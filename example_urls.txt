@@ -1,0 +1,8 @@
+# Пример файла со списком URL для парсинга
+# Каждый URL на отдельной строке
+# Строки, начинающиеся с #, игнорируются
+
+# Примеры URL для тестирования:
+# https://vc.ru/media/2330878-kinopoisk-obnovil-podpiski-na-servisy-bez-yandeks-plyusa
+# https://techcrunch.com/2025/11/09/youtube-tv-is-giving-customers-a-20-credit-for-disney-blackout/
+# https://habr.com/ru/news/964822/
