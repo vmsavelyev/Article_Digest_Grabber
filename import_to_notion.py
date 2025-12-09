@@ -16,16 +16,239 @@ from datetime import datetime
 class NotionImporter:
     """Класс для импорта статей в Notion"""
     
-    def __init__(self, notion_token: str, database_id: str):
+    def __init__(self, notion_token: str, database_id: str = None):
         """
         Инициализация импортера
         
         Args:
             notion_token: API токен Notion (получить на https://www.notion.so/my-integrations)
-            database_id: ID базы данных Notion (извлекается из URL)
+            database_id: ID базы данных Notion (извлекается из URL), опционально
         """
         self.notion = Client(auth=notion_token)
         self.database_id = database_id
+        self.database_properties = None
+    
+    def get_database_structure(self, database_id: str) -> dict:
+        """
+        Получает структуру Database через Notion API
+        
+        Args:
+            database_id: ID базы данных
+            
+        Returns:
+            dict с информацией о структуре Database и properties
+        """
+        try:
+            # Получаем информацию о Database
+            database = self.notion.databases.retrieve(database_id)
+            
+            # Получаем properties через data_sources (правильный способ согласно Notion API)
+            properties = {}
+            
+            # Получаем data_sources из database
+            data_sources = []
+            if isinstance(database, dict):
+                data_sources = database.get('data_sources', [])
+            elif hasattr(database, 'data_sources'):
+                data_sources = database.data_sources if database.data_sources else []
+            
+            # Если есть data_sources, получаем properties из первого data source
+            if data_sources and len(data_sources) > 0:
+                # Берем первый data source
+                data_source = data_sources[0]
+                if isinstance(data_source, dict):
+                    data_source_id = data_source.get('id')
+                else:
+                    data_source_id = getattr(data_source, 'id', None)
+                
+                if data_source_id:
+                    # Получаем структуру data source
+                    try:
+                        data_source_info = self.notion.data_sources.retrieve(data_source_id)
+                        if isinstance(data_source_info, dict):
+                            properties = data_source_info.get('properties', {})
+                        elif hasattr(data_source_info, 'properties'):
+                            props = data_source_info.properties
+                            if isinstance(props, dict):
+                                properties = props
+                    except Exception as e:
+                        raise Exception(f"Не удалось получить data source: {e}")
+            
+            # Если properties все еще пустой, пробуем получить напрямую из database (fallback)
+            if not properties:
+                if isinstance(database, dict):
+                    properties = database.get('properties', {})
+                elif hasattr(database, 'properties'):
+                    props = database.properties
+                    if isinstance(props, dict):
+                        properties = props
+            
+            # Формируем структурированную информацию о полях
+            fields_info = {}
+            if properties:
+                for prop_name, prop_data in properties.items():
+                    # Обрабатываем разные форматы prop_data
+                    prop_type = 'unknown'
+                    prop_id = None
+                    
+                    if isinstance(prop_data, dict):
+                        prop_type = prop_data.get('type', 'unknown')
+                        prop_id = prop_data.get('id')
+                    elif hasattr(prop_data, 'type'):
+                        prop_type = prop_data.type
+                        prop_id = getattr(prop_data, 'id', None)
+                    elif isinstance(prop_data, str):
+                        # Если prop_data - это просто строка (название типа)
+                        prop_type = prop_data
+                    else:
+                        # Пробуем получить тип через другие способы
+                        prop_type = str(prop_data) if prop_data else 'unknown'
+                    
+                    fields_info[prop_name] = {
+                        'type': prop_type,
+                        'id': prop_id,
+                        'name': prop_name
+                    }
+            
+            # Получаем title
+            title = "Без названия"
+            if isinstance(database, dict):
+                title = self._extract_title(database.get('title', []))
+            elif hasattr(database, 'title'):
+                title_obj = database.title
+                if isinstance(title_obj, list):
+                    title = self._extract_title(title_obj)
+                else:
+                    title = str(title_obj)
+            
+            return {
+                'database_id': database_id,
+                'title': title,
+                'properties': fields_info,
+                'raw': database if isinstance(database, dict) else str(database)
+            }
+        except Exception as e:
+            raise Exception(f"Ошибка при получении структуры Database: {e}")
+    
+    def _extract_title(self, title_array: list) -> str:
+        """Извлекает текст из массива rich text объектов Notion"""
+        if not title_array:
+            return "Без названия"
+        text_parts = []
+        for item in title_array:
+            if item.get('type') == 'text':
+                text_parts.append(item.get('text', {}).get('content', ''))
+        return ''.join(text_parts) if text_parts else "Без названия"
+    
+    def display_database_structure(self, structure: dict):
+        """Выводит структуру Database в читаемом формате"""
+        print("\n" + "=" * 80)
+        print(f"📊 Структура Database: {structure['title']}")
+        print("=" * 80)
+        print(f"Database ID: {structure['database_id']}")
+        print(f"\nПоля (Properties):")
+        print("-" * 80)
+        
+        if not structure['properties']:
+            print("  ⚠ В Database не найдено полей")
+            return
+        
+        for i, (prop_name, prop_info) in enumerate(structure['properties'].items(), 1):
+            prop_type = prop_info['type']
+            print(f"  {i}. {prop_name}")
+            print(f"     Тип: {prop_type}")
+        
+        print("-" * 80)
+    
+    def explain_mapping(self, structure: dict) -> dict:
+        """
+        Объясняет, какие данные будут импортированы в какие поля
+        
+        Returns:
+            dict с маппингом полей
+        """
+        mapping = {}
+        properties = structure['properties']
+        
+        # Автоматическое сопоставление полей
+        # Ищем поля по стандартным названиям
+        title_field = None
+        url_field = None
+        date_field = None
+        
+        # Ищем поле типа Title для заголовка
+        for prop_name, prop_info in properties.items():
+            if prop_info['type'] == 'title':
+                title_field = prop_name
+                break
+        
+        # Ищем поле URL
+        for prop_name, prop_info in properties.items():
+            if prop_info['type'] == 'url':
+                if url_field is None or 'url' in prop_name.lower():
+                    url_field = prop_name
+        
+        # Ищем поле Date
+        for prop_name, prop_info in properties.items():
+            if prop_info['type'] == 'date':
+                if date_field is None or 'дата' in prop_name.lower() or 'date' in prop_name.lower():
+                    date_field = prop_name
+        
+        mapping['title'] = title_field
+        mapping['url'] = url_field
+        mapping['date'] = date_field
+        
+        return mapping
+    
+    def display_mapping(self, mapping: dict, structure: dict):
+        """Выводит информацию о маппинге данных"""
+        print("\n" + "=" * 80)
+        print("📋 Маппинг данных для импорта:")
+        print("=" * 80)
+        
+        print("\nБудут импортированы следующие данные:")
+        print("-" * 80)
+        
+        # Заголовок статьи
+        title_field = mapping.get('title')
+        if title_field:
+            print(f"  ✓ Заголовок статьи → поле '{title_field}' (Title)")
+        else:
+            print(f"  ⚠ Заголовок статьи → НЕ НАЙДЕНО подходящее поле (нужно поле типа Title)")
+        
+        # URL статьи
+        url_field = mapping.get('url')
+        if url_field:
+            print(f"  ✓ URL статьи → поле '{url_field}' (URL)")
+        else:
+            print(f"  ⚠ URL статьи → НЕ НАЙДЕНО подходящее поле (нужно поле типа URL)")
+        
+        # Дата публикации
+        date_field = mapping.get('date')
+        if date_field:
+            print(f"  ✓ Дата публикации → поле '{date_field}' (Date)")
+        else:
+            print(f"  ⚠ Дата публикации → НЕ НАЙДЕНО подходящее поле (нужно поле типа Date)")
+        
+        print("\nКонтент статьи:")
+        print("  ✓ Тело статьи будет добавлено как контент страницы (блоки)")
+        
+        print("-" * 80)
+        
+        # Предупреждения
+        warnings = []
+        if not title_field:
+            warnings.append("Не найдено поле типа Title для заголовка")
+        if not url_field:
+            warnings.append("Не найдено поле типа URL для ссылки")
+        if not date_field:
+            warnings.append("Не найдено поле типа Date для даты")
+        
+        if warnings:
+            print("\n⚠ Предупреждения:")
+            for warning in warnings:
+                print(f"  - {warning}")
+            print("\nИмпорт продолжится, но эти данные не будут сохранены в properties.")
     
     def parse_markdown_file(self, filepath: str) -> dict:
         """Парсит markdown файл и извлекает метаданные и контент"""
@@ -191,15 +414,30 @@ class NotionImporter:
         except:
             return None
     
-    def create_page(self, article_data: dict) -> str:
-        """Создает страницу в Notion Database"""
+    def create_page(self, article_data: dict, field_mapping: dict = None) -> str:
+        """
+        Создает страницу в Notion Database
+        
+        Args:
+            article_data: Данные статьи для импорта
+            field_mapping: Маппинг полей (если None, используется стандартный)
+        """
+        if field_mapping is None:
+            # Стандартный маппинг для обратной совместимости
+            field_mapping = {
+                'title': 'Name',
+                'url': 'URL',
+                'date': 'Дата публикации'
+            }
+        
         # Подготовка properties
+        properties = {}
         title_text = article_data.get('title') or "Без заголовка"
         
-        # Notion API поддерживает заголовки до 2000 символов в одном text объекте
-        # Используем полный заголовок без обрезки
-        properties = {
-            "Name": {
+        # Title property
+        title_field = field_mapping.get('title')
+        if title_field:
+            properties[title_field] = {
                 "title": [
                     {
                         "type": "text",
@@ -209,19 +447,20 @@ class NotionImporter:
                     }
                 ]
             }
-        }
         
         # URL property
-        if article_data.get('url'):
-            properties["URL"] = {
+        url_field = field_mapping.get('url')
+        if url_field and article_data.get('url'):
+            properties[url_field] = {
                 "url": article_data['url']
             }
         
         # Дата публикации property
-        if article_data.get('date'):
+        date_field = field_mapping.get('date')
+        if date_field and article_data.get('date'):
             date_obj = self.parse_date(article_data['date'])
             if date_obj:
-                properties["Дата публикации"] = {
+                properties[date_field] = {
                     "date": date_obj
                 }
         
@@ -240,7 +479,7 @@ class NotionImporter:
             print(f"  Ошибка при создании страницы: {e}")
             raise
     
-    def import_from_directory(self, markdown_dir: str, json_file: str = None):
+    def import_from_directory(self, markdown_dir: str, json_file: str = None, field_mapping: dict = None):
         """Импортирует все markdown файлы из директории"""
         markdown_path = Path(markdown_dir)
         
@@ -314,7 +553,7 @@ class NotionImporter:
                     print(f"  ⚠ Предупреждение: заголовок может быть обрезан")
                 
                 # Создаем страницу в Notion
-                page_id = self.create_page(article_data)
+                page_id = self.create_page(article_data, field_mapping)
                 print(f"  ✓ Страница создана (ID: {page_id[:8]}...)")
                 imported += 1
                 
@@ -328,6 +567,68 @@ class NotionImporter:
         print(f"Ошибок: {errors}")
 
 
+def extract_database_id(input_value: str) -> str:
+    """
+    Извлекает Database ID из URL или возвращает ID, если он уже в правильном формате
+    
+    Args:
+        input_value: URL Database или Database ID
+        
+    Returns:
+        Database ID (32 символа, может содержать дефисы)
+    """
+    if not input_value:
+        return ""
+    
+    input_value = input_value.strip()
+    
+    # Если это URL, извлекаем ID
+    if input_value.startswith('http'):
+        # Ищем паттерн: .../ID?v=... или .../ID
+        # Database ID - это 32 символа (может быть с дефисами или без)
+        # Формат: abc123def456ghi789jkl012mno345pq или abc123def-456ghi-789jkl-012mno345pq
+        
+        # Убираем параметры запроса и якоря
+        url_without_params = input_value.split('?')[0].split('#')[0]
+        
+        # Ищем последний сегмент URL (после последнего /)
+        parts = url_without_params.rstrip('/').split('/')
+        if len(parts) > 0:
+            last_part = parts[-1]
+            
+            # Database ID может быть:
+            # 1. 32 символа без дефисов: abc123def456ghi789jkl012mno345pq
+            # 2. 32 символа с дефисами: abc123def-456ghi-789jkl-012mno345pq
+            # 3. UUID формат: abc123def-4567-89ab-cdef-0123456789ab
+            
+            # Убираем дефисы для проверки длины
+            id_without_dashes = last_part.replace('-', '')
+            
+            # Database ID должен быть 32 символа (без дефисов)
+            if len(id_without_dashes) == 32:
+                return last_part
+    
+    # Если это не URL, проверяем, что это похоже на Database ID
+    # Database ID: 32 символа (может быть с дефисами или без)
+    id_without_dashes = input_value.replace('-', '')
+    if len(id_without_dashes) == 32:
+        return input_value
+    
+    # Если не похоже на ID и не URL, возвращаем как есть (будет ошибка при использовании)
+    return input_value
+
+
+def get_user_confirmation(prompt: str, default: bool = False) -> bool:
+    """Запрашивает подтверждение у пользователя"""
+    default_text = "Y/n" if default else "y/N"
+    response = input(f"{prompt} [{default_text}]: ").strip().lower()
+    
+    if not response:
+        return default
+    
+    return response in ['y', 'yes', 'да', 'д']
+
+
 def main():
     """Основная функция"""
     # Получаем NOTION_TOKEN: приоритет у аргументов командной строки, затем переменные окружения
@@ -337,54 +638,95 @@ def main():
     if not notion_token:
         notion_token = os.getenv('NOTION_TOKEN')
     
-    # Получаем DATABASE_ID: приоритет у аргументов командной строки, затем переменные окружения
+    # Проверяем наличие токена
+    if not notion_token:
+        print("Ошибка: NOTION_TOKEN не указан")
+        print("\nИспользование:")
+        print("  1. Через переменные окружения:")
+        print("     export NOTION_TOKEN='your_token'")
+        print("     python3 import_to_notion.py")
+        print("\n  2. Через аргументы командной строки:")
+        print("     python3 import_to_notion.py <NOTION_TOKEN>")
+        print("\nГде:")
+        print("  NOTION_TOKEN - API токен Notion (получить на https://www.notion.so/my-integrations)")
+        print("\nПример:")
+        print("  python3 import_to_notion.py secret_xxx")
+        sys.exit(1)
+    
+    # Создаем импортер (без database_id, он будет запрошен интерактивно)
+    importer = NotionImporter(notion_token)
+    
+    # Интерактивный запрос Database ID
+    print("=" * 80)
+    print("📥 Импорт статей в Notion Database")
+    print("=" * 80)
+    
+    # Проверяем, не передан ли database_id через аргументы или переменные окружения
     database_id = None
     if len(sys.argv) >= 3:
         database_id = sys.argv[2]
     if not database_id:
         database_id = os.getenv('NOTION_DATABASE_ID')
     
-    # Проверяем наличие обязательных параметров
-    if not notion_token:
-        print("Ошибка: NOTION_TOKEN не указан")
-        print("\nИспользование:")
-        print("  1. Через переменные окружения:")
-        print("     export NOTION_TOKEN='your_token'")
-        print("     export NOTION_DATABASE_ID='your_database_id'")
-        print("     python3 import_to_notion.py")
-        print("\n  2. Через аргументы командной строки:")
-        print("     python3 import_to_notion.py <NOTION_TOKEN> <DATABASE_ID>")
-        print("\n  3. Комбинированный способ:")
-        print("     export NOTION_DATABASE_ID='your_database_id'")
-        print("     python3 import_to_notion.py <NOTION_TOKEN>")
+    # Извлекаем Database ID из URL, если передан URL
+    if database_id:
+        database_id = extract_database_id(database_id)
+    
+    # Если database_id не указан, запрашиваем у пользователя
+    if not database_id:
+        print("\nВведите Database ID или URL Database для импорта данных.")
+        print("Вы можете ввести:")
+        print("  - Database ID: abc123def456ghi789jkl012mno345pq")
+        print("  - Полный URL: https://www.notion.so/workspace/abc123def456ghi789jkl012mno345pq?v=...")
+        print()
+        print("Database ID можно найти в URL вашей Database:")
+        print("  https://www.notion.so/workspace/abc123def456ghi789jkl012mno345pq?v=...")
+        print("  Database ID: abc123def456ghi789jkl012mno345pq (часть между последним '/' и '?')")
+        print()
+        user_input = input("Database ID или URL: ").strip()
+        
+        if not user_input:
+            print("Ошибка: Database ID или URL не может быть пустым")
+            sys.exit(1)
+        
+        # Извлекаем Database ID из введенного значения
+        database_id = extract_database_id(user_input)
+        
+        if not database_id or len(database_id.replace('-', '')) != 32:
+            print(f"Ошибка: Не удалось извлечь Database ID из введенного значения: {user_input}")
+            print("Убедитесь, что вы ввели правильный Database ID или URL Database")
+            sys.exit(1)
+    
+    # Получаем структуру Database
+    print("\n🔍 Получение структуры Database...")
+    try:
+        structure = importer.get_database_structure(database_id)
+        importer.database_id = database_id
+        importer.database_properties = structure['properties']
+    except Exception as e:
+        print(f"❌ Ошибка при получении структуры Database: {e}")
         sys.exit(1)
     
-    if not database_id:
-        print("Ошибка: DATABASE_ID не указан")
-        print("\nИспользование:")
-        print("  1. Через переменные окружения:")
-        print("     export NOTION_TOKEN='your_token'")
-        print("     export NOTION_DATABASE_ID='your_database_id'")
-        print("     python3 import_to_notion.py")
-        print("\n  2. Через аргументы командной строки:")
-        print("     python3 import_to_notion.py <NOTION_TOKEN> <DATABASE_ID>")
-        print("\n  3. Комбинированный способ:")
-        print("     export NOTION_TOKEN='your_token'")
-        print("     python3 import_to_notion.py <DATABASE_ID>")
-        print("\nГде:")
-        print("  NOTION_TOKEN - API токен Notion (получить на https://www.notion.so/my-integrations)")
-        print("  DATABASE_ID - ID базы данных (извлекается из URL базы данных)")
-        print("\nПример:")
-        print("  python3 import_to_notion.py secret_xxx abc123def456ghi789jkl012mno345pq")
-        sys.exit(1)
+    # Отображаем структуру Database
+    importer.display_database_structure(structure)
+    
+    # Объясняем маппинг данных
+    field_mapping = importer.explain_mapping(structure)
+    importer.display_mapping(field_mapping, structure)
+    
+    # Запрашиваем подтверждение
+    print("\n" + "=" * 80)
+    if not get_user_confirmation("Продолжить импорт?", default=False):
+        print("Импорт отменен пользователем.")
+        sys.exit(0)
     
     # Пути к файлам
     markdown_dir = 'articles_markdown'
     json_file = 'parsed_articles.json'
     
-    # Создаем импортер и запускаем импорт
-    importer = NotionImporter(notion_token, database_id)
-    importer.import_from_directory(markdown_dir, json_file)
+    # Запускаем импорт
+    print("\n🚀 Начинаем импорт...")
+    importer.import_from_directory(markdown_dir, json_file, field_mapping)
 
 
 if __name__ == "__main__":
