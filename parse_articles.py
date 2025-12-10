@@ -13,6 +13,7 @@ import time
 import sys
 import re
 import os
+import shutil
 from datetime import datetime
 from typing import List, Dict, Optional
 
@@ -959,15 +960,30 @@ def main():
         print("Список URL пуст")
         sys.exit(1)
     
-    print(f"Найдено {len(urls)} URL для обработки")
+    # Очистка перед запуском
+    print("Очистка предыдущих данных...")
+    
+    # Удаляем и создаем заново parsed_articles.json
+    output_file = 'parsed_articles.json'
+    if os.path.exists(output_file):
+        os.remove(output_file)
+        print(f"  ✓ Удален файл: {output_file}")
+    
+    # Очищаем каталог articles_markdown
+    md_dir = 'articles_markdown'
+    if os.path.exists(md_dir):
+        shutil.rmtree(md_dir)
+        print(f"  ✓ Очищен каталог: {md_dir}/")
+    
+    # Создаем каталог заново
+    os.makedirs(md_dir, exist_ok=True)
+    print(f"  ✓ Создан каталог: {md_dir}/")
+    
+    print(f"\nНайдено {len(urls)} URL для обработки")
     print("=" * 80)
     
     parser = ArticleParser()
     results = []
-    
-    # Создаем папку для markdown файлов
-    md_dir = 'articles_markdown'
-    os.makedirs(md_dir, exist_ok=True)
     
     # Обрабатываем каждый URL
     for i, url in enumerate(urls, 1):
