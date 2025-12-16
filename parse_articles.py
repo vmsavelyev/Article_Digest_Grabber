@@ -216,6 +216,47 @@ class ArticleParser:
                 if datetime_str:
                     result['date'] = self.format_date(datetime_str)
         
+        # Извлечение featured image (главное изображение статьи)
+        featured_figure = soup.find('figure', class_='wp-block-post-featured-image')
+        if featured_figure:
+            featured_img = featured_figure.find('img')
+            if featured_img:
+                # Получаем URL изображения (предпочитаем src, затем srcset)
+                img_src = featured_img.get('src')
+                if not img_src:
+                    srcset = featured_img.get('srcset')
+                    if srcset:
+                        # Берем первый URL из srcset (обычно самый маленький)
+                        # или ищем версию без resize параметров
+                        srcset_parts = srcset.split(',')
+                        for part in srcset_parts:
+                            part_url = part.strip().split()[0]
+                            if 'resize' not in part_url:
+                                img_src = part_url
+                                break
+                        if not img_src:
+                            img_src = srcset_parts[0].strip().split()[0]
+                
+                if img_src:
+                    if img_src.startswith('//'):
+                        img_src = 'https:' + img_src
+                    elif img_src.startswith('/'):
+                        img_src = urljoin(url, img_src)
+                    elif not img_src.startswith('http'):
+                        img_src = urljoin(url, img_src)
+                    
+                    if not img_src.startswith('data:'):
+                        img_alt = featured_img.get('alt', '')
+                        # Проверяем подпись к изображению
+                        figcaption = featured_figure.find('figcaption')
+                        if figcaption:
+                            img_alt = figcaption.get_text(strip=True) or img_alt
+                        
+                        result['images'].append({
+                            'url': img_src,
+                            'alt': img_alt
+                        })
+        
         # Извлечение тела статьи
         content_div = soup.find('div', class_='entry-content')
         if content_div:
@@ -465,6 +506,45 @@ class ArticleParser:
     def extract_structured_content_techcrunch(self, soup: BeautifulSoup, url: str) -> List[Dict]:
         """Извлекает структурированный контент с techcrunch.com с сохранением порядка элементов"""
         content_items = []
+        
+        # Извлекаем featured image (главное изображение статьи) - добавляем в начало
+        featured_figure = soup.find('figure', class_='wp-block-post-featured-image')
+        if featured_figure:
+            featured_img = featured_figure.find('img')
+            if featured_img:
+                img_src = featured_img.get('src')
+                if not img_src:
+                    srcset = featured_img.get('srcset')
+                    if srcset:
+                        srcset_parts = srcset.split(',')
+                        for part in srcset_parts:
+                            part_url = part.strip().split()[0]
+                            if 'resize' not in part_url:
+                                img_src = part_url
+                                break
+                        if not img_src:
+                            img_src = srcset_parts[0].strip().split()[0]
+                
+                if img_src:
+                    if img_src.startswith('//'):
+                        img_src = 'https:' + img_src
+                    elif img_src.startswith('/'):
+                        img_src = urljoin(url, img_src)
+                    elif not img_src.startswith('http'):
+                        img_src = urljoin(url, img_src)
+                    
+                    if not img_src.startswith('data:'):
+                        img_alt = featured_img.get('alt', '')
+                        figcaption = featured_figure.find('figcaption')
+                        if figcaption:
+                            img_alt = figcaption.get_text(strip=True) or img_alt
+                        
+                        content_items.append({
+                            'type': 'image',
+                            'url': img_src,
+                            'alt': img_alt
+                        })
+        
         content_div = soup.find('div', class_='entry-content')
         
         if content_div:
@@ -472,7 +552,11 @@ class ArticleParser:
             # Это гарантирует, что мы не потеряем изображения контента
             
             # Проходим по всем элементам в порядке их появления в DOM
+            # Добавляем уже обработанные изображения (featured image)
             processed_images = set()
+            for item in content_items:
+                if item.get('type') == 'image' and item.get('url'):
+                    processed_images.add(item['url'])
             seen_texts = set()
             
             # Рекурсивная функция для обхода элементов в порядке появления

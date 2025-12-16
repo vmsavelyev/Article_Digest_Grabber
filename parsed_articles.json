@@ -97,11 +97,20 @@
     "text": "Many daters on Hinge are getting annoyed with matches who just like their profiles but never bother to start a conversation. It often leads to this awkward silence, putting all the pressure on one person to make the first move. Instead of coming up with something interesting to say, some just fall back on the same old lines or stick to boring small talk, like asking, “How are you?”\n\nTo address this issue, Hinge unveiled “Convo Starters,” a feature powered by AI that provides personalized tips for initiating conversations.\n\nThe feature aims to inspire daters and boost their confidence when sending initial messages. When users like a profile, they’ll now see three tailored tips beneath each photo and prompt. The AI evaluates a user’s profile and generates recommendations based on the individual photos or prompts. For example, if a potential match is pictured playing chess, Hinge might suggest beginning the conversation around board games.\n\nConvo Starters was developed in response to user feedback, Hinge says. The company’s research indicated that 72% of Hinge daters are more inclined to consider someone when a like is accompanied by a message. Data from Hinge reveals that those who include a comment with their likes are twice as likely to arrange a date.\n\nThis new feature follows the launch of its AI-driven Prompt Feedback feature, which assesses user prompts and offers tailored advice aimed at improving them by urging users to elaborate and share engaging details about their lives.\n\nHowever, as Hinge incorporates AI features into its app, many users, especially Gen Z, are uncomfortable with the thought of using AI in their online dating experiences. A Bloomberg Intelligence survey found that Gen Z feels more uneasy about using AI for tasks such as drafting profile prompts and responding to messages than older generations do.\n\nHinge’s parent company, Match Group, is dedicating around $20 million to $30 million toward AI efforts.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/HingeConvoStarter.png?w=1024",
+        "alt": "Image Credits:Hinge"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Hinge-ConvoStarter2.png?w=680",
         "alt": "Image Credits:Hinge"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/HingeConvoStarter.png?w=1024",
+        "alt": "Image Credits:Hinge"
+      },
       {
         "type": "text",
         "content": "Many daters on Hinge are getting annoyed with matches who just like their profiles but never bother to start a conversation. It often leads to this awkward silence, putting all the pressure on one person to make the first move. Instead of coming up with something interesting to say, some just fall back on the same old lines or stick to boring small talk, like asking, “How are you?”"
@@ -146,11 +155,20 @@
     "text": "Adobe is partnering with YouTube to launch a dedicated content creation space in Premiere for iOS for YouTube Shorts creators, the company announced on Monday. The new space gives creators access to exclusive templates, transitions, and effects, along with the ability to instantly publish Shorts to their YouTube channels directly from their phones.\n\nThe company says the space is designed to give creators everything they need to produce viral videos, grow their audience, and tap into trends, whether it’s creating day-in-the-life vlogs, travel videos, or behind-the-scenes clips.\n\nBy partnering with Adobe, YouTube is giving creators on its platform an exclusive space to create content, encouraging them to use its partners’ space instead of competitors’ tools, like Meta’s Edits or CapCut, which is owned by TikTok parent ByteDance.\n\n“Although content edited in Premiere mobile can be shared to other social platforms, what’s unique about this partnership is that creators getting inspiration from their YouTube Shorts feed, can launch a template that caught their eye, directly into Premiere mobile and start customizing it for their own channel,” said Meagan Keane, director, Product Marketing, Digital Video and Audio at Adobe, in an email to TechCrunch. “This content creation space within the Premiere mobile app is designed and optimized for YouTube Shorts.”\n\nThe Create for YouTube Shorts content creation space in Premiere mobile features Shorts templates from top creators with built-in text, effects, and transition presets. Creators can add their own media and customize the templates to their style. They also have the option to create and submit their own original templates.\n\nTo get started, creators need a free Premiere mobile login to access the space and a YouTube profile to publish directly to their Shorts feed. Creators can download Adobe Premiere from the App Store and tap the “Create for YouTube” option to access the creation space.\n\nFrom there, they can upload clips from their iPhone camera roll, cloud storage, or Adobe Creative Cloud. They can then cut and trim clips, layer in video and audio tracks, adjust color and brightness, and add text overlays and captions.\n\nAfter following export prompts, creators can upload the finished product to YouTube.\n\n“New tools and capabilities in the app, like templates, effects, transitions, and this new content creation space for YouTube Short creation, will be powerful for all creators, from longtime creators to those just getting started,” Keane said. “It brings creators polished video editing with studio-quality audio, AI sound effects, precision multi-track editing, Firefly AI content generation, and more to make producing and sharing their content easier and faster. This ultimately helps us further our goal of empowering creativity for all. Every day, we’re focused on doing our part to make this the best time ever to be a creator.”",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/YouTube-x-Premiere-Mobile.png?w=1024",
+        "alt": "Image Credits:Adobe"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Screenshot-2025-12-05-at-12.32.14-PM.png?w=680",
         "alt": "Image Credits:Adobe"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/YouTube-x-Premiere-Mobile.png?w=1024",
+        "alt": "Image Credits:Adobe"
+      },
       {
         "type": "text",
         "content": "Adobe is partnering with YouTube to launch a dedicated content creation space in Premiere for iOS for YouTube Shorts creators, the company announced on Monday. The new space gives creators access to exclusive templates, transitions, and effects, along with the ability to instantly publish Shorts to their YouTube channels directly from their phones."
@@ -203,6 +221,10 @@
     "text": "An increasing number of browsers are experimenting with agentic features that will take actions on your behalf, such as booking tickets or shopping for different items. However, these agentic capabilities also come with security risks that could lead to loss of data or money.\n\nGoogle detailed its approach to handling user security on Chrome using observer models and consent for user action. The company previewed agentic capabilities on Chrome in September and said these features will roll out in the coming months.\n\nThe company said it is using the help of a few models to keep agentic actions in check. Google said it built a User Alignment Critic using Gemini to scrutinize the action items built by the planner model for a particular task. If the critic model thinks that the planned tasks don’t serve the user’s goal, it asks the planner model to rethink the strategy. Google noted that the critic model only sees the metadata of the proposed action and not the actual web content.\n\nWhat’s more, to prevent agents from accessing disallowed or untrustworthy sites, Google is using Agent Origin Sets, which restrict the model to access read-only origins and read-writeable origins. Read-only origin is data that Gemini is permitted to consume content from. For instance, on a shopping site, the listings are relevant to the task, but banner ads aren’t. Similarly, Google said the agent is only allowed to click or type on certain iframes of a page.\n\n“This delineation enforces that only data from a limited set of origins is available to the agent, and this data can only be passed on to the writable origins. This bounds the threat vector of cross-origin data leaks. This also gives the browser the ability to enforce some of that separation, such as by not even sending to the model data that is outside the readable set,” the company said in a blog post.\n\nGoogle is also keeping a check on page navigation by investigating URLs through another observer model. This can prevent navigation to harmful model-generated URLs, the company said.\n\nThe search giant said that it is also handing over the reins to users for sensitive tasks. For instance, when an agent tries to navigate to a sensitive site with information like banking or your medical data, it first asks the user. For sites that require sign-in, it’ll ask the user for permission to let Chrome use the password manager. Google said that the agent’s model doesn’t have exposure to password data. The company added that it will ask users before taking actions like making a purchase or sending a message.\n\nGoogle said that, in addition to this, it also has a prompt-injection classifier to prevent unwanted actions and is also testing agentic capabilities against attacks created by researchers.\n\nAI browser makers are also paying attention to security. Earlier this month, Perplexity released a new open source content detection model to prevent prompt injection attacks against agents.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/07/chrome-with-ai-GettyImages-2184968624.jpg?w=1024",
+        "alt": "Image Credits:Gabby Jones/Bloomberg / Getty Images"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/image-1.png?w=680",
         "alt": "Image Credits:Google"
       },
@@ -212,6 +234,11 @@
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/07/chrome-with-ai-GettyImages-2184968624.jpg?w=1024",
+        "alt": "Image Credits:Gabby Jones/Bloomberg / Getty Images"
+      },
       {
         "type": "text",
         "content": "An increasing number of browsers are experimenting with agentic features that will take actions on your behalf, such as booking tickets or shopping for different items. However, these agentic capabilities also come with security risks that could lead to loss of data or money."
@@ -267,8 +294,18 @@
     "title": "Claude Code is coming to Slack, and that’s a bigger deal than it sounds",
     "date": "08.12.2025",
     "text": "Anthropic is launching Claude Code in Slack, allowing developers to delegate coding tasks directly from chat threads. The beta feature, available Monday as a research preview, builds on Anthropic’s existing Slack integration by adding full workflow automation. The rollout signals that the next frontier in coding assistants isn’t the model; it’s the workflow.\n\nPreviously, developers could only get lightweight coding help via Claude in Slack — like writing snippets, debugging, and explanations. Now they can tag @Claude to spin up a complete coding session using Slack context like bug reports or feature requests. Claude analyzes recent messages to determine the right repository, posts progress updates in threads, and shares links to review work and open pull requests.\n\nThe move reflects a broader industry shift: AI coding assistants are migrating from IDEs (integrated development environment, where software development happens) into collaboration tools where teams already work.\n\nCursor offers Slack integration for drafting and debugging code in threads, while GitHub Copilot recently added features to generate pull requests from chat. OpenAI’s Codex is accessible via custom Slack bots.\n\nFor Slack, positioning itself as an “ agentic hub ” where AI meets workplace context creates a strategic advantage: Whichever AI tool dominates Slack — the center of engineering communication — could shape how software teams work.\n\nBy letting developers move seamlessly from conversation to code without switching apps, Claude Code and similar tools represent a shift toward AI-embedded collaboration that could fundamentally change developer workflows.\n\nWhile Anthropic has not yet confirmed when it would make a broader rollout available, the timing is strategic. The AI coding market is getting more competitive, and differentiation is starting to depend more on integration depth and distribution than model capability alone.\n\nThat said, the integration raises questions about code security and IP protection, as it adds another platform through which sensitive repository access must be managed and audited — while also introducing new dependencies where outages or rate limits in either Slack or Claude’s API could disrupt development workflows that teams previously controlled locally.\n\nTechCrunch has reached out to Anthropic and Slack for more information.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/claude-code-slack.png?w=1024",
+        "alt": "Image Credits:Anthropic"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/claude-code-slack.png?w=1024",
+        "alt": "Image Credits:Anthropic"
+      },
       {
         "type": "text",
         "content": "Anthropic is launching Claude Code in Slack, allowing developers to delegate coding tasks directly from chat threads. The beta feature, available Monday as a research preview, builds on Anthropic’s existing Slack integration by adding full workflow automation. The rollout signals that the next frontier in coding assistants isn’t the model; it’s the workflow."
@@ -314,8 +351,18 @@
     "title": "Google’s AI try-on app Doppl adds a shoppable discovery feed",
     "date": "08.12.2025",
     "text": "Google announced on Monday that it’s introducing a shoppable discovery feed in Doppl , its experimental app that uses AI to visualize how different outfits might look on you.\n\nThe tech giant says the idea behind the new feed is to display recommendations so users can discover and virtually try on new items. Nearly everything in the feed is shoppable, with direct links to merchants.\n\nThe discovery feed features AI-generated videos of real products and suggests outfits based on your personalized style. Google determines your style by analyzing the preferences you share with Doppl and the items you interact with.\n\nThe move comes as short-form video feeds, particularly on TikTok and Instagram, have conditioned users to scroll visual feeds and buy what they see. However, unlike on TikTok and Instagram, where real influencers showcase products, Google’s new feed only consists of AI-generated content.\n\nWhile some may not be fond of an AI-generated feed, Google likely sees it as a way to surface products in a format that people are already used to. Plus, it makes sense for the company to try a new e-commerce strategy, especially as it continues to lose ground to companies like Amazon and social media platforms.\n\nIt’s worth noting that AI-generated videos aren’t new to Doppl. While the app creates images of a virtual version of yourself wearing different outfits, it can turn these static images and convert them into AI-generated videos. The purpose of this is to give you a better sense of how the outfit would look on you in real life.\n\nThe new discovery feed is rolling out to Doppl on iOS and Android in the U.S. for users 18 and above.\n\nAlthough a feed consisting solely of AI-generated content would have seemed strange a year ago, the idea is now gaining traction. For example, OpenAI in September launched Sora , a social media platform of just AI videos. Meta also has a short-form video feed of AI-generated videos called “ Vibes ” in the Meta AI app.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/doppl.png?w=1024",
+        "alt": "Image Credits:Doppl"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/doppl.png?w=1024",
+        "alt": "Image Credits:Doppl"
+      },
       {
         "type": "text",
         "content": "Google announced on Monday that it’s introducing a shoppable discovery feed in Doppl , its experimental app that uses AI to visualize how different outfits might look on you."
@@ -357,8 +404,18 @@
     "title": "Department of Commerce approves Nvidia H200 chip exports to China",
     "date": "08.12.2025",
     "text": "Advanced Nvidia AI chips can head back to China after all.\n\nThe Department of Commerce will allow Nvidia to ship H200 chips to China, as originally reported by Semafor , to approved customers in the country. The U.S. will take a 25% cut of these sales , CNBC reported.\n\nH200 chips are much more advanced than the H20 chips Nvidia developed specifically for the Chinese market, but the company would only be able to send H200s that are roughly 18 months old, Semafor reported.\n\nAn Nvidia spokesperson told TechCrunch of the development: “We applaud President Trump’s decision to allow America’s chip industry to compete to support high paying jobs and manufacturing in America. Offering H200 to approved commercial customers, vetted by the Department of Commerce, strikes a thoughtful balance that is great for America.”\n\nThe news report comes a week after U.S. Commerce Secretary Howard Lutnick said the decision on exporting these H200 chips to China was in President Donald Trump’s hands .\n\nThe decision to send the chips to China conflicts with Congressional concerns about national security.\n\nPete Ricketts, a Republican senator from Nebraska, and Chris Coons, a Democratic senator from Delaware, introduced a bill on December 4 that would block the export of advanced AI chips to China for more than two years.\n\nThe Secure and Feasible Exports Act (SAFE) Chips Act would require the Department of Commerce to deny any export license on advanced AI chips to China for 30 months. It’s unclear when legislators will vote on the proposed bill especially now that the Trump administration has given the green light to sell the H200 chips.\n\nWhile Congress has long been clear about sending advanced AI chips to China — on both sides of the aisle — President Trump has waffled on whether or not to allow the exports.\n\nThe Trump administration hit chip companies like Nvidia with licensing requirements to send their chips to China in April before it formally rescinded a Biden administration diffusion rule that would have regulated AI chip exports in May. Over the summer, the U.S. government signaled that companies would be able to start sending chips to China as long as the government got a 15% cut of all revenue , as chips became a bargaining tool in trade talks with China.\n\nHowever, by that point, the market for U.S.-developed chips in China was strained.\n\nIn September, China’s internet regulator, the Cyberspace Administration of China, banned domestic companies from buying Nvidia’s chips, leaving companies in the country to rely on less advanced domestic chips from Alibaba and Huawei.\n\nOn Monday, Trump said that Chinese president Xi Jinping “responded positively” to the latest H200 news in a Truth Social post .\n\nThis story was updated on December 8 when the proposed decision was confirmed.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/07/GettyImages-2219673294.jpg?w=1024",
+        "alt": "Image Credits:Chesnot / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/07/GettyImages-2219673294.jpg?w=1024",
+        "alt": "Image Credits:Chesnot / Getty Images"
+      },
       {
         "type": "text",
         "content": "Advanced Nvidia AI chips can head back to China after all."
@@ -424,8 +481,18 @@
     "title": "Mistral AI surfs vibe-coding tailwinds with new coding models",
     "date": "09.12.2025",
     "text": "French AI startup Mistral today launched Devstral 2, a new generation of its AI model designed for coding, as the company seeks to catch up to bigger AI labs like Anthropic and other coding-focused LLMs.\n\nThis announcement follows the recent launch of the Mistral 3 family of open-weight models and confirms Mistral’s intent to close in on its bigger and better-funded AI rivals.\n\nThe unicorn is also jumping into the vibe-coding race, which has fueled the rise of companies like Cursor and Supabase , with Mistral Vibe, a new command-line interface (CLI) aimed at facilitating code automation through natural language, with tools for file manipulation, code searching, version control, and command execution.\n\nMistral AI is betting on the added value of context awareness, which is particularly relevant in business use cases. Similar to its AI assistant, Le Chat, which can remember previous conversations with users and use that context to guide its answers, Vibe CLI features persistent history and can scan file structures and Git statuses to build context to inform its behavior.\n\nThis focus on production-grade workflows also explains why Devstral 2 is relatively demanding, requiring at least four H100 GPUs or equivalent for deployment, and weighing 123 billion parameters. However, the model is also available in a smaller size with Devstral Small, which, at 24 billion parameters, makes it deployable locally on consumer hardware.\n\nThe models differ in their open source licensing — Devstral 2 ships under a modified MIT license, while Devstral Small uses Apache 2.0.\n\nThey also differ in pricing. Devstral 2 is currently free to use via the company’s API. After the free period, the API pricing will cost $0.40/$2.00 per million tokens (input/output) for Devstral 2, and $0.10/$0.30 for Devstral Small.\n\nMistral has partnered with agent tools Kilo Code and Cline to release Devstral 2 to users, while Mistral Vibe CLI is available as an extension in Zed for use inside the IDE.\n\nEurope’s champion AI lab, Mistral is currently valued at €11.7 billion (approximately $13.8 billion) following a Series C funding round led by Dutch semiconductor company ASML , which invested €1.3 billion (approximately $1.5 billion) in September.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2024/05/GettyImages-2147859992-e1713960898378.webp?w=1024",
+        "alt": "Image Credits:Rafael Henrique/SOPA Images/LightRocket / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2024/05/GettyImages-2147859992-e1713960898378.webp?w=1024",
+        "alt": "Image Credits:Rafael Henrique/SOPA Images/LightRocket / Getty Images"
+      },
       {
         "type": "text",
         "content": "French AI startup Mistral today launched Devstral 2, a new generation of its AI model designed for coding, as the company seeks to catch up to bigger AI labs like Anthropic and other coding-focused LLMs."
@@ -471,8 +538,18 @@
     "title": "Anthropic and Accenture sign multi-year AI strategic partnership",
     "date": "09.12.2025",
     "text": "AI research lab Anthropic continues to cement its stake as the predominant AI player in the enterprise space.\n\nOn Tuesday, Anthropic announced a multi-year partnership with professional services firm Accenture. Financial terms of the deal were not disclosed; however, The Wall Street Journal reported that the deal is for three years .\n\nAccenture confirmed the deal is for three years but declined to comment on financials. TechCrunch reached out to Anthropic for more information.\n\nThe two companies are forming the Accenture Anthropic Business Group. This will include formal Claude training for Accenture’s 30,000 employees. Anthropic’s Claude Code coding tools will be available for Accenture’s tens of thousands of developers. They are also launching a joint initiative to help chief investment officers track their return on investment for AI.\n\nThis announcement comes as Anthropic’s market share within enterprise continues to grow.\n\nA new report from Menlo Ventures shows that Anthropic holds 40% of the market share within enterprise and 54% of the market share when it comes to coding. This marks a bump from Menlo’s previous survey this summer, where Anthropic held 32% of the enterprise market share.\n\nAnthropic announced a $200 million deal with cloud data company Snowflake last week. The company also announced sizable and similar AI partnerships with both Deloitte and IBM in October.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/06/Anthropic-economic-futures-program.png?w=1024",
+        "alt": "Image Credits:Anthropic"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/06/Anthropic-economic-futures-program.png?w=1024",
+        "alt": "Image Credits:Anthropic"
+      },
       {
         "type": "text",
         "content": "AI research lab Anthropic continues to cement its stake as the predominant AI player in the enterprise space."
@@ -2231,8 +2308,18 @@
     "title": "India proposes charging OpenAI, Google for training AI on copyrighted content",
     "date": "09.12.2025",
     "text": "India has proposed a mandatory royalty system for AI companies that train their models on copyrighted content — a move that could reshape how OpenAI and Google operate in what has already become one of their most important and fastest-growing markets globally.\n\nOn Tuesday, India’s Department for Promotion of Industry and Internal Trade released a proposed framework that would give AI companies access to all copyrighted works for training in exchange for paying royalties to a new collecting body composed of rights-holding organizations, with payments then distributed to creators. The proposal argues that this “mandatory blanket license” would lower compliance costs for AI firms while ensuring that writers, musicians, artists, and other rights holders are compensated when their work is scraped to train commercial models.\n\nIndia’s proposal comes amid mounting concerns in global markets over how AI companies train their models on copyrighted material, a practice that has triggered lawsuits from authors, news organizations, artists, and other rights holders in the U.S. and Europe. Courts and regulators are still weighing whether such training qualifies as fair use, leaving AI firms operating under legal uncertainty and allowing them to rapidly expand their business without clear regulations.\n\nUnlike the U.S. and the European Union, where policymakers are debating transparency obligations and fair-use boundaries, India is proposing one of the most interventionist approaches yet by giving AI companies automatic access to copyrighted material in exchange for mandatory payment.\n\nThe eight-member committee, formed by the Indian government in late April, argues the system would avoid years of legal uncertainty while ensuring creators are compensated from the outset.\n\nDefending the system, the committee says in a 125-page submission (PDF) that a blanket license “aims to provide an easy access to content for AI developers… reduce transaction costs… [and] ensure fair compensation for rightsholders,” calling it the least burdensome way to manage large-scale AI training. The submission adds that the single collecting body would function as a “single window,” eliminating the need for individual negotiations and enabling royalties to flow to both registered and unregistered creators.\n\nThe committee also points to India’s growing importance as a market for GenAI tools . Citing OpenAI CEO Sam Altman’s remark that India is the company’s second-largest market after the U.S. and “may well become our largest,” it argues that because AI firms derive significant revenue from Indian users while relying on Indian creators’ work to train their models, a portion of that value should flow back to those creators. That, it says, is part of the rationale for establishing a “balanced framework” that guarantees compensation.\n\nIndia’s proposal lands amid intensifying legal battles worldwide over whether AI companies can lawfully use copyrighted material to train their models.\n\nIn India, news agency ANI sued OpenAI in the Delhi High Court , arguing its articles were used without permission — a case that has prompted the court to examine whether AI training is itself an act of reproduction or protected by “fair dealing.” Courts in the U.S. and Europe are confronting similar disputes , with creators alleging that tech companies have built their models on unlicensed content .\n\nNot everyone is convinced by the Indian government’s proposed model, though.\n\nNasscom, the industry body representing technology firms, including Google and Microsoft, filed a formal dissent arguing that India should instead adopt a broad text-and-data-mining exception that would allow AI developers to train on copyrighted content as long as the material is lawfully accessed. It warned that a mandatory licensing regime could slow innovation and said rightsholders who object should be allowed to opt out rather than force companies to pay for all training data.\n\nThe Business Software Alliance, which represents global tech firms, including Adobe, Amazon Web Services, and Microsoft, pressed the Indian government to avoid a purely licensing-based regime. It urged India to introduce an explicit text-and-data-mining exception, arguing that “relying solely on direct or statutory licensing for AI training data may be impractical and may not yield the best outcomes.”\n\nLimiting AI models to smaller sets of licensed or public-domain material, BSA warned, could reduce model quality and “increase the risk that outputs simply reflect trends and biases of the limited training data sets,” adding that a clear TDM exception would better balance innovation and rights holders’ interests.\n\nThe committee did not consider both a broad text-and-data-mining exception and an opt-out model, arguing that such systems either undermine copyright protections or are impossible to enforce. Instead, it proposed a “hybrid model” that would grant AI firms automatic access to all lawfully available copyrighted works while requiring them to pay royalties into the central collecting body that distributes the proceeds to creators.\n\nThe Indian government has now opened the proposal for public consultation, giving companies and other stakeholders 30 days to submit their comments. After reviewing the feedback, the committee will finalize its recommendations before the framework is taken up by the government.\n\nOpenAI and Google did not respond to requests for comments.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2024/06/india-ai.jpg?w=1024",
+        "alt": "Image Credits:Jagmeet Singh / TechCrunch"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2024/06/india-ai.jpg?w=1024",
+        "alt": "Image Credits:Jagmeet Singh / TechCrunch"
+      },
       {
         "type": "text",
         "content": "India has proposed a mandatory royalty system for AI companies that train their models on copyrighted content — a move that could reshape how OpenAI and Google operate in what has already become one of their most important and fastest-growing markets globally."
@@ -2306,8 +2393,18 @@
     "title": "Microsoft to invest $17.5B in India by 2029 as AI race accelerates",
     "date": "09.12.2025",
     "text": "Microsoft plans to invest $17.5 billion in India over the next four years, expanding its AI and cloud footprint in the South Asian nation, whose vast online and smartphone user base is turning it into a critical battleground for global tech companies.\n\nAnnounced on Tuesday, the investment — Microsoft’s largest in Asia — will fund new data centers, AI infrastructure, and skilling programs from 2026 to 2029, building on the $3 billion the company committed in India in January.\n\nMicrosoft’s move comes as major U.S. tech companies ramp up spending on data centers and AI compute worldwide, with India emerging as a strategic prize thanks to its fast-growing developer base and one of the world’s largest pools of internet and smartphone users.\n\nThe latest push also puts pressure on rivals such as Google, Amazon, and OpenAI, which are growing their presence in India to tap demand for cloud services and AI tools from businesses, startups, and government agencies. Moreover, the investment aligns with New Delhi’s push to accelerate digital infrastructure and AI adoption across sectors, as India looks to position itself as a global technology hub while addressing concerns around data governance and equitable access.\n\nThe announcement comes during Microsoft CEO Satya Nadella’s visit to India and follows his meeting with Prime Minister Narendra Modi on Tuesday, ahead of a keynote in New Delhi on Wednesday. The Redmond-based company also said it will open a new data center region in Hyderabad by mid-2026, its largest in India, comprising three availability zones — a footprint the company described as roughly the size of two Eden Gardens stadiums. Microsoft said it will continue expanding its three existing data-center regions in Chennai, Hyderabad, and Pune.\n\nAs part of the push, Microsoft also announced it will work with the Ministry of Labour and Employment to integrate advanced AI capabilities into two of its flagship digital public platforms — e-Shram and the National Career Service — to offer AI-driven services to more than 310 million informal workers.\n\nThe two Indian government platforms will use Microsoft’s Azure OpenAI Service to provide multilingual access, AI-assisted job matching, predictive analytics on skill and demand trends, automated résumé creation, and personalized pathways, the company said.\n\nMicrosoft also said it is rolling out new sovereign cloud options for Indian customers, including a Sovereign Public Cloud now available across its India regions and a Sovereign Private Cloud powered by Azure Local for both connected and air-gapped operations. The offerings would help enterprises meet regulatory and data-residency requirements and support high-performance workloads with access to the latest Nvidia GPUs and Microsoft 365 services, the company noted.\n\nAdditionally, Microsoft said its skilling efforts are also accelerating, noting that through its “ADVANTA(I)GE India” initiative, it has trained 5.6 million people since January — well ahead of its goal of training 10 million by 2030 — with the programs enabling more than 125,000 individuals to secure jobs or start businesses. The company is doubling its earlier commitment and now aims to equip 20 million Indians with basic AI skills by 2030, working with government agencies, industry partners, and digital public platforms to broaden access to training.\n\nMicrosoft’s investment commitment comes just months after Google announced a $15 billion plan to build an AI hub and data-center infrastructure in India — the company’s largest investment in the country and one that follows its earlier $10 billion pledge in 2020.\n\nIn the recent months, India has emerged as an especially attractive market for global tech companies as they look for regions to expand their AI footprint, drawn by the country’s vast base of internet subscribers, hundreds of millions of smartphone users, a fast-growing startup ecosystem, and the Indian government’s aggressive digitization agenda — all of which promise both consumer scale and enterprise demand. The push has accelerated this year, with OpenAI and Anthropic setting up offices in India, and Google and Perplexity striking partnerships with major telecom operators Reliance Jio and Bharti Airtel, respectively, to deepen their reach in the market.\n\nHowever, even as global tech firms ramp up investment, hyperscalers are expected to face significant constraints in India, where data-center expansion is challenged by patchy power availability , high energy costs, and water scarcity in several regions — factors that could slow the build-out of AI infrastructure and raise operating expenses for cloud providers.\n\nNonetheless, the Indian government has been pushing aggressively to draw more big-tech investment, framing large-scale data-center and AI projects as central to its economic and digital-public-infrastructure ambitions. Despite the constraints, New Delhi has rolled out incentives for AI and semiconductor projects, eased some regulatory hurdles, and encouraged partnerships with domestic telecom and IT firms to anchor more of the global AI value chain in India.\n\nWhen it comes to AI, the world is optimistic about India! Had a very productive discussion with Mr. Satya Nadella. Happy to see India being the place where Microsoft will make its largest-ever investment in Asia. The youth of India will harness this opportunity to innovate… https://t.co/fMFcGQ8ctK\n\n“Microsoft has been part of India’s fabric for more than three decades,” said Puneet Chandok, president, Microsoft India and South Asia, in a prepared statement. “As the nation moves confidently into its AI-first future, we are proud to stand as a trusted partner in advancing the infrastructure, innovation, and opportunity that can power a billion dreams.”\n\nMicrosoft already employs more than 22,000 people across Bengaluru, Hyderabad, Pune, Gurugram, Noida, and other cities, including engineering teams that build AI products such as Copilot Studio, Azure AI Search, AI agents, speech and translation tools, and Azure Machine Learning for global markets, while also supporting the company’s domestic operations.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2020/01/GettyImages-1173107665-1.jpg?w=1024",
+        "alt": "Image Credits:Mark Kauzlarich/Bloomberg / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2020/01/GettyImages-1173107665-1.jpg?w=1024",
+        "alt": "Image Credits:Mark Kauzlarich/Bloomberg / Getty Images"
+      },
       {
         "type": "text",
         "content": "Microsoft plans to invest $17.5 billion in India over the next four years, expanding its AI and cloud footprint in the South Asian nation, whose vast online and smartphone user base is turning it into a critical battleground for global tech companies."
@@ -2381,8 +2478,18 @@
     "title": "EU launches antitrust probe into Google’s AI search tools",
     "date": "09.12.2025",
     "text": "Even as Big Tech and American tech elites criticize how the European Union is implementing rules to regulate tech and AI on the continent, the bloc isn’t letting competition concerns slide. The European Commission has launched an investigation into whether Google may have breached EU’s competition laws by using content from websites without compensating owners to generate answers for its AI summaries that appear above search results.\n\nThe EC also will look at how AI summaries use videos from YouTube to generate answers. The investigation will examine if Google is harming competition in the AI market by granting itself access to websites’ content, and imposing “unfair terms and conditions on publishers and content creators.”\n\n“The Commission will investigate to what extent the generation of AI Overviews and AI Mode by Google is based on web publishers’ content without appropriate compensation for that, and without the possibility for publishers to refuse without losing access to Google Search,” the bloc’s executive arm wrote in a statement.\n\nGoogle’s AI Overview and AI Mode are the two chief products being investigated here, and the EC highlights that the tech giant doesn’t leave websites or content producers with much choice since it directs a majority of web traffic, doesn’t pay them for using their content, and doesn’t allow YouTube uploads if you don’t let Google use that data.\n\nThe EU is also concerned over the fact that Google doesn’t allow rival AI companies to use YouTube content to train their own AI models.\n\n“This complaint risks stifling innovation in a market that is more competitive than ever,” a Google spokesperson said in an emailed statement. “Europeans deserve to benefit from the latest technologies and we will continue to work closely with the news and creative industries as they transition to the AI era.”\n\nThe investigation comes at a time when companies developing AI models and content are being sued for copyright infringement by publishers and websites. AI search tool Perplexity, for one, has been sued by several outlets , including The New York Times, Chicago Tribune, News Corp, New York Post, Merriam-Webster, Nikkei, and Reddit.\n\nThe EU’s investigation differs, however, because in many cases, these media companies are suing as a way to negotiate content-licensing deals with AI firms in hopes of compensating creators and being paid for their content. The EU is seeking to level the playing field for AI companies that compete with Google, which according to some reports , benefits from its reach by being able to train its AI models on much more of the internet than its rivals.\n\nUnder consistent and widespread criticism of its AI regulation, however, the EU is considering simplifying its AI rules , and has proposed to delay the implementation of rules for the use of AI in high-risk applications.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/06/GettyImages-2206888090.jpg?w=1024",
+        "alt": "Image Credits:Smith Collection/Gado / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/06/GettyImages-2206888090.jpg?w=1024",
+        "alt": "Image Credits:Smith Collection/Gado / Getty Images"
+      },
       {
         "type": "text",
         "content": "Even as Big Tech and American tech elites criticize how the European Union is implementing rules to regulate tech and AI on the continent, the bloc isn’t letting competition concerns slide. The European Commission has launched an investigation into whether Google may have breached EU’s competition laws by using content from websites without compensating owners to generate answers for its AI summaries that appear above search results."
@@ -2428,8 +2535,18 @@
     "title": "Google’s first AI glasses expected next year",
     "date": "09.12.2025",
     "text": "Google will launch its first AI glasses in 2026, according to a company blog post .\n\nAt Google’s I/O event in May, the company announced partnerships with Gentle Monster and Warby Parker to create consumer wearables based on Android XR, the operating system that powers Samsung’s Galaxy XR headset .\n\nBut you can’t wear a bulky headset while out in the real world, which makes smart glasses appealing as a less obtrusive smart wearable.\n\n“For AI and XR to be truly helpful, the hardware needs to fit seamlessly into your life and match your personal style,” Google writes . “We want to give you the freedom to choose the right balance of weight, style and immersion for your needs.”\n\nGoogle is working on various types of AI-powered glasses — one model is designed for screen-free assistance, using built-in speakers, microphones, and cameras to allow the user to communicate with Gemini and take photos. The other model has an in-lens display — which is only visible to the person wearing the glasses — that can show turn-by-turn directions or closed captioning.\n\nGoogle also shared a preview of the wired XR glasses from Xreal called Project Aura. This model situates itself between a bulky headset and an unobtrusive pair of glasses. Beyond just an in-lens display, the Project Aura glasses can function as an extended workplace or entertainment device, allowing the user to use Google’s suite of products or stream video as they would in a more advanced headset.\n\nWhile Meta has gotten off to an early lead in smart glasses development, Google now joins Apple and Snap among the companies expected to challenge Meta with their own hardware next year.\n\nMeta’s smart glasses have caught on in part thanks to its partnership with Ray-Ban, and it sells these products in retail stores. Google’s partnership with Warby Parker seems like it will follow a similar strategy, committing $75 million thus far to support the eyewear company’s product development and commercialization costs. If Warby Parker meets certain milestones, Google will commit an additional $75 million and take an equity stake in the brand.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/05/glasses_2745f1.jpg?w=1024",
+        "alt": "Image Credits:Google"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/05/glasses_2745f1.jpg?w=1024",
+        "alt": "Image Credits:Google"
+      },
       {
         "type": "text",
         "content": "Google will launch its first AI glasses in 2026, according to a company blog post ."
@@ -2473,11 +2590,20 @@
     "text": "Amazon has long had to deal with the reality that owners of its Echo smart speakers weren’t using its voice-controlled assistant, Alexa, to buy things, as it had hoped. The tech giant hasn’t given up on that dream yet: Its AI assistant, Alexa+, is getting new shopping-enabled features in the U.S. and Canada from today, including a shopping hub, tools to add items to recent orders, and personalized recommendations.\n\nThe company has already been working on features that make Alexa+ more of a shopping assistant with abilities like automated deal tracking and automatic purchases. The former feature lets you set Alexa to alert you when items in your cart or list drop below a certain price point. If you also have automatic purchases set up, Alexa can immediately order an item when it reaches that target price.\n\nNow, Amazon says it’s turning its Echo devices with a screen — the Echo Show 15 and 21 — into a shopping hub with an interface that it’s calling the “Shopping Essentials” experience. From this dashboard, Amazon shoppers can track deliveries in real time, see information about recent orders, get reminders about household essentials they need to reorder, and view their shopping list and saved items.\n\nThe screen would also let shoppers tap to see more products and add items directly to their cart and then check out.\n\nTo access the new experience, Amazon users can say “Alexa, where’s my stuff?” or “Open Shopping Essentials.” Soon, a shopping widget will be available to add to the Echo device’s home screen, too.\n\nAnother new feature rolling out now will allow Alexa device owners to add items to an upcoming delivery at any time until the item leaves the warehouse. This builds on a similar feature recently added to Amazon’s retail website and app, so it isn’t necessarily an Alexa+ exclusive, but the feature wasn’t live on Alexa devices so far.\n\nAlexa+ is also gaining the ability to recommend gifts. You’ll be able to describe who you’re shopping for, or the occasion, and Alexa+ will display product suggestions on the screen, organized into categories.\n\nAmazon says Alexa+ is now available to “tens of millions” of customers, and these new features are live for users in the U.S. and Canada. While not everyone has been happy with Alexa+, the company says the percentage of users who downgraded back to the AI-free interface remains in the “very low single digits.”",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/08/alexa-plus-event.png?w=1024",
+        "alt": "Image Credits:Amazon"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2024/11/amazon-echo-show-15-21.png?w=680",
         "alt": "Image Credits:Amazon"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/08/alexa-plus-event.png?w=1024",
+        "alt": "Image Credits:Amazon"
+      },
       {
         "type": "text",
         "content": "Amazon has long had to deal with the reality that owners of its Echo smart speakers weren’t using its voice-controlled assistant, Alexa, to buy things, as it had hoped. The tech giant hasn’t given up on that dream yet: Its AI assistant, Alexa+, is getting new shopping-enabled features in the U.S. and Canada from today, including a shopping hub, tools to add items to recent orders, and personalized recommendations."
@@ -2524,8 +2650,18 @@
     "title": "OpenAI, Anthropic, and Block join new Linux Foundation effort to standardize the AI agent era",
     "date": "09.12.2025",
     "text": "As AI moves beyond chatbots and toward systems that can take actions, the Linux Foundation is launching a new group dedicated to keeping AI agents from splintering into a mess of incompatible, locked-down products.\n\nThe group, dubbed the Agentic AI Foundation (AAIF), will act as a neutral home for open source projects related to AI agents. Anchoring the AAIF at launch are donations from Anthropic, Block, and OpenAI.\n\nAnthropic is donating its MCP (Model Context Protocol), a standard way to connect models and agents to tools and data; Block is contributing Goose, its open source agent framework; and OpenAI is bringing AGENTS.md to the table, its simple instruction file developers can add to a repository to tell AI coding tools how to behave. You can think of these tools as the basic plumbing of the agent era.\n\nOther members in the AAIF include AWS, Bloomberg, Cloudflare, and Google, signaling an industry-level push for shared guardrails so that AI agents can be trustworthy at scale.\n\nIn OpenAI engineer Nick Cooper’s view, protocols are essentially a shared language that lets different agents and systems work together without every developer reinventing integrations from scratch.\n\n“We need multiple [protocols] to negotiate, communicate, and work together to deliver value for people, and that sort of openness and communication is why it’s not ever going to be one provider, one host, one company,” Cooper told TechCrunch.\n\nJim Zemlin , executive director of the Linux Foundation, put it more bluntly in conversations around the launch: The goal is to avoid a future of “closed wall” proprietary stacks, where tool connections, agent behavior, and orchestration are locked behind a handful of platforms.\n\n“By bringing these projects together under the AAIF, we are now able to coordinate interoperability, safety patterns, and best practices specifically for AI agents,” Zemlin said.\n\nBlock — the fintech company behind Square and Cash App — isn’t known for AI infrastructure, but it’s making an openness play with Goose. AI tech lead Brad Axen frames it as proof that open alternatives can match proprietary agents at scale, with thousands of engineers using it weekly for coding, data analysis, and documentation.\n\nOpen sourcing Goose serves a dual purpose for Block.\n\n“Getting it out into the world gives us a place for other people to come help us make it better,” Axen told TechCrunch. “We have a lot of contributors from open source, and everything they do to improve it comes back to our company.”\n\nMeanwhile, donating Goose to the Linux Foundation gives Block access to community stress tests while positioning it as a working example of AAIF’s vision — an agent framework designed to plug into shared building blocks like MCP and AGENTS.md.\n\nAnthropic is making a similar move at the protocol layer, handing MCP to the Linux Foundation. The goal: make MCP the neutral infrastructure connecting AI models to tools, data, and applications without endless one-off adapters.\n\n“The main goal is to have enough adoption in the world that it’s the de facto standard,” MCP co-creator David Soria Parra told TechCrunch. “We’re all better off if we have an open integration center where you can build something once as a developer and use it across any client.”\n\nDonating MCP to AAIF signals that the protocol won’t be controlled by a single vendor.\n\nThat governance point is central to why the Linux Foundation created a new umbrella at all. The organization already hosts major AI and developer infrastructure projects — everything from PyTorch and Ray to Kubernetes — but says AAIF is specifically aimed at agent standards and orchestration, including shared safety patterns and interoperability.\n\nAAIF’s structure is funded through a “directed fund,” meaning companies can contribute money through membership dues. But Zemlin of the Linux Foundation argues that funding doesn’t equal control: Project roadmaps are set by technical steering committees, and no single member gets unilateral say over direction.\n\nStill, the big question is whether AAIF becomes real infrastructure or just another industry logo alliance.\n\n“An early indicator of success, in addition to adoption of these standards, would be the development and implementation of shared standards being used by vendor agents around the world,” Zemlin said.\n\nFor OpenAI’s Cooper, success would look like an evolution of standards: “I don’t want it to be a stagnant thing. I don’t want these protocols to be part of this foundation, and that’s where they sat for two years. They should evolve and continually accept further input.”\n\nThere’s also a more subtle consequence: Even with open governance, one company’s implementation could become the default simply because it ships fastest or gains the most usage. Zemlin says that’s not necessarily a bad thing, though. He points to open source history — like Kubernetes “winning” the container race — as evidence that “dominance emerges from merit and not vendor control.”\n\nFor developers and enterprises, the short-term appeal is clear: less time building custom connectors, more predictable agent behavior across codebases, and simpler deployment in security-conscious environments. The larger vision is more ambitious: If tools like MCP, AGENTS.md, and Goose become standard infrastructure, the agent landscape could shift from closed platforms to an open, mix-and-match software world reminiscent of the interoperable systems that built the modern web.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Screenshot-2025-12-09-at-12.11.34-PM.png?w=1024",
+        "alt": "Image Credits:Anthropic"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Screenshot-2025-12-09-at-12.11.34-PM.png?w=1024",
+        "alt": "Image Credits:Anthropic"
+      },
       {
         "type": "text",
         "content": "As AI moves beyond chatbots and toward systems that can take actions, the Linux Foundation is launching a new group dedicated to keeping AI agents from splintering into a mess of incompatible, locked-down products."
@@ -2623,8 +2759,18 @@
     "title": "Slack CEO Denise Dresser to join OpenAI as chief revenue officer",
     "date": "09.12.2025",
     "text": "OpenAI is hiring Slack CEO Denise Dresser as its new chief revenue officer. The news was first reported by Wired , then confirmed by OpenAI in a blog post.\n\nDresser’s new role comes after more than 14 years at Salesforce, Slack’s parent company. While at Slack, Dresser oversaw the introduction of several AI features.\n\nOpenAI says that Dresser will be responsible for the company’s revenue strategy in enterprise and customer success. That’s a pivotal role, given that the company has a rocky road ahead if it ever wants to turn a profit.\n\n“We’re on a path to put AI tools into the hands of millions of workers, across every industry,” Fidji Simo, OpenAI’s CEO of Applications, said in a statement. “Denise has led that kind of shift before, and her experience will help us make AI useful, reliable, and accessible for businesses everywhere.”\n\nLike Dresser, Simo also joined OpenAI this year after a long track record of high-profile leadership, most recently as CEO of Instacart, which has become a close partner of OpenAI.\n\nAccording to Wired, Slack’s chief product officer, Rob Seaman, will become interim CEO of Slack.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2024/11/54103320653_6eb7d509ce_k.jpg?w=1024",
+        "alt": "Image Credits:Kimberly White / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2024/11/54103320653_6eb7d509ce_k.jpg?w=1024",
+        "alt": "Image Credits:Kimberly White / Getty Images"
+      },
       {
         "type": "text",
         "content": "OpenAI is hiring Slack CEO Denise Dresser as its new chief revenue officer. The news was first reported by Wired , then confirmed by OpenAI in a blog post."
@@ -2658,8 +2804,18 @@
     "title": "Rivian is building its own AI assistant",
     "date": "09.12.2025",
     "text": "Rivian has spent nearly two years building its own AI assistant, an effort that remains separate from its multibillion-dollar technology joint venture with Volkswagen, TechCrunch has learned.\n\nRivian hasn’t revealed when it will put the AI assistant in consumers hands. However, in an interview earlier this year, Rivian’s software chief Wassym Bensaid told TechCrunch it was targeting the end of the year. The company will likely share more during its upcoming AI & Autonomy Day , which will be livestreamed starting at 9 a.m. PT December 11.\n\nRivian’s plans are reflective of the moment as the pace of development from foundational AI companies — the tech giants and startups like Anthropic, Google, Microsoft, Meta, and OpenAI that are building the core models and infrastructure — accelerates and industries scramble to keep up.\n\nBut as Bensaid noted to TechCrunch earlier this year, this isn’t some slapdash effort to stay on trend. Nor is it simply a chatbot thrown into the infotainment system. The company has put considerable thought, resources, and time into the product, Bensaid said, noting that it’s designed to be integrated with all vehicle controls.\n\nThe company started with an underlying philosophy to build an overall architecture that is model and platform agnostic, according to Bensaid. The Rivian AI assistant team, which is based out of the company’s Palo Alto office, soon realized effort and attention should also be directed toward developing the software layers that help coordinate various workflows as well as the control logic that resolves conflicts.\n\n“And that’s the in-vehicle platform we have built,” Bensaid said. “We use what the industry loves to now call an agentic framework; but we thought about that architecture since very early so that we can interface with different models.”\n\nThe in-house AI assistant program is consistent with Rivian’s push to become more vertically integrated. In 2024, Rivian overhauled its flagship R1T truck and R1S SUV , changing everything from the battery pack and suspension system to the electrical architecture, sensor stack, and software user interface.\n\nThe company has also put considerable resources toward developing and improving its own software stack, which includes everything related to real-time operating systems (RTOS) that manage the car, such as thermal dynamics, ADAS, and safety systems, as well as another layer related to the infotainment system.\n\nBensaid didn’t provide detailed information about the AI assistant, but he did say it includes a mix of models that handle specific tasks. The result is a hybrid software stack that combines edge AI, where tasks are handled on the device, and cloud AI, in which large models that require more compute are handled by remote servers.\n\nThis should mean a flexible, customized AI assistant that splits the workload between the edge and cloud.\n\nRivian developed much of the AI software stack in-house, including its own custom models and the “orchestration layer,” the conductor or traffic cop of sorts that makes sure the various AI models work together. Rivian tapped other companies for specific agentic AI functions.\n\nThe mission is to develop an AI assistant that increases customer trust and engagement, Bensaid said.\n\nFor now, the AI assistant is staying within Rivian. The company’s joint venture with Volkswagen is focused on software, but not an AI assistant or anything to do with automated driving.\n\nThe technology joint venture with Volkswagen, which was announced in 2024 and is worth up to $5.8 billion , is centered on the underlying electrical architecture and zonal compute, and infotainment. The joint venture officially kicked off in November 2024 and is expected to supply the electrical architecture and software for Volkswagen Group as early as 2027.\n\nAutonomy and AI are separate for now, but “it doesn’t mean that it may not be in the future,” Bensaid said.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/07/250522-ANASTASIA-BENSON-GOOGLE-MAPS-AEB08056-FINAL.jpg?w=1024",
+        "alt": "Image Credits:Rivian"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/07/250522-ANASTASIA-BENSON-GOOGLE-MAPS-AEB08056-FINAL.jpg?w=1024",
+        "alt": "Image Credits:Rivian"
+      },
       {
         "type": "text",
         "content": "Rivian has spent nearly two years building its own AI assistant, an effort that remains separate from its multibillion-dollar technology joint venture with Volkswagen, TechCrunch has learned."
@@ -2729,8 +2885,18 @@
     "title": "Hinge CEO steps down to launch Overtone, an AI dating app",
     "date": "09.12.2025",
     "text": "Hinge CEO Justin McLeod is stepping down from his role to launch a new AI dating product called Overtone.\n\nMatch Group, the dating giant that owns apps like Hinge, Tinder, and OkCupid, is backing Overtone with pre-seed financing and plans to take a “substantial ownership position,” according to a press release.\n\nWith Match’s support, Overtone was incubated as a project inside of Hinge. McLeod and a dedicated team spent the year developing the idea of Overtone, which is described as “an early-stage dating service focused on using AI and voice tools to help people connect in a more thoughtful and personal way.”\n\nMcLeod isn’t the only dating app founder branching out into new, standalone AI experiences. Whitney Wolfe Herd, founder of Bumble, said she wants to use AI to make “the world’s smartest and most emotionally intelligent matchmaker in existence.” Somewhat infamously, Wolfe Herd proposed the idea last year of singles using AI to stand-in for themselves and date other people’s AIs.\n\nIt’s not yet clear how Overtone will differentiate itself from other dating apps, which have been experimenting with AI features to compensate for the market’s growing malaise with online dating — especially among Gen Z .\n\nTinder has reported nine straight quarters of paying-subscriber declines and has leaned into AI with features that are supposed to help users get more matches. Hinge launched another AI feature just this week called “Convo Starters,” which is supposed to help daters come up with more interesting things to say than the usual small talk. Tinder and Facebook Dating have each experimented with AI-powered matching to combat “swipe fatigue.”\n\nCeding control of your dating experience is one thing, but other attempts at integrating AI into these apps get even more dubious.\n\nMatch CEO Spencer Rascoff said last month that a “major pillar of Tinder’s upcoming 2026 product experience” will be a feature called Chemistry. With the user’s permission, the feature will access users’ camera rolls to learn more about them. (For the record, we would advise that you do not give tech companies unfettered access to even more of your data.)\n\nMcLeod founded Hinge in 2011 as a dating app with a greater focus on building relationships than facilitating casual dates. The app, which is on track to hit $1 billion in revenue by 2027, was acquired by Match in 2019. Jackie Jantos, Hinge’s president and chief marketing officer, will take over as CEO. McLeod will remain in an advisory position at Hinge through March.\n\nThis summer, TechCrunch spoke to Jantos at SXSW London about how Hinge will address Gen Z, a market that’s growing increasingly disillusioned with meeting people online.\n\n“This is a generation that has grown up with a deep understanding of how digital experiences are created and what they are trying to get out of them,” Jantos told TechCrunch.\n\nGen Z wants transparency and authenticity from digital brands, according to Jantos. While some might see this as inherently incompatible with the company’s growing reliance on AI, Hinge’s AI recommendation feature, launched in March, drove a 15% increase in matches and contact exchanges in the first quarter of this year.\n\nBased on Jantos’ comments upon assuming her new role, it seems that Hinge will continue investing in these features under her leadership.\n\n“Our focus will remain on intentional innovation that is grounded in culture, creativity, and a deep understanding of how people connect today,” Jantos said in a statement.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2023/06/robots-love.jpg?w=1024",
+        "alt": "Image Credits:Kilito Chan / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2023/06/robots-love.jpg?w=1024",
+        "alt": "Image Credits:Kilito Chan / Getty Images"
+      },
       {
         "type": "text",
         "content": "Hinge CEO Justin McLeod is stepping down from his role to launch a new AI dating product called Overtone."
@@ -2796,8 +2962,18 @@
     "title": "Unconventional AI confirms its massive  $475M seed round",
     "date": "09.12.2025",
     "text": "Naveen Rao, the former head of AI at Databricks, has raised $475 million in seed capital at a $4.5 billion valuation for his new startup, Unconventional AI .\n\nThe round was led by Andreessen Horowitz and Lightspeed Ventures, with participation from Lux Capital and DCVC. The funding is a first installment toward the goal of up to $1 billion for the round, Rao told Bloomberg .\n\nTechCrunch was first to report, back in October, that Unconventional AI was seeking this mega funding for Rao’s new startup, although the final valuation is marginally lower than the $5 billion sources told us he was seeking. If he does eventually raise as much as $1 billion, we’ll see how that impacts his company’s value.\n\nUnconventional AI is set on building a new, energy-efficient computer for AI. Rao previously wrote on X that his goal is to create a computer that is “as efficient as biology.”\n\nDatabricks acquired Rao’s previous startup, MosaicML in 2023 , for $1.3 billion. Prior to MosaicML, Rao co-founded the machine learning platform Nervana Systems , which Intel Corp. acquired in 2016 for reportedly more than $400 million.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2024/04/Naveen-Rao-headshot.png?w=1024",
+        "alt": "Image Credits:Naveen Rao"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2024/04/Naveen-Rao-headshot.png?w=1024",
+        "alt": "Image Credits:Naveen Rao"
+      },
       {
         "type": "text",
         "content": "Naveen Rao, the former head of AI at Databricks, has raised $475 million in seed capital at a $4.5 billion valuation for his new startup, Unconventional AI ."
@@ -2829,6 +3005,10 @@
     "text": "Fertility startup Inito has raised $29 million in Series B funding to scale its at-home health diagnostics platform and use AI-designed antibodies to unlock new kinds of at-home tests.\n\nWhen the company launched its first fertility monitor in 2021, its goal was to make quantitative fertility hormone testing possible at home.\n\nWhile standard at-home ovulation tests predict fertile days by tracking estrogen and luteinizing hormone (LH), they don’t measure the hormone that confirms your ovulation, which is progesterone metabolite PdG. Inito allows women to measure estrogen, LH, progesterone (PdG), and FSH (follicle-stimulating hormone) on a single test strip. Inito’s AI models interpret these levels to reveal fertility hormone patterns, track fertile days, and confirm ovulation.\n\nFast-forward to today, the startup has become a popular option for women looking to track fertility hormones, analyzing more than 30 million fertility hormone data points since 2021.\n\nThe startup is now doubling down on its belief that healthcare should start at home and is working to evolve Inito from a fertility tracker into a broader hormone and at-home health diagnostics platform.\n\nInito is using the new funding to invest in and develop AI-engineered antibodies, which it says will allow for the development of new types of tests and improve the accuracy of existing ones.\n\nFor context, when you take a test at a lab or a home, antibodies are what bind to the target molecule (such as estrogen or testosterone) to produce a signal. Traditional antibodies are grown inside animals and then screened manually in the lab, which can be a slow and expensive process. Conventional antibodies also lack the sensitivity to make at-home tests for a large number of biomarkers.\n\nInito says AI-designed antibodies change the game. Instead of “raising” antibodies in animals, they can be treated almost like software.\n\n“We predict how proteins fold in 3D, design synthetic antibodies using AI, and test millions of variants virtually before making a single one in the lab,” explained Inito co-founder and CTO Varun Venkatesan in an email. “This produces antibodies that are far more sensitive, consistent, and stable than anything developed through traditional methods.”\n\nFor Inito, this will unlock the next generation of at-home tests. Venkatesan says the company is already using these methods in R&D and that its wet lab is showing promising results.\n\n“The real vision is bigger than adding new tests,” said Inito co-founder and CEO Aayush Rai. “The endgame is to redefine diagnostics altogether. If you want to understand what’s happening inside your body at every life stage and health need, you shouldn’t be limited by clinic appointments, lab schedules, or rigid testing systems. You should be able to measure, track, and get insights about your body from home, with lab-grade confidence.”\n\nInito wants to expand its vision beyond a “trying to conceive” platform. Its reader and app will soon power tests for pregnancy, menopause, and broader at-home health monitoring.\n\n“Our long-term roadmap goes far beyond fertility,” said Rai. “We’re building toward a platform that can measure and interpret the full spectrum of hormones that shape health across a lifetime. Pregnancy progression, menopause, and broader endocrine markers like testosterone — all powered by AI antibodies and imaging that sets Inito apart today.”\n\nThe company is going to use part of the funding to scale manufacturing and grow globally to meet growing demand across the United States and new international markets.\n\nInito’s latest funding round was led by Bertelsmann India Investments and Fireside Ventures. The investment brings Inito’s total funding to around $45 million. The company previously raised $6 million in funding led by Fireside Ventures and $9 million from Y Combinator, former Nurx CEO Varsha Rao, and a dozen physicians and family offices.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/inito.png?w=1024",
+        "alt": "Image Credits:Inito"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/2024_10_03_Inito_2461-Edit-2.jpg?w=680",
         "alt": "Image Credits:Inito"
       },
@@ -2838,6 +3018,11 @@
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/inito.png?w=1024",
+        "alt": "Image Credits:Inito"
+      },
       {
         "type": "text",
         "content": "Fertility startup Inito has raised $29 million in Series B funding to scale its at-home health diagnostics platform and use AI-designed antibodies to unlock new kinds of at-home tests."
@@ -2919,6 +3104,10 @@
     "text": "Adobe is doubling down on its strategy of using AI to bring more users into its product ecosystem. The company on Wednesday said it is adding features from Photoshop, Express, and Acrobat to ChatGPT, letting users ask the chatbot to use these apps to edit images, modify PDFs, or animate elements.\n\nSo users can now tell ChatGPT to use Photoshop to edit specific parts of images; remove or blur the background; adjust exposure, brightness, and contrast; or apply various effects. The chatbot will also give you an option to modify the intensity of effects using sliders.\n\nWith support for Express, ChatGPT now lets users tell it to do stuff like fetch existing designs from its library, put together themed creatives, animate elements, and edit designs.\n\nAnd with Acrobat’s PDF editing capabilities, ChatGPT can do things like merge files, edit or extract text or tables within a file, and more.\n\nIf at any point you don’t feel like struggling with ChatGPT, you get an option to continue working inside Adobe’s apps to finish the job yourself or use features that are not available within ChatGPT.\n\nAdobe said these features will be available globally. While features from all three Adobe apps are available on ChatGPT’s desktop, web, and iOS apps, only Adobe Express is currently supported on ChatGPT for Android. The company says support for Photoshop and Express is coming soon.\n\nAdobe has shipped many AI-powered features and products this year. In October, the company released AI assistants for Express and Photoshop , and also teased a cross-app assistant, dubbed Project Moonlight.\n\nOpenAI started supporting third-party apps inside ChatGPT in October, launching with Canva, Spotify, Expedia, and Figma. But as more companies work to bake in their apps within the popular chatbot, the challenge for companies will be getting people to use their app instead of a rival’s inside ChatGPT. For instance, you can use both Canva and Photoshop to edit images with the chatbot, but if you don’t use either of these apps, you might not have a preference.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/PS_Make-Colors-More-Vibrant_16x9.jpeg?w=1024",
+        "alt": "Image Credits:Adobe"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/PS_Selective_16x9.jpeg?w=680",
         "alt": "Image Credits:Adobe"
       },
@@ -2928,6 +3117,11 @@
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/PS_Make-Colors-More-Vibrant_16x9.jpeg?w=1024",
+        "alt": "Image Credits:Adobe"
+      },
       {
         "type": "text",
         "content": "Adobe is doubling down on its strategy of using AI to bring more users into its product ecosystem. The company on Wednesday said it is adding features from Photoshop, Express, and Acrobat to ChatGPT, letting users ask the chatbot to use these apps to edit images, modify PDFs, or animate elements."
@@ -2979,8 +3173,18 @@
     "title": "Google launches sub-$5 AI Plus plan in India to compete with ChatGPT Go",
     "date": "10.12.2025",
     "text": "Google on Wednesday launched its more affordable AI Plus plan in India as it seeks to compete on pricing with other low-cost AI offerings, like OpenAI’s ChatGPT Go subscription.\n\nFor new users in India, Google is offering AI Plus for ₹199 ($2.21) per month, for the first six months, after which you’ll have to pay ₹399 ($4.44) a month.\n\nThe AI Plus plan gives users higher limits for Gemini 3 Pro and image editing model Nano Banana Pro; access to video generation in the Gemini and Flow apps; expanded access to deep research in NotebookLM; and 200GB of storage across Photos, Drive, and Gmail. Subscribers can give access to up to five family members, too.\n\nBefore this, Google’s cheapest AI subscription available in the country was AI Pro, which was priced at ₹1,950 per month ($21.69).\n\nBut Google is late to customize its pricing for India, as the AI Plus plan was first introduced in Indonesia in September and offered it in other countries that same month . OpenAI debuted its sub-$5 ChatGPT Go plan in India in August and made it available in other countries in subsequent months. The plan allows users to have 10 times more limits than the free plan for messages, image generation, and file uploads.\n\nAI companies have been busy offering freebies in India as they seek to tap its huge population for users. First, Perplexity partnered with telco Airtel to offer its Pro plan for a year to all Airtel customers for free. OpenAI also offered ChatGPT Go free for a year to existing subscribers of Go and new users.\n\nMeanwhile, Google teamed up with telco Reliance Jio to offer its AI Pro plan for 18 months at no cost to users on a certain carrier plan.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/10/gemini.jpg?w=1024",
+        "alt": "Image Credits:Jagmeet Singh / TechCrunch"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/10/gemini.jpg?w=1024",
+        "alt": "Image Credits:Jagmeet Singh / TechCrunch"
+      },
       {
         "type": "text",
         "content": "Google on Wednesday launched its more affordable AI Plus plan in India as it seeks to compete on pricing with other low-cost AI offerings, like OpenAI’s ChatGPT Go subscription."
@@ -3020,11 +3224,20 @@
     "text": "Design tool Figma launched new AI-powered image-editing features today, including the ability to remove and isolate objects and expand images.\n\nThe company said that these features will save the hassle of exporting images to other tools for editing and importing them back. It added that generation models like Nano Banana are good for creating images, but users often need granular tools for editing that work without any text prompts.\n\nFigma has improved its lasso tool for selection. Now you can use it to select an object, remove it, or isolate it to move it around. When you move around the object, the image still retains other characteristics, such as background and color. Users can also select an object to adjust factors like lighting, shadow, color, or focus.\n\nThe company is also bringing an image-expansion feature to its design suite. This feature is handy when you are adjusting a creative for a particular format and need to fill in the background or other details. For instance, creating a web banner or mobile banner from a 1×1 image. It essentially saves you from constantly cropping an image and adjusting elements within it.\n\nBesides adding these features, Figma is collating all its image-editing tools in one toolbar for easier access. You can select objects or parts of images, change background color, and add annotations or text using this toolbar. The company said removing background is one of the most common actions on the platform, and that is why it is getting a prominent spot on the new toolbar.\n\nRivals like Adobe and Canva have had object removal for a few years now. Figma is finally catching up to offer these features.\n\nThe company said the new image-editing features are available on Figma Design and Draw, with plans to make them available across Figma tools next year.\n\nFigma’s launch comes on the same day as Adobe making some of these features available to users within ChatGPT . Figma was one of the launch partners of the app, calling on ChatGPT in October. It is not clear if these new functions will be available to users using Figma within OpenAI’s tool.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/AI-Image-toolbar.jpeg?w=1024",
+        "alt": "Image Credits:Figma"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/ezgif-8bda4c8d57256f21.gif?w=680",
         "alt": "Image Credits:Figma"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/AI-Image-toolbar.jpeg?w=1024",
+        "alt": "Image Credits:Figma"
+      },
       {
         "type": "text",
         "content": "Design tool Figma launched new AI-powered image-editing features today, including the ability to remove and isolate objects and expand images."
@@ -3073,6 +3286,10 @@
     "text": "Oboe , a learning startup from Anchor co-founders and former Spotify execs Nir Zicherman and Michael Mignano, said today it has raised $16 million in Series A funding led by a16z, with participation from existing investors Eniac, Haystack, Offline, and Factorial. The round also saw investments from individuals such as Adam D’Angelo, Garry Tan, Lenny Rachitsky, Mati Staniszewski, Mikey Shulman, Jared Hecht, and M.G. Siegler.\n\nThat platform, which officially launched in September , allows users to define a learning goal and use AI to create a course for them.\n\nThe startup’s fundraise comes three months after the app’s launch and a year after it raised a $4 million seed round . Zicherman said the reason behind the fresh round is to fuel growth at scale.\n\n“We want to reach billions of people who want to learn about new topics, and it is a very big opportunity,” he told TechCrunch over a call. “We need to execute faster and reach a larger audience at scale to achieve this vision.”\n\n“We have a team of successful consumer product builders that can execute well, which gives us an edge over other startups in the market,” he added.\n\nBryan Kim, a partner at a16z, said that he was impressed by how fast Oboe started generating content on a topic and didn’t make users wait behind a loading indicator.\n\n“We have had a thesis around how AI-aided learning can help people explore new topics and have been looking for the right company. After Oboe launched, we tried it and loved the product. We wanted to back a founder who was ambitious, flexible in adopting different form factors, and understood AI to build a big platform. We found that in Oboe,” he told TechCrunch over a call.\n\nThe company is making changes to its core course-generation experience, as well. Earlier, Oboe generated different text and audio formats for users in different styles. Plus, it capped course generation based on the payment plan.\n\nWith the new version, the app will first understand your goal and then generate chapters based on that to help you learn about those topics. What’s more, users will see other modalities like quizzes appear within the course material seamlessly. For some courses, Oboe will also generate flashcards for you to easily remember course materials.\n\nIn terms of audio, instead of having to choose between a podcast format and a lecture format, the company generates a podcast for you and changes its tone based on the learning material and other signals from users.\n\nZicherman said that the company observed that there is a high demand among users to learn about STEM topics (Science, Technology, Engineering, and Math). The startup has worked on sourcing the best material for these topics, including programming.\n\nHe said that good teachers decide what is the best way of learning for students and the company is taking that approach of designing courses for learners.\n\nOboe is revamping its pricing model to give unlimited course generation to users.\n\nHowever, if they want to dive deeper into a topic, they can pay $15 a month ($144 per year) to access more course chapters. There is also a $40 per month ($384 per year) Pro plan, which gives unlimited chapter access and allows users to export or download courses for consumption outside Oboe. The startup said this is suitable for students who want to take printouts of the study material and consume it offline.\n\nZicherman said that right now Oboe is offering courses in English, but it wants to reach different parts of the world better with localized courses and language support. The platform is currently available on the web, with mobile support planned for the future.\n\nIn the last few years, multiple tools, including Google’s NotebookLM and ex-Google employees’ Huxe , allow you to enter a prompt to get a podcast episode to explore a topic. While these are one-off generations, Oboe’s approach is to let you dive deeper into the topic with chapter-based learning.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Blog2.0-Header2.jpeg?w=1024",
+        "alt": "Image Credits:Oboe"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Blog2.0-ChapterList.jpeg?w=680",
         "alt": "Image Credits:Oboe"
       },
@@ -3086,6 +3303,11 @@
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Blog2.0-Header2.jpeg?w=1024",
+        "alt": "Image Credits:Oboe"
+      },
       {
         "type": "text",
         "content": "Oboe , a learning startup from Anchor co-founders and former Spotify execs Nir Zicherman and Michael Mignano, said today it has raised $16 million in Series A funding led by a16z, with participation from existing investors Eniac, Haystack, Offline, and Factorial. The round also saw investments from individuals such as Adam D’Angelo, Garry Tan, Lenny Rachitsky, Mati Staniszewski, Mikey Shulman, Jared Hecht, and M.G. Siegler."
@@ -3174,8 +3396,18 @@
     "title": "Google launches managed MCP servers that let AI agents simply plug into its tools",
     "date": "10.12.2025",
     "text": "AI agents are being sold as the solution for planning trips, answering business questions, and solving problems of all kinds, but getting them to work with tools and data outside their chat interfaces has been tricky. Developers have to patch together various connectors and keep them running, but that’s a fragile approach that’s hard to scale and creates governance headaches.\n\nGoogle claims it’s trying to solve that by launching its own fully managed, remote MCP servers that would make its Google and Cloud services — like Maps and BigQuery — easier for agents to plug into.\n\nThe move follows the launch of Google’s latest Gemini 3 model , and the company is looking to pair stronger reasoning with more dependable connections to real-world tools and data.\n\n“We are making Google agent-ready by design,” Steren Giannini, product management director at Google Cloud, told TechCrunch.\n\nInstead of spending a week or two setting up connectors, developers can now essentially paste in a URL to a managed endpoint, Giannini said.\n\nAt launch, Google is starting with MCP servers for Maps, BigQuery, Compute Engine, and Kubernetes Engine. In practice, this might look like an analytics assistant querying BigQuery directly, or an ops agent interacting with infrastructure services.\n\nIn the case of Maps, Giannini said, without the MCP, developers would rely on the model’s built-in knowledge. “But by giving your agent […] a tool like the Google Maps MCP server, then it gets grounded on actual, up-to-date location information for places or trips planning,” he added.\n\nWhile the MCP servers will eventually be offered across all of Google’s tools, they are initially launching under public preview, meaning they’re not yet fully covered by Google Cloud terms of service. They are, however, being offered at no extra cost to enterprise customers that already pay for Google services.\n\n“We expect to bring them to general availability very soon in the new year,” Giannini said, adding that he expects more MCP servers to trickle in every week.\n\nMCP, which stands for Model Context Protocol, was developed by Anthropic about a year ago as an open source standard to connect AI systems with data and tools. The protocol has been widely adopted across the agent tooling world, and Anthropic earlier this week donated MCP to a new Linux Foundation fund dedicated to open sourcing and standardizing AI agent infrastructure.\n\n“The beauty of MCP is that, because it’s a standard, if Google provides a server, it can connect to any client,” Giannini said. “I’m looking forward to seeing how many more clients will emerge.”\n\nOne can think of MCP clients as the AI apps on the other end of the wire that talk to MCP servers and call the tools they offer. For Google, that includes Gemini CLI and AI Studio. Giannini said he’s also tried it with Anthropic’s Claude and OpenAI’s ChatGPT as clients, and “they just work.”\n\nGoogle argues this isn’t just about connecting agents to its services. The bigger enterprise play is Apigee, its API management product , which many companies already use to issue API keys, set quotas, and monitor traffic.\n\nGiannini said Apigee can essentially “translate” a standard API into an MCP server, turning endpoints like a product catalog API into tools an agent can discover and use, with existing security and governance controls layered on top.\n\nIn other words, the same API guardrails companies use for human-built apps could now apply to AI agents, too.\n\nGoogle’s new MCP servers are protected by a permission mechanism called Google Cloud IAM, which explicitly protects what an agent can do with that server. They are also protected by Google Cloud Model Armor, which Giannini describes as a firewall dedicated to agentic workloads that defends against advanced agentic threats like prompt injection and data exfiltration. Administrators can also rely on audit logging for additional observability.\n\nGoogle plans to expand MCP support beyond the initial set of servers. In the next few months, the company will roll out support for services across areas like storage, databases, logging and monitoring, and security.\n\n“We built the plumbing so that developers don’t have to,” Giannini said.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2024/07/GettyImages-2148009757.jpg?w=1024",
+        "alt": "Image Credits:Krisztian Bocsi/Bloomberg / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2024/07/GettyImages-2148009757.jpg?w=1024",
+        "alt": "Image Credits:Krisztian Bocsi/Bloomberg / Getty Images"
+      },
       {
         "type": "text",
         "content": "AI agents are being sold as the solution for planning trips, answering business questions, and solving problems of all kinds, but getting them to work with tools and data outside their chat interfaces has been tricky. Developers have to patch together various connectors and keep them running, but that’s a fragile approach that’s hard to scale and creates governance headaches."
@@ -3259,11 +3491,20 @@
     "text": "Google is testing AI-powered article overviews on participating publications’ Google News pages as part of a new pilot program, the search giant announced on Wednesday.\n\nNews publishers participating in the pilot program include Der Spiegel, El País, Folha, Infobae, Kompas, The Guardian, The Times of India, The Washington Examiner, and The Washington Post, among others.\n\nThe purpose of the new commercial partnership program is to “explore how AI can drive more engaged audiences,” Google said in a blog post . As part of the new AI pilot program, the company will work with publishers to experiment with new features in Google News.\n\nBy adding AI-powered article overviews, Google says users will get more context before they click through to read an article. While AI-generated summaries may lead to fewer clicks on news articles, publications participating in the commercial pilot program will receive direct payments from Google, which could make up for the potential decrease in traffic to their sites.\n\nThe AI-powered article overviews will only appear on participating publications’ Google News pages, and not anywhere else on Google News or in Search.\n\nThis isn’t the first time that Google has introduced AI summaries for news. In July, the company rolled out AI summaries in Discover , the main news feed inside Google’s search app. With this change, users no longer see a single headline from a major publication in the feed. Instead, they see the logos of multiple news publishers in the top-left corner, followed by an AI-generated summary that cites those sources.\n\nGoogle is also experimenting with audio briefings for people who prefer listening to the news rather than reading it, as part of the new pilot program.\n\nThe company says these features will include clear attribution and a link to articles.\n\nAdditionally, Google is partnering with organizations such as Estadão, Antara, Yonhap, and The Associated Press to incorporate real-time information and enhance results in the Gemini app.\n\n“As the way people consume information evolves, we’ll continue to improve our products for people around the world and engage with feedback from stakeholders across the ecosystem,” Google wrote in its blog post. “We’re doing this work in collaboration with websites and creators of all sizes, from major news publishers to new and emerging voices.”\n\nAs part of Google’s Wednesday announcement, the company said that it’s launching its “Preferred Sources” feature globally after first launching it in the U.S. and India in August. The feature allows users to select their favorite news sites and blogs to appear in the Top Stories section of Google search results.\n\nIn the coming days, the feature will be available for English-language users worldwide, and Google plans to roll it out to all supported languages early next year.\n\nGoogle will now also highlight links from your news subscriptions and show these links in a dedicated carousel in the Gemini app in the coming weeks, with AI Overviews and AI Mode to follow.\n\nWhile these features make it easy for users to access news from their preferred sources, they also risk confining them to an ideological bubble that limits their exposure to different perspectives.\n\nGoogle also announced that it’s increasing the number of inline links in AI Mode. Additionally, it’s introducing “contextual introductions” for embedded links, which are brief explanations that explain why a link could be useful to explore.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2196352264.jpg?w=1024",
+        "alt": "Image Credits:Matthias Balk/picture alliance / Getty Images"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Screenshot-2025-12-10-at-10.59.58-AM.png?w=680",
         "alt": "Image Credits:Google"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2196352264.jpg?w=1024",
+        "alt": "Image Credits:Matthias Balk/picture alliance / Getty Images"
+      },
       {
         "type": "text",
         "content": "Google is testing AI-powered article overviews on participating publications’ Google News pages as part of a new pilot program, the search giant announced on Wednesday."
@@ -3340,11 +3581,20 @@
     "text": "Spotify announced on Wednesday that, for the first time, it’s giving users more control over the streaming service’s algorithm. That’s at least how the company is framing the launch of its new “Promoted Playlists,” a feature that will initially be available to Premium subscribers in New Zealand.\n\nThe feature, which is currently available in English only, is still in beta and will evolve before rolling out to other markets, according to Spotify.\n\nThe new tool allows users to describe what they want to hear in a personalized playlist that reflects the “full arc” of their tastes, according to the company. That means the playlist focuses not only on the songs you like now, but your entire Spotify listening history from day one — something that differentiates the feature from other playlists, the company says.\n\nThe feature is an evolution from Spotify’s existing AI playlist option, which debuted last year , and also works through written prompts. As with AI playlists, the new Prompted Playlists allow users to request what they want to hear with written instructions. However, they can now write much longer prompts with more specific instructions. That’s because the new AI feature factors in world knowledge, a rep from Spotify explained to TechCrunch.\n\nIn addition, the ability to go further back in your listening history and schedule how often the playlist refreshes makes it different from Spotify’s other AI playlist offerings.\n\nFor instance, Spotify suggests subscribers can use the new feature to ask for something like, “music from my top artists from the last five years,” then amend the prompt to include a request for “deep cuts I haven’t heard yet.”\n\nIn another example of a longer prompt, Spotify said you could ask for “high-energy pop and hip-hop for a 30-minute 5K run that keeps a steady pace before easing into relaxing songs for a cool-down” or “music from this year’s biggest films and most-talked-about TV shows that match my taste.”\n\nIn addition, you can continue to fine-tune the prompt to make it even more specific, and can set how often you want it to refresh, like daily or weekly. The idea is that users can essentially make their own version of something like Spotify’s flagship playlist, Discover Weekly, but one that’s focused on a type of music, genre, or time period they’d like to track, or their own version of something like Spotify’s genre-focused Daily Mixes.\n\nThe company says the playlist will include descriptions and context so you know why you’re getting the recommendation. Plus, it will offer a set of prompts to help users get started.\n\nSpotify isn’t the only social app pitching how it’s letting users take control of its algorithm . Instagram today also introduced a new feature that lets users control what type of reels they see. Bluesky, a decentralized X competitor, also lets users swap out its algorithm for one of their own.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Prompted-Playlist-Static-Image-1-Correct-1234832-scaled-1.jpg?w=1024",
+        "alt": "Image Credits:Spotify"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Prompted-Playlist-GIF-102924.gif?w=680",
         "alt": "Image Credits:Spotify"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Prompted-Playlist-Static-Image-1-Correct-1234832-scaled-1.jpg?w=1024",
+        "alt": "Image Credits:Spotify"
+      },
       {
         "type": "text",
         "content": "Spotify announced on Wednesday that, for the first time, it’s giving users more control over the streaming service’s algorithm. That’s at least how the company is framing the launch of its new “Promoted Playlists,” a feature that will initially be available to Premium subscribers in New Zealand."
@@ -3399,8 +3649,18 @@
     "title": "State attorneys general warn Microsoft, OpenAI, Google, and other AI giants to fix ‘delusional’ outputs",
     "date": "10.12.2025",
     "text": "After a string of disturbing mental health incidents involving AI chatbots, a group of state attorneys general have sent a letter to the AI industry’s top companies, with a warning to fix “delusional outputs” or risk being in breach of state law.\n\nThe letter , signed by dozens of AGs from U.S. states and territories with the National Association of Attorneys General, asks the companies, including Microsoft, OpenAI, Google, and 10 other major AI firms, to implement a variety of new internal safeguards to protect their users. Anthropic, Apple, Chai AI, Character Technologies, Luka, Meta, Nomi AI, Perplexity AI, Replika, and xAI were also included in the letter.\n\nThe letter comes as a fight over AI regulations has been brewing between state and federal government.\n\nThose safeguards include transparent third-party audits of large language models that look for signs of delusional or sycophantic ideations, as well as new incident reporting procedures designed to notify users when chatbots produce psychologically harmful outputs. Those third parties, which could include academic and civil society groups, should be allowed to “evaluate systems pre-release without retaliation and to publish their findings without prior approval from the company,” the letter states.\n\n“GenAI has the potential to change how the world works in a positive way. But it also has caused—and has the potential to cause—serious harm, especially to vulnerable populations,” the letter states, pointing to a number of well-publicized incidents over the past year — including suicides and murder — in which violence has been linked to excessive AI use, the letter states. “In many of these incidents, the GenAI products generated sycophantic and delusional outputs that either encouraged users’ delusions or assured users that they were not delusional.”\n\nAGs also suggest companies treat mental health incidents the same way tech companies handle cybersecurity incidents — with clear and transparent incident reporting policies and procedures.\n\nCompanies should develop and publish “detection and response timelines for sycophantic and delusional outputs,” the letter states. In a similar fashion to how data breaches are currently handled, companies should also “promptly, clearly, and directly notify users if they were exposed to potentially harmful sycophantic or delusional outputs,” the letter says.\n\nAnother ask is that the companies develop “reasonable and appropriate safety tests” on GenAI models to “ensure the models do not produce potentially harmful sycophantic and delusional outputs.” These tests should be conducted before the models are ever offered to the public, it adds.\n\nTechCrunch was unable to reach Google, Microsoft, or OpenAI for comment prior to publication. The article will be updated if the companies respond.\n\nTech companies developing AI have had a much warmer reception at the federal level.\n\nThe Trump administration has made it known it is unabashedly pro-AI , and, over the past year, multiple attempts have been made to pass a nationwide moratorium on state-level AI regulations. So far, those attempts have failed — thanks, in part, to pressure from state officials .\n\nNot to be deterred, Trump announced Monday he plans to pass an executive order next week that will limit the ability of states to regulate AI. The president said in a post on Truth Social he hoped his EO would stop AI from being “DESTROYED IN ITS INFANCY.”",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2195918462.jpg?w=1024",
+        "alt": "Image Credits:Silas Stein/picture alliance / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2195918462.jpg?w=1024",
+        "alt": "Image Credits:Silas Stein/picture alliance / Getty Images"
+      },
       {
         "type": "text",
         "content": "After a string of disturbing mental health incidents involving AI chatbots, a group of state attorneys general have sent a letter to the AI industry’s top companies, with a warning to fix “delusional outputs” or risk being in breach of state law."
@@ -3460,11 +3720,20 @@
     "text": "Following a couple of months’ testing, Norway-based browser company Opera has finally made its AI-powered browser, Neon, available to the public — though you’ll have to shell out $19.90 per month to use it.\n\nOpera first unveiled Neon earlier this year in May and launched it in early access to select users in October .\n\nSimilar to other AI-first browsers like Perplexity’s Comet , OpenAI’s Atlas , and The Browser Company’s Dia , Neon bakes in an AI chatbot into its interface, letting you ask it answers about pages, use it to create mini apps and videos, and get it to do tasks for you. The browser uses your browsing history as context, so you can do things like ask it to fetch details from a YouTube video you watched last week or the post that you read yesterday.\n\nYou can also build “Cards” for repeatable tasks using prompts, and the browser offers a deep research agent that can get you detailed information about any topic. The browser also has a new tab organizational feature called Tasks, which are contained workspaces of AI chats and tabs. This feature is more like Tab Groups combined with Arc Browser’s Spaces feature , which has its own context for AI.\n\nIn addition to the AI features, the subscription gives users access to top models like Gemini 3 Pro, GPT-5.1, Veo 3.1, and Nano Banana Pro. Subscribers will also get access to Opera’s Discord community and direct access to its developers.\n\n“Opera Neon is a product for people who like to be the first to the newest AI tech. It’s a rapidly evolving project with significant updates released every week. We’ve been shaping it with our Founders community for a while and are now excited to share the early access to it with a larger audience,” Krystian Kolondra, EVP of browsers at Opera, said in a statement.\n\nThe company noted that its other products, like Opera One, Opera GX, and Opera Air, also have free AI features, like a chat-based assistant.\n\nMeanwhile, browser incumbents are taking a slower approach to adding AI features to their products. Earlier this week, Google detailed the security work it is doing to protect users against different attack surfaces that agentic features are prone to, and Brave said on Wednesday it is previewing its agentic features in a nightly build , and provides an isolated browsing profile for using AI features so users can keep their regular, non-AI usage separate.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Agent-Selector.jpeg?w=1024",
+        "alt": "Image Credits:Opera"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Cards.jpeg?w=680",
         "alt": "Image Credits: Opera"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/Agent-Selector.jpeg?w=1024",
+        "alt": "Image Credits:Opera"
+      },
       {
         "type": "text",
         "content": "Following a couple of months’ testing, Norway-based browser company Opera has finally made its AI-powered browser, Neon, available to the public — though you’ll have to shell out $19.90 per month to use it."
@@ -3511,8 +3780,18 @@
     "title": "Disney signs deal with OpenAI to allow Sora to generate AI videos featuring its characters",
     "date": "11.12.2025",
     "text": "The Walt Disney Company announced on Thursday that it has signed a three-year partnership with OpenAI that will bring its iconic characters to the company’s Sora AI video generator. Disney is also making a $1 billion equity investment in OpenAI.\n\nDisney CEO Bob Iger told CNBC that the deal comes with about a year of exclusivity. After the year is up, Disney can license its IP to other AI companies.\n\nLaunched in September, Sora allows users to create short videos using simple prompts. With this new agreement, users will be able to draw on more than 200 animated, masked, and creature characters from Disney, Marvel, Pixar, and Star Wars, including costumes, props, vehicles, and more.\n\nThese characters include iconic faces like Mickey Mouse, Ariel, Belle, Cinderella, Baymax, and Simba, as well as characters from Encanto, Frozen, Inside Out, Moana, Monsters, Inc., Toy Story, Up, and Zootopia. Users will also be able to draw on animated or illustrated versions of Marvel and Lucasfilm characters like Black Panther, Captain America, Deadpool, Groot, Iron Man, Darth Vader, Han Solo, Stormtroopers, and more.\n\nUsers will also be able to draw on these characters while using ChatGPT Images, the feature in ChatGPT that allows users to create visuals using text prompts.\n\nThe agreement does not include any talent likenesses or voices, Disney says.\n\n“The rapid advancement of artificial intelligence marks an important moment for our industry, and through this collaboration with OpenAI we will thoughtfully and responsibly extend the reach of our storytelling through generative AI, while respecting and protecting creators and their works,” said Disney CEO Bob Iger in a statement.\n\nDisney says that alongside the agreement, it will “become a major customer of OpenAI,” as it will use its APIs to build new products, tools, and experiences, including for Disney+.\n\n“Disney is the global gold standard for storytelling, and we’re excited to partner to allow Sora and ChatGPT Images to expand the way people create and experience great content,” said Sam Altman, co-founder and CEO of OpenAI, in a statement. “This agreement shows how AI companies and creative leaders can work together responsibly to promote innovation that benefits society, respect the importance of creativity, and help works reach vast new audiences.”\n\nIt’s worth noting that Disney has sued the generative AI platform Midjourney for ignoring requests to stop violating its intellectual property rights. Disney also sent a cease-and-desist letter to Character.AI , urging the chatbot company to remove Disney characters from among the millions of AI companions on its platform.\n\nDisney’s agreement with OpenAI indicates the company isn’t fully closing the door on AI platforms.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/10/GettyImages-1387623215.jpg?w=1024",
+        "alt": "Image Credits:Yujie Chen / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/10/GettyImages-1387623215.jpg?w=1024",
+        "alt": "Image Credits:Yujie Chen / Getty Images"
+      },
       {
         "type": "text",
         "content": "The Walt Disney Company announced on Thursday that it has signed a three-year partnership with OpenAI that will bring its iconic characters to the company’s Sora AI video generator. Disney is also making a $1 billion equity investment in OpenAI."
@@ -3568,6 +3847,10 @@
     "text": "Google on Thursday introduced a new AI experiment for the web browser: the Gemini-powered product Disco, which helps to turn your open tabs into custom applications. With Disco, you can create what Google is calling “GenTabs,” a tool that proactively suggests interactive web apps that can help you complete tasks related to what you’re browsing and allows you to build your own apps via written prompts.\n\nFor instance, if you’re studying a particular subject, GenTabs might suggest building a web app to visualize the information, which could help you better understand the core principles.\n\nOr, in a less academic scenario, you could use GenTabs to help you create a meal plan from a series of online recipes or help you plan a trip when you’re researching travel.\n\nThese are things that you can already do today with some AI-powered chatbots, but GenTabs builds these custom experiences on the fly using Gemini 3, using the information in your browser and in your Gemini chat history. After the app is built, you can also continue to refine it using natural language commands.\n\nThe resulting generative elements in the GenTabs experience will link back to the original sources, Google notes.\n\nLike others in the AI market, Google has been experimenting with bringing AI deeper into the web-browsing experience. Instead of building its own stand-alone AI browser, like Perplexity’s Comet or ChatGPT Atlas, Google integrated its AI assistant Gemini into the Chrome browser , where it can optionally be used to ask questions about the web page you’re on.\n\nWith GenTabs, the focus is not only on what you’re currently viewing, but also on your overall browsing, spanning multiple tabs — whether that’s research, learning, or something else.\n\nHowever, the feature is only initially going to be available to a small number of testers through Google Labs, who will offer feedback about the experience. The company says that interesting ideas that are developed through Disco may one day find their way into other, larger Google products.\n\nIt also suggests that GenTabs will be one of many Disco features to come over time, noting that GenTabs is the “first feature” being tested.\n\nTo access Disco, users will need to join a waitlist to download the app, starting on macOS.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2017/04/gettyimages-592356083.jpg?w=1024",
+        "alt": "Image Credits:Michele Palazzo / EyeEm"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/1_Solar-System.gif?w=680",
         "alt": "Image Credits:Google"
       },
@@ -3577,6 +3860,11 @@
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2017/04/gettyimages-592356083.jpg?w=1024",
+        "alt": "Image Credits:Michele Palazzo / EyeEm"
+      },
       {
         "type": "text",
         "content": "Google on Thursday introduced a new AI experiment for the web browser: the Gemini-powered product Disco, which helps to turn your open tabs into custom applications. With Disco, you can create what Google is calling “GenTabs,” a tool that proactively suggests interactive web apps that can help you complete tasks related to what you’re browsing and allows you to build your own apps via written prompts."
@@ -3638,11 +3926,20 @@
     "text": "Google is updating its AI try-on feature to let you virtually try on clothes using just a selfie, the company announced on Thursday . In the past, users had to upload a full-body picture of themselves to virtually try on a piece of clothing. Now they can use a selfie and Nano Banana, Google’s Gemini 2.5 Flash Image model, to generate a full-body digital version of themselves for virtual try-ons.\n\nUsers can select their usual clothing size, and the feature will then generate several images. From there, users can choose one to make it their default try-on photo.\n\nIf desired, users still have the option to use a full-body photo or select from a range of models with diverse body types.\n\nThe new capability is launching in the United States today.\n\nGoogle first launched the try-on feature in July, allowing users to try on apparel items from its Shopping Graph across Search, Google Shopping, and Google Images. To use the feature, users need to tap on a product listing or apparel product result and select the “try it on” icon.\n\nThe move comes as Google has been investing in the virtual AI try-on space, as the company has a separate app dedicated specifically to that purpose. The app, called Doppl , is designed to help visualize how different outfits might look on you using AI.\n\nEarlier this week, the tech giant updated it with a shoppable discovery feed that displays recommendations so users can discover and virtually try on new items. Nearly everything in the feed is shoppable, with direct links to merchants.\n\nThe discovery feed features AI-generated videos of real products and suggests outfits based on your personalized style. While some may not be fond of an AI-generated feed, Google likely views it as a way to showcase products in a format that people are already familiar with, thanks to platforms like TikTok and Instagram.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/08/GettyImages-2198713751.jpg?w=1024",
+        "alt": "Image Credits:Klaudia Radecka/NurPhoto / Getty Images"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Screenshot-2025-12-11-at-12.55.46-PM.png?w=446",
         "alt": "Image Credits:Google"
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/08/GettyImages-2198713751.jpg?w=1024",
+        "alt": "Image Credits:Klaudia Radecka/NurPhoto / Getty Images"
+      },
       {
         "type": "text",
         "content": "Google is updating its AI try-on feature to let you virtually try on clothes using just a selfie, the company announced on Thursday . In the past, users had to upload a full-body picture of themselves to virtually try on a piece of clothing. Now they can use a selfie and Nano Banana, Google’s Gemini 2.5 Flash Image model, to generate a full-body digital version of themselves for virtual try-ons."
@@ -3689,8 +3986,18 @@
     "title": "Google launched its deepest AI research agent yet — on the same day OpenAI dropped GPT-5.2",
     "date": "11.12.2025",
     "text": "Google released on Thursday a “reimagined” version of its research agent Gemini Deep Research based on its much-ballyhooed state-of-the-art foundation model , Gemini 3 Pro.\n\nThis new agent isn’t just designed to produce research reports — although it can still do that. It now allows developers to embed Google’s SATA-model research capabilities into their own apps. That capability is made possible through Google’s new Interactions API , which is designed to give devs more control in the coming agentic AI era.\n\nThe new Gemini Deep Research tool is an agent equipped to synthesize mountains of information and handle a large context dump in the prompt. Google says it’s used by customers for tasks ranging from due diligence to drug toxicity safety research.\n\nGoogle also says it will soon be integrating this new deep research agent into services, including Google Search, Google Finance, its Gemini App, and its popular NotebookLM. This is another step toward preparing for a world where humans don’t Google anything anymore — their AI agents do.\n\nThe tech giant says that Deep Research benefits from Gemini 3 Pro’s status as its “most factual” model that is trained to minimize hallucinations during complex tasks.\n\nAI hallucinations — where the LLM just makes stuff up — are an especially crucial issue for long-running, deep reasoning agentic tasks, in which many autonomous decisions are made over minutes, hours, or longer. The more choices an LLM has to make, the greater the chance that even one hallucinated choice will invalidate the entire output.\n\nTo prove its progress claims, Google has also created yet another benchmark (as if the AI world needs another one). The new benchmark is unimaginatively named DeepSearchQA and is intended to test agents on complex, multi-step information-seeking tasks. Google has open sourced this benchmark.\n\nIt also tested Deep Research on Humanity’s Last Exam, a much more interestingly named, independent benchmark of general knowledge filled with impossibly niche tasks; and BrowserComp, a benchmark for browser-based agentic tasks.\n\nAs you might expect, Google’s new agent bested the competition on its own benchmark, and Humanity’s. However, OpenAI’s ChatGPT 5 Pro was a surprisingly close second all the way around and slightly bested Google on BrowserComp.\n\nBut those benchmark comparisons were obsolete almost the moment Google published them. Because on the same day, OpenAI launched its highly anticipated GPT 5.2 — codenamed Garlic. OpenAI says its newest model bests its rivals — especially Google — on a suite of the typical benchmarks, including OpenAI’s homegrown one.\n\nPerhaps one of the most interesting parts of this announcement was the timing. Knowing that the world was awaiting the release of Garlic, Google dropped some AI news of its own.",
-    "images": [],
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2022/05/GettyImages-1147600063.jpg?w=1024",
+        "alt": "Image Credits:Justin Sullivan / Getty Images"
+      }
+    ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2022/05/GettyImages-1147600063.jpg?w=1024",
+        "alt": "Image Credits:Justin Sullivan / Getty Images"
+      },
       {
         "type": "text",
         "content": "Google released on Thursday a “reimagined” version of its research agent Gemini Deep Research based on its much-ballyhooed state-of-the-art foundation model , Gemini 3 Pro."
@@ -3746,6 +4053,10 @@
     "text": "Google is rolling out a beta experience that lets you hear real-time translations in your headphones, the company announced on Friday. The tech giant is also bringing advanced Gemini capabilities to Google Translate and expanding its language-learning tools in the Translate app.\n\nThe new real-time headphone translations experience keeps each speaker’s tone, emphasis, and cadence intact, so it’s easier to follow the conversation and tell who’s saying what, Google says. The new capability essentially turns any pair of headphones into a real-time, one-way translation device.\n\n“Whether you’re trying to have a conversation in a different language, listen to a speech or lecture while abroad, or watch a TV show or film in another language, you can now put in your headphones, open the Translate app, tap ‘Live translate’ and hear a real-time translation in your preferred language,” said Rose Yao, Google VP Product Management, Search Verticals, in the blog post.\n\nThe beta is rolling out now in the Translate app on Android in the U.S., Mexico, and India. The feature works with any pair of headphones and supports more than 70 languages.\n\nThe company plans to bring the capability to iOS and more countries in 2026.\n\nAs for the advanced Gemini capabilities coming to Translate, Google says they will enable smarter, more natural, and accurate text translations. They’ll also enable improved translations of phrases with more nuanced meanings, like slang, idioms, or local expressions.\n\nFor example, if you’re trying to translate an English idiom like “stealing my thunder,” you’ll now get a more accurate translation instead of a literal word-for-word translation, as Gemini will parse the context to capture what the idiom really means.\n\nThis update is rolling out now in the U.S. and India, translating between English and nearly 20 languages, including Spanish, Arabic, Chinese, Japanese, and German. The update is available in the Translate app on Android, iOS, and on the web.\n\nGoogle is also expanding its language learning tools to almost 20 new countries, including Germany, India, Sweden, and Taiwan. English speakers can now practice German, while Bengali, Mandarin Chinese (Simplified), Dutch, German, Hindi, Italian, Romanian, and Swedish speakers can practice English.\n\nThe tech giant is also adding improved feedback so you can get helpful tips based on your speaking practice.\n\nAdditionally, Google is adding a feature that tracks how many days in a row you’ve been learning, making it easier to see your progress and stay consistent. While the tools were already designed to take on Duolingo, this new feature brings the experience even closer to the popular language-learning app.",
     "images": [
       {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2196352264.jpg?w=1024",
+        "alt": "Image Credits:Matthias Balk/picture alliance / Getty Images"
+      },
+      {
         "url": "https://techcrunch.com/wp-content/uploads/2025/12/Screenshot-2025-12-12-at-10.02.57-AM.png?w=680",
         "alt": "Image Credits:Google"
       },
@@ -3755,6 +4066,11 @@
       }
     ],
     "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/02/GettyImages-2196352264.jpg?w=1024",
+        "alt": "Image Credits:Matthias Balk/picture alliance / Getty Images"
+      },
       {
         "type": "text",
         "content": "Google is rolling out a beta experience that lets you hear real-time translations in your headphones, the company announced on Friday. The tech giant is also bringing advanced Gemini capabilities to Google Translate and expanding its language-learning tools in the Translate app."
@@ -3912,6 +4228,68 @@
       {
         "type": "text",
         "content": "#новости #яндекскарты"
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "url": "https://techcrunch.com/2025/12/10/figma-launches-new-ai-powered-object-removal-and-image-extension/",
+    "site_type": "techcrunch",
+    "title": "Figma launches new AI-powered object removal and image extension",
+    "date": "10.12.2025",
+    "text": "Design tool Figma launched new AI-powered image-editing features today, including the ability to remove and isolate objects and expand images.\n\nThe company said that these features will save the hassle of exporting images to other tools for editing and importing them back. It added that generation models like Nano Banana are good for creating images, but users often need granular tools for editing that work without any text prompts.\n\nFigma has improved its lasso tool for selection. Now you can use it to select an object, remove it, or isolate it to move it around. When you move around the object, the image still retains other characteristics, such as background and color. Users can also select an object to adjust factors like lighting, shadow, color, or focus.\n\nThe company is also bringing an image-expansion feature to its design suite. This feature is handy when you are adjusting a creative for a particular format and need to fill in the background or other details. For instance, creating a web banner or mobile banner from a 1×1 image. It essentially saves you from constantly cropping an image and adjusting elements within it.\n\nBesides adding these features, Figma is collating all its image-editing tools in one toolbar for easier access. You can select objects or parts of images, change background color, and add annotations or text using this toolbar. The company said removing background is one of the most common actions on the platform, and that is why it is getting a prominent spot on the new toolbar.\n\nRivals like Adobe and Canva have had object removal for a few years now. Figma is finally catching up to offer these features.\n\nThe company said the new image-editing features are available on Figma Design and Draw, with plans to make them available across Figma tools next year.\n\nFigma’s launch comes on the same day as Adobe making some of these features available to users within ChatGPT . Figma was one of the launch partners of the app, calling on ChatGPT in October. It is not clear if these new functions will be available to users using Figma within OpenAI’s tool.",
+    "images": [
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/AI-Image-toolbar.jpeg?w=1024",
+        "alt": "Image Credits:Figma"
+      },
+      {
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/ezgif-8bda4c8d57256f21.gif?w=680",
+        "alt": "Image Credits:Figma"
+      }
+    ],
+    "structured_content": [
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/AI-Image-toolbar.jpeg?w=1024",
+        "alt": "Image Credits:Figma"
+      },
+      {
+        "type": "text",
+        "content": "Design tool Figma launched new AI-powered image-editing features today, including the ability to remove and isolate objects and expand images."
+      },
+      {
+        "type": "text",
+        "content": "The company said that these features will save the hassle of exporting images to other tools for editing and importing them back. It added that generation models like Nano Banana are good for creating images, but users often need granular tools for editing that work without any text prompts."
+      },
+      {
+        "type": "text",
+        "content": "Figma has improved its lasso tool for selection. Now you can use it to select an object, remove it, or isolate it to move it around. When you move around the object, the image still retains other characteristics, such as background and color. Users can also select an object to adjust factors like lighting, shadow, color, or focus."
+      },
+      {
+        "type": "text",
+        "content": "The company is also bringing an image-expansion feature to its design suite. This feature is handy when you are adjusting a creative for a particular format and need to fill in the background or other details. For instance, creating a web banner or mobile banner from a 1×1 image. It essentially saves you from constantly cropping an image and adjusting elements within it."
+      },
+      {
+        "type": "image",
+        "url": "https://techcrunch.com/wp-content/uploads/2025/12/ezgif-8bda4c8d57256f21.gif?w=680",
+        "alt": "Image Credits:Figma"
+      },
+      {
+        "type": "text",
+        "content": "Besides adding these features, Figma is collating all its image-editing tools in one toolbar for easier access. You can select objects or parts of images, change background color, and add annotations or text using this toolbar. The company said removing background is one of the most common actions on the platform, and that is why it is getting a prominent spot on the new toolbar."
+      },
+      {
+        "type": "text",
+        "content": "Rivals like Adobe and Canva have had object removal for a few years now. Figma is finally catching up to offer these features."
+      },
+      {
+        "type": "text",
+        "content": "The company said the new image-editing features are available on Figma Design and Draw, with plans to make them available across Figma tools next year."
+      },
+      {
+        "type": "text",
+        "content": "Figma’s launch comes on the same day as Adobe making some of these features available to users within ChatGPT . Figma was one of the launch partners of the app, calling on ChatGPT in October. It is not clear if these new functions will be available to users using Figma within OpenAI’s tool."
       }
     ],
     "status": "success"
