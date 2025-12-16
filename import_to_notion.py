@@ -8,25 +8,31 @@ import os
 import json
 import re
 import sys
+import asyncio
+import time
 from pathlib import Path
-from notion_client import Client
+from notion_client import Client, AsyncClient
 from datetime import datetime
+from typing import List, Dict, Tuple, Optional
 
 
 class NotionImporter:
     """Класс для импорта статей в Notion"""
     
-    def __init__(self, notion_token: str, database_id: str = None):
+    def __init__(self, notion_token: str, database_id: str = None, max_concurrent: int = 3):
         """
         Инициализация импортера
         
         Args:
             notion_token: API токен Notion (получить на https://www.notion.so/my-integrations)
             database_id: ID базы данных Notion (извлекается из URL), опционально
+            max_concurrent: Максимальное количество одновременных запросов (по умолчанию 3, Notion rate limit)
         """
+        self.notion_token = notion_token
         self.notion = Client(auth=notion_token)
         self.database_id = database_id
         self.database_properties = None
+        self.max_concurrent = max_concurrent
     
     def get_database_structure(self, database_id: str) -> dict:
         """
@@ -479,7 +485,122 @@ class NotionImporter:
             print(f"  Ошибка при создании страницы: {e}")
             raise
     
-    def import_from_directory(self, markdown_dir: str, json_file: str = None, field_mapping: dict = None):
+    async def create_page_async(self, async_client: AsyncClient, article_data: dict, field_mapping: dict = None) -> Tuple[str, Optional[str], Optional[str]]:
+        """
+        Асинхронно создает страницу в Notion Database
+        
+        Args:
+            async_client: Асинхронный клиент Notion
+            article_data: Данные статьи для импорта
+            field_mapping: Маппинг полей
+            
+        Returns:
+            Tuple[title, page_id или None, error или None]
+        """
+        if field_mapping is None:
+            field_mapping = {
+                'title': 'Name',
+                'url': 'URL',
+                'date': 'Дата публикации'
+            }
+        
+        title_text = article_data.get('title') or "Без заголовка"
+        
+        # Подготовка properties
+        properties = {}
+        
+        # Title property
+        title_field = field_mapping.get('title')
+        if title_field:
+            properties[title_field] = {
+                "title": [
+                    {
+                        "type": "text",
+                        "text": {
+                            "content": title_text
+                        }
+                    }
+                ]
+            }
+        
+        # URL property
+        url_field = field_mapping.get('url')
+        if url_field and article_data.get('url'):
+            properties[url_field] = {
+                "url": article_data['url']
+            }
+        
+        # Дата публикации property
+        date_field = field_mapping.get('date')
+        if date_field and article_data.get('date'):
+            date_obj = self.parse_date(article_data['date'])
+            if date_obj:
+                properties[date_field] = {
+                    "date": date_obj
+                }
+        
+        # Конвертируем markdown body в блоки Notion
+        blocks = self.markdown_to_notion_blocks(article_data['body'])
+        
+        try:
+            response = await async_client.pages.create(
+                parent={"database_id": self.database_id},
+                properties=properties,
+                children=blocks
+            )
+            return (title_text, response['id'], None)
+        except Exception as e:
+            return (title_text, None, str(e))
+    
+    async def import_batch_async(self, articles_data: List[dict], field_mapping: dict = None) -> Tuple[int, int]:
+        """
+        Асинхронно импортирует список статей
+        
+        Args:
+            articles_data: Список данных статей
+            field_mapping: Маппинг полей
+            
+        Returns:
+            Tuple[успешно импортировано, ошибок]
+        """
+        async with AsyncClient(auth=self.notion_token) as async_client:
+            semaphore = asyncio.Semaphore(self.max_concurrent)
+            
+            async def create_with_semaphore(article_data: dict, index: int) -> Tuple[int, str, Optional[str], Optional[str]]:
+                async with semaphore:
+                    # Небольшая задержка для соблюдения rate limits
+                    await asyncio.sleep(0.1)
+                    title, page_id, error = await self.create_page_async(async_client, article_data, field_mapping)
+                    return (index, title, page_id, error)
+            
+            tasks = [create_with_semaphore(article, i) for i, article in enumerate(articles_data)]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            imported = 0
+            errors = 0
+            
+            # Сортируем результаты по индексу для правильного вывода
+            sorted_results = sorted(
+                [(r if not isinstance(r, Exception) else (r, None, None, str(r))) for r in results],
+                key=lambda x: x[0] if isinstance(x[0], int) else 0
+            )
+            
+            for result in sorted_results:
+                if isinstance(result, Exception):
+                    print(f"  ✗ Критическая ошибка: {result}")
+                    errors += 1
+                else:
+                    index, title, page_id, error = result
+                    if error:
+                        print(f"  ✗ [{index + 1}/{len(articles_data)}] {title[:50]}... - Ошибка: {error}")
+                        errors += 1
+                    else:
+                        print(f"  ✓ [{index + 1}/{len(articles_data)}] {title[:50]}... (ID: {page_id[:8]}...)")
+                        imported += 1
+            
+            return (imported, errors)
+    
+    def import_from_directory(self, markdown_dir: str, json_file: str = None, field_mapping: dict = None, use_async: bool = True):
         """Импортирует все markdown файлы из директории"""
         markdown_path = Path(markdown_dir)
         
@@ -501,26 +622,24 @@ class NotionImporter:
         md_files = sorted(markdown_path.glob('*.md'))
         
         print(f"Найдено {len(md_files)} markdown файлов для импорта")
+        print(f"Режим: {'асинхронный' if use_async else 'последовательный'} (до {self.max_concurrent} запросов одновременно)")
         print("=" * 80)
         
-        imported = 0
-        errors = 0
+        # Подготавливаем данные статей
+        articles_data = []
+        skipped = 0
         
         for i, md_file in enumerate(md_files, 1):
-            print(f"\n[{i}/{len(md_files)}] Обрабатываю: {md_file.name}")
-            
             try:
                 # Парсим markdown файл
                 article_data = self.parse_markdown_file(str(md_file))
                 
                 # Если есть метаданные из JSON, используем их (они более точные)
-                # Сопоставляем по номеру файла или URL
                 file_num = re.match(r'^(\d+)_', md_file.name)
                 if file_num and json_data:
                     file_index = int(file_num.group(1)) - 1
                     if 0 <= file_index < len(json_data):
                         json_article = json_data[file_index]
-                        # Используем заголовок из JSON (он полный и точный)
                         if json_article.get('title'):
                             article_data['title'] = json_article['title']
                         if json_article.get('date'):
@@ -529,7 +648,6 @@ class NotionImporter:
                             article_data['url'] = json_article['url']
                 elif article_data.get('url') and article_data['url'] in articles_metadata:
                     json_article = articles_metadata[article_data['url']]
-                    # Используем заголовок из JSON (он полный и точный)
                     if json_article.get('title'):
                         article_data['title'] = json_article['title']
                     if json_article.get('date'):
@@ -539,32 +657,54 @@ class NotionImporter:
                 
                 # Проверяем, что есть необходимые данные
                 if not article_data.get('title'):
-                    print(f"  ⚠ Предупреждение: заголовок не найден, пропускаю файл")
-                    errors += 1
+                    print(f"  ⚠ [{i}/{len(md_files)}] {md_file.name} - заголовок не найден, пропускаю")
+                    skipped += 1
                     continue
                 
-                # Отладочный вывод (показываем полный заголовок)
-                title = article_data.get('title', '')
-                title_len = len(title)
-                print(f"  Заголовок ({title_len} символов): {title}")
-                
-                # Проверяем, что заголовок не обрезан (если он короче 50 символов, возможно проблема)
-                if title_len < 50 and '...' in title:
-                    print(f"  ⚠ Предупреждение: заголовок может быть обрезан")
-                
-                # Создаем страницу в Notion
-                page_id = self.create_page(article_data, field_mapping)
-                print(f"  ✓ Страница создана (ID: {page_id[:8]}...)")
-                imported += 1
+                articles_data.append(article_data)
                 
             except Exception as e:
-                print(f"  ✗ Ошибка: {e}")
-                errors += 1
+                print(f"  ✗ [{i}/{len(md_files)}] {md_file.name} - ошибка парсинга: {e}")
+                skipped += 1
+        
+        if not articles_data:
+            print("Нет статей для импорта")
+            return
+        
+        print(f"\nПодготовлено {len(articles_data)} статей для импорта")
+        if skipped > 0:
+            print(f"Пропущено: {skipped}")
+        print("-" * 80)
+        
+        start_time = time.time()
+        
+        if use_async:
+            # Асинхронный импорт
+            imported, errors = asyncio.run(self.import_batch_async(articles_data, field_mapping))
+        else:
+            # Последовательный импорт (fallback)
+            imported = 0
+            errors = 0
+            for i, article_data in enumerate(articles_data, 1):
+                try:
+                    title = article_data.get('title', '')
+                    page_id = self.create_page(article_data, field_mapping)
+                    print(f"  ✓ [{i}/{len(articles_data)}] {title[:50]}... (ID: {page_id[:8]}...)")
+                    imported += 1
+                except Exception as e:
+                    print(f"  ✗ [{i}/{len(articles_data)}] {title[:50]}... - Ошибка: {e}")
+                    errors += 1
+        
+        elapsed_time = time.time() - start_time
         
         print("\n" + "=" * 80)
-        print(f"Импорт завершен!")
+        print(f"Импорт завершен за {elapsed_time:.2f} секунд!")
         print(f"Успешно импортировано: {imported}")
         print(f"Ошибок: {errors}")
+        if skipped > 0:
+            print(f"Пропущено (ошибки парсинга): {skipped}")
+        if imported > 0:
+            print(f"Средняя скорость: {imported / elapsed_time:.2f} статей/сек")
 
 
 def extract_database_id(input_value: str) -> str:
@@ -631,12 +771,55 @@ def get_user_confirmation(prompt: str, default: bool = False) -> bool:
 
 def main():
     """Основная функция"""
-    # Получаем NOTION_TOKEN: приоритет у аргументов командной строки, затем переменные окружения
-    notion_token = None
-    if len(sys.argv) >= 2:
-        notion_token = sys.argv[1]
-    if not notion_token:
-        notion_token = os.getenv('NOTION_TOKEN')
+    # Парсим аргументы командной строки
+    notion_token = os.getenv('NOTION_TOKEN')
+    database_id = os.getenv('NOTION_DATABASE_ID')
+    max_concurrent = 3  # Notion rate limit: 3 запроса в секунду
+    use_async = True
+    
+    i = 1
+    while i < len(sys.argv):
+        arg = sys.argv[i]
+        if arg == '--concurrent' and i + 1 < len(sys.argv):
+            try:
+                max_concurrent = int(sys.argv[i + 1])
+                if max_concurrent < 1:
+                    max_concurrent = 1
+                elif max_concurrent > 10:
+                    max_concurrent = 10
+                    print(f"Предупреждение: количество одновременных запросов ограничено до 10 (Notion rate limits)")
+            except ValueError:
+                print(f"Ошибка: неверное значение для --concurrent: {sys.argv[i + 1]}")
+                sys.exit(1)
+            i += 2
+        elif arg == '--sync':
+            use_async = False
+            i += 1
+        elif arg == '--database' and i + 1 < len(sys.argv):
+            database_id = sys.argv[i + 1]
+            i += 2
+        elif arg == '--help' or arg == '-h':
+            print("Использование: python3 import_to_notion.py [опции] [NOTION_TOKEN] [DATABASE_ID]")
+            print("\nОпции:")
+            print("  --concurrent <число>  Количество одновременных запросов (1-10, по умолчанию 3)")
+            print("  --sync                Использовать последовательный режим вместо асинхронного")
+            print("  --database <id/url>   Database ID или URL")
+            print("  --help, -h            Показать эту справку")
+            print("\nПеременные окружения:")
+            print("  NOTION_TOKEN          API токен Notion")
+            print("  NOTION_DATABASE_ID    Database ID")
+            print("\nПримеры:")
+            print("  python3 import_to_notion.py secret_xxx")
+            print("  python3 import_to_notion.py --concurrent 5 --database https://notion.so/...")
+            sys.exit(0)
+        elif not notion_token:
+            notion_token = arg
+            i += 1
+        elif not database_id:
+            database_id = arg
+            i += 1
+        else:
+            i += 1
     
     # Проверяем наличие токена
     if not notion_token:
@@ -651,22 +834,16 @@ def main():
         print("  NOTION_TOKEN - API токен Notion (получить на https://www.notion.so/my-integrations)")
         print("\nПример:")
         print("  python3 import_to_notion.py secret_xxx")
+        print("\nДля справки: python3 import_to_notion.py --help")
         sys.exit(1)
     
-    # Создаем импортер (без database_id, он будет запрошен интерактивно)
-    importer = NotionImporter(notion_token)
+    # Создаем импортер
+    importer = NotionImporter(notion_token, max_concurrent=max_concurrent)
     
     # Интерактивный запрос Database ID
     print("=" * 80)
     print("📥 Импорт статей в Notion Database")
     print("=" * 80)
-    
-    # Проверяем, не передан ли database_id через аргументы или переменные окружения
-    database_id = None
-    if len(sys.argv) >= 3:
-        database_id = sys.argv[2]
-    if not database_id:
-        database_id = os.getenv('NOTION_DATABASE_ID')
     
     # Извлекаем Database ID из URL, если передан URL
     if database_id:
@@ -726,7 +903,7 @@ def main():
     
     # Запускаем импорт
     print("\n🚀 Начинаем импорт...")
-    importer.import_from_directory(markdown_dir, json_file, field_mapping)
+    importer.import_from_directory(markdown_dir, json_file, field_mapping, use_async=use_async)
 
 
 if __name__ == "__main__":
