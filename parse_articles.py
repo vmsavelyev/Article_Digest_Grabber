@@ -5,15 +5,16 @@
 Извлекает заголовок, дату публикации, текст и изображения из статей
 """
 
-import requests
+import asyncio
+import aiohttp
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import json
-import time
 import sys
 import re
 import os
 import shutil
+import time
 from datetime import datetime
 from typing import List, Dict, Optional
 
@@ -21,10 +22,12 @@ from typing import List, Dict, Optional
 class ArticleParser:
     """Класс для парсинга статей с разных сайтов"""
     
-    def __init__(self):
+    def __init__(self, max_concurrent: int = 10):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
+        self.max_concurrent = max_concurrent
+        self.session = None
     
     def detect_site_type(self, url: str) -> str:
         """Определяет тип сайта по URL"""
@@ -811,15 +814,19 @@ class ArticleParser:
             filename = filename[:max_length]
         return filename.strip('_')
     
-    def parse_article(self, url: str) -> Dict:
-        """Парсит статью по URL"""
+    async def _fetch_url(self, session: aiohttp.ClientSession, url: str) -> bytes:
+        """Асинхронно загружает страницу"""
+        async with session.get(url, headers=self.headers, timeout=aiohttp.ClientTimeout(total=15)) as response:
+            response.raise_for_status()
+            return await response.read()
+    
+    async def parse_article_async(self, session: aiohttp.ClientSession, url: str) -> Dict:
+        """Асинхронно парсит статью по URL"""
         print(f"Обрабатываю: {url}")
         
         try:
-            response = requests.get(url, headers=self.headers, timeout=15)
-            response.raise_for_status()
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
+            content = await self._fetch_url(session, url)
+            soup = BeautifulSoup(content, 'html.parser')
             site_type = self.detect_site_type(url)
             
             # Парсинг в зависимости от типа сайта
@@ -848,7 +855,7 @@ class ArticleParser:
                 'status': 'success'
             }
             
-        except requests.exceptions.RequestException as e:
+        except aiohttp.ClientError as e:
             print(f"  Ошибка при загрузке страницы: {e}")
             return {
                 'url': url,
@@ -870,6 +877,46 @@ class ArticleParser:
                 'images': [],
                 'status': 'error'
             }
+    
+    def parse_article(self, url: str) -> Dict:
+        """Синхронная обертка для обратной совместимости"""
+        return asyncio.run(self._parse_article_sync(url))
+    
+    async def _parse_article_sync(self, url: str) -> Dict:
+        """Вспомогательная функция для синхронной обертки"""
+        async with aiohttp.ClientSession() as session:
+            return await self.parse_article_async(session, url)
+    
+    async def parse_articles_batch(self, urls: List[str]) -> List[Dict]:
+        """Асинхронно парсит список статей"""
+        async with aiohttp.ClientSession() as session:
+            semaphore = asyncio.Semaphore(self.max_concurrent)
+            
+            async def parse_with_semaphore(url: str) -> Dict:
+                async with semaphore:
+                    return await self.parse_article_async(session, url)
+            
+            tasks = [parse_with_semaphore(url) for url in urls]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            # Обрабатываем исключения
+            processed_results = []
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    print(f"  Критическая ошибка при обработке {urls[i]}: {result}")
+                    processed_results.append({
+                        'url': urls[i],
+                        'site_type': 'unknown',
+                        'title': 'Критическая ошибка',
+                        'date': None,
+                        'text': f'Критическая ошибка: {str(result)}',
+                        'images': [],
+                        'status': 'error'
+                    })
+                else:
+                    processed_results.append(result)
+            
+            return processed_results
     
     def parse_generic(self, soup: BeautifulSoup, url: str) -> Dict:
         """Универсальный парсинг для неизвестных сайтов"""
@@ -933,28 +980,68 @@ class ArticleParser:
         return result
 
 
-def main():
-    """Основная функция"""
+def extract_urls_from_line(line: str) -> List[str]:
+    """Извлекает URL из строки, игнорируя текст названия статьи"""
+    # Регулярное выражение для поиска URL (http:// или https://)
+    url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+    urls = re.findall(url_pattern, line)
+    return urls
+
+
+async def main_async():
+    """Асинхронная основная функция"""
     # Проверяем аргументы командной строки
     if len(sys.argv) < 2:
         print("Использование: python parse_articles.py <url1> [url2] [url3] ...")
         print("Или: python parse_articles.py --file <путь_к_файлу_с_url.txt>")
+        print("Или: python parse_articles.py --file <путь_к_файлу_с_url.txt> --concurrent <число>")
         sys.exit(1)
     
     urls = []
+    max_concurrent = 10
+    file_path = None
     
-    # Если указан флаг --file, читаем URL из файла
-    if sys.argv[1] == '--file' and len(sys.argv) > 2:
-        file_path = sys.argv[2]
+    # Парсим аргументы
+    i = 1
+    while i < len(sys.argv):
+        if sys.argv[i] == '--file' and i + 1 < len(sys.argv):
+            file_path = sys.argv[i + 1]
+            i += 2
+        elif sys.argv[i] == '--concurrent' and i + 1 < len(sys.argv):
+            try:
+                max_concurrent = int(sys.argv[i + 1])
+                if max_concurrent < 1:
+                    max_concurrent = 1
+                elif max_concurrent > 50:
+                    max_concurrent = 50
+                    print(f"Предупреждение: максимальное количество одновременных запросов ограничено до 50")
+            except ValueError:
+                print(f"Ошибка: неверное значение для --concurrent: {sys.argv[i + 1]}")
+                sys.exit(1)
+            i += 2
+        else:
+            # Если не флаг, то это URL
+            urls.append(sys.argv[i])
+            i += 1
+    
+    # Если указан файл, читаем URL из файла
+    if file_path:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
-                urls = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
+                file_urls = []
+                for line in f:
+                    line = line.strip()
+                    # Пропускаем пустые строки и комментарии
+                    if not line or line.startswith('#'):
+                        continue
+                    # Извлекаем URL из строки (может быть название статьи + URL на одной строке)
+                    found_urls = extract_urls_from_line(line)
+                    file_urls.extend(found_urls)
+                # Если URL были переданы и через файл, и напрямую, объединяем их
+                urls = file_urls + urls
         except FileNotFoundError:
             print(f"Файл {file_path} не найден")
             sys.exit(1)
-    else:
-        # URL переданы как аргументы командной строки
-        urls = sys.argv[1:]
     
     if not urls:
         print("Список URL пуст")
@@ -980,25 +1067,25 @@ def main():
     print(f"  ✓ Создан каталог: {md_dir}/")
     
     print(f"\nНайдено {len(urls)} URL для обработки")
+    print(f"Максимальное количество одновременных запросов: {max_concurrent}")
     print("=" * 80)
     
-    parser = ArticleParser()
-    results = []
+    start_time = time.time()
     
-    # Обрабатываем каждый URL
-    for i, url in enumerate(urls, 1):
-        print(f"\n[{i}/{len(urls)}] ", end='')
-        article_data = parser.parse_article(url)
-        results.append(article_data)
-        
-        # Сохраняем markdown файл для каждой статьи
+    parser = ArticleParser(max_concurrent=max_concurrent)
+    
+    # Асинхронно обрабатываем все URL
+    results = await parser.parse_articles_batch(urls)
+    
+    # Сохраняем markdown файлы для каждой статьи
+    for i, article_data in enumerate(results, 1):
         if article_data['status'] == 'success':
             # Создаем имя файла из заголовка или URL
             if article_data.get('title') and article_data['title'] != 'Заголовок не найден':
                 filename = parser.sanitize_filename(article_data['title'])
             else:
                 # Используем часть URL как имя файла
-                url_path = urlparse(url).path.strip('/')
+                url_path = urlparse(article_data['url']).path.strip('/')
                 filename = parser.sanitize_filename(url_path.replace('/', '_'))
             
             # Добавляем индекс для уникальности
@@ -1015,23 +1102,27 @@ def main():
             with open(md_filepath, 'w', encoding='utf-8') as f:
                 f.write(markdown_content)
             
-            print(f"  ✓ Markdown сохранен: {md_filepath}")
-        
-        # Небольшая задержка между запросами
-        if i < len(urls):
-            time.sleep(1)
+            print(f"  ✓ [{i}/{len(results)}] Markdown сохранен: {md_filepath}")
     
     # Сохраняем результаты в JSON
     output_file = 'parsed_articles.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     
+    elapsed_time = time.time() - start_time
+    
     print("\n" + "=" * 80)
-    print(f"Обработка завершена!")
+    print(f"Обработка завершена за {elapsed_time:.2f} секунд!")
     print(f"Успешно обработано: {sum(1 for r in results if r['status'] == 'success')}")
     print(f"Ошибок: {sum(1 for r in results if r['status'] == 'error')}")
+    print(f"Средняя скорость: {len(urls) / elapsed_time:.2f} статей/сек")
     print(f"Результаты сохранены в файл: {output_file}")
     print(f"Markdown файлы сохранены в папку: {md_dir}/")
+
+
+def main():
+    """Основная функция (синхронная обертка)"""
+    asyncio.run(main_async())
 
 
 if __name__ == "__main__":
