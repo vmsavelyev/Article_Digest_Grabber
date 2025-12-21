@@ -14,6 +14,10 @@ import os
 import re
 import sys
 import httpx
+import asyncio
+import aiohttp
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 from collections import defaultdict
@@ -55,6 +59,256 @@ def extract_database_id(url_or_id: str) -> str:
         return url_or_id
 
     return url_or_id
+
+
+class TitleVerifier:
+    """Класс для проверки соответствия названий статей"""
+
+    def __init__(self, max_concurrent: int = 5):
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        self.max_concurrent = max_concurrent
+
+    def detect_site_type(self, url: str) -> str:
+        """Определяет тип сайта по URL"""
+        domain = urlparse(url).netloc.lower()
+
+        if 'vc.ru' in domain:
+            return 'vcru'
+        elif 'techcrunch.com' in domain:
+            return 'techcrunch'
+        elif 'habr.com' in domain:
+            return 'habr'
+        else:
+            return 'unknown'
+
+    def extract_title_from_soup(self, soup: BeautifulSoup, url: str) -> Optional[str]:
+        """Извлекает заголовок из HTML в зависимости от типа сайта"""
+        site_type = self.detect_site_type(url)
+
+        if site_type == 'vcru':
+            title_tag = soup.find('h1', class_=lambda x: x and 'content-title' in x)
+            if title_tag:
+                # Удаляем иконки
+                title_copy = BeautifulSoup(str(title_tag), 'html.parser')
+                for icon in title_copy.find_all('span', class_='content-title__editorial-icon'):
+                    icon.decompose()
+                for svg in title_copy.find_all('svg'):
+                    svg.decompose()
+                for use in title_copy.find_all('use'):
+                    use.decompose()
+                title = title_copy.get_text(separator=' ', strip=True)
+                return re.sub(r'\s+', ' ', title).strip()
+
+        elif site_type == 'techcrunch':
+            title_tag = soup.find('h1', class_='wp-block-post-title')
+            if title_tag:
+                return title_tag.get_text(strip=True)
+
+        elif site_type == 'habr':
+            title_tag = soup.find('h1', class_='tm-title')
+            if title_tag:
+                span = title_tag.find('span')
+                if span:
+                    return span.get_text(strip=True)
+                return title_tag.get_text(strip=True)
+
+        # Универсальный парсинг
+        for tag in ['h1', 'title']:
+            title_tag = soup.find(tag)
+            if title_tag:
+                return title_tag.get_text(strip=True)
+
+        return None
+
+    async def fetch_title(self, session: aiohttp.ClientSession, url: str) -> Tuple[str, Optional[str], Optional[str]]:
+        """
+        Асинхронно получает title страницы по URL
+
+        Returns:
+            Tuple[url, title, error]
+        """
+        try:
+            async with session.get(url, headers=self.headers, timeout=aiohttp.ClientTimeout(total=15)) as response:
+                response.raise_for_status()
+                content = await response.read()
+                soup = BeautifulSoup(content, 'html.parser')
+                title = self.extract_title_from_soup(soup, url)
+                return (url, title, None)
+        except aiohttp.ClientError as e:
+            return (url, None, f"Ошибка загрузки: {e}")
+        except Exception as e:
+            return (url, None, f"Ошибка: {e}")
+
+    def normalize_title(self, title: str) -> str:
+        """Нормализует название для сравнения"""
+        if not title:
+            return ""
+        # Приводим к нижнему регистру, убираем лишние пробелы и спецсимволы
+        normalized = title.lower()
+        normalized = re.sub(r'\s+', ' ', normalized)
+        normalized = normalized.strip()
+        return normalized
+
+    def titles_match(self, digest_title: str, actual_title: str, threshold: float = 0.7) -> bool:
+        """
+        Проверяет соответствие названий
+
+        Args:
+            digest_title: Название из Digest
+            actual_title: Фактическое название со страницы
+            threshold: Минимальный порог совпадения (0.0 - 1.0)
+
+        Returns:
+            True если названия соответствуют
+        """
+        if not digest_title or not actual_title:
+            return False
+
+        norm_digest = self.normalize_title(digest_title)
+        norm_actual = self.normalize_title(actual_title)
+
+        # Точное совпадение
+        if norm_digest == norm_actual:
+            return True
+
+        # Проверяем вхождение одного в другое
+        if norm_digest in norm_actual or norm_actual in norm_digest:
+            return True
+
+        # Расчет схожести через общие слова
+        digest_words = set(norm_digest.split())
+        actual_words = set(norm_actual.split())
+
+        if not digest_words or not actual_words:
+            return False
+
+        common_words = digest_words & actual_words
+        # Используем минимальный размер для расчета соответствия
+        min_size = min(len(digest_words), len(actual_words))
+        similarity = len(common_words) / min_size if min_size > 0 else 0
+
+        return similarity >= threshold
+
+    async def verify_titles_async(self, news_items: List[Dict], log_file: Optional[str] = None) -> List[Dict]:
+        """
+        Асинхронно проверяет соответствие названий для списка новостей
+
+        Args:
+            news_items: Список новостей с полями name и url
+            log_file: Путь к файлу для логирования результатов
+
+        Returns:
+            Список несоответствий [{name, url, actual_title, error}]
+        """
+        mismatches = []
+        all_results = []  # Для логирования всех результатов
+        items_with_urls = [(item['name'], item['url']) for item in news_items if item.get('url')]
+
+        if not items_with_urls:
+            return mismatches
+
+        async with aiohttp.ClientSession() as session:
+            semaphore = asyncio.Semaphore(self.max_concurrent)
+
+            async def fetch_with_semaphore(name: str, url: str) -> Dict:
+                async with semaphore:
+                    url_result, actual_title, error = await self.fetch_title(session, url)
+                    return {
+                        'name': name,
+                        'url': url,
+                        'actual_title': actual_title,
+                        'error': error
+                    }
+
+            tasks = [fetch_with_semaphore(name, url) for name, url in items_with_urls]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+            for result in results:
+                if isinstance(result, Exception):
+                    continue
+
+                # Определяем статус соответствия
+                if result.get('error'):
+                    match_status = 'ERROR'
+                    is_match = False
+                elif result.get('actual_title'):
+                    is_match = self.titles_match(result['name'], result['actual_title'])
+                    match_status = 'MATCH' if is_match else 'MISMATCH'
+                else:
+                    match_status = 'NO_TITLE'
+                    is_match = False
+
+                # Сохраняем для логирования
+                all_results.append({
+                    'name': result['name'],
+                    'url': result['url'],
+                    'actual_title': result.get('actual_title'),
+                    'error': result.get('error'),
+                    'status': match_status
+                })
+
+                # Добавляем в список несоответствий
+                if result.get('error'):
+                    mismatches.append({
+                        'name': result['name'],
+                        'url': result['url'],
+                        'actual_title': None,
+                        'error': result['error']
+                    })
+                elif result.get('actual_title') and not is_match:
+                    mismatches.append({
+                        'name': result['name'],
+                        'url': result['url'],
+                        'actual_title': result['actual_title'],
+                        'error': None
+                    })
+
+        # Логирование в файл
+        if log_file:
+            self._write_log(log_file, all_results)
+
+        return mismatches
+
+    def _write_log(self, log_file: str, results: List[Dict]):
+        """Записывает результаты проверки в лог-файл"""
+        with open(log_file, 'w', encoding='utf-8') as f:
+            f.write(f"# Лог проверки соответствия названий статей\n")
+            f.write(f"# Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"# Всего проверено: {len(results)}\n")
+
+            match_count = sum(1 for r in results if r['status'] == 'MATCH')
+            mismatch_count = sum(1 for r in results if r['status'] == 'MISMATCH')
+            error_count = sum(1 for r in results if r['status'] == 'ERROR')
+
+            f.write(f"# Совпадений: {match_count}\n")
+            f.write(f"# Несоответствий: {mismatch_count}\n")
+            f.write(f"# Ошибок: {error_count}\n")
+            f.write("=" * 80 + "\n\n")
+
+            for i, result in enumerate(results, 1):
+                status_icon = {
+                    'MATCH': '✅',
+                    'MISMATCH': '❌',
+                    'ERROR': '⚠️',
+                    'NO_TITLE': '❓'
+                }.get(result['status'], '?')
+
+                f.write(f"{i}. [{result['status']}] {status_icon}\n")
+                f.write(f"   URL: {result['url']}\n")
+                f.write(f"   Название в Digest:    {result['name']}\n")
+                if result.get('error'):
+                    f.write(f"   Ошибка: {result['error']}\n")
+                elif result.get('actual_title'):
+                    f.write(f"   Фактическое название: {result['actual_title']}\n")
+                else:
+                    f.write(f"   Фактическое название: (не удалось извлечь)\n")
+                f.write("\n")
+
+    def verify_titles(self, news_items: List[Dict], log_file: Optional[str] = None) -> List[Dict]:
+        """Синхронная обертка для проверки названий"""
+        return asyncio.run(self.verify_titles_async(news_items, log_file))
 
 
 class DigestCreator:
@@ -711,6 +965,30 @@ def main():
     print(f"📄 Страница: AI Digest - Week {week_number} {year}")
     print(f"🔗 ID: {page_id}")
     print("=" * 60)
+
+    # Шаг 5: Проверка соответствия названий статей
+    print("\n" + "-" * 60)
+    print("🔍 Проверка соответствия названий статей...")
+
+    # Формируем имя лог-файла с датой и номером недели
+    log_filename = f"title_verification_week{week_number}_{year}.log"
+    verifier = TitleVerifier(max_concurrent=5)
+    mismatches = verifier.verify_titles(news_items, log_file=log_filename)
+
+    print(f"📝 Результаты сохранены в: {log_filename}")
+
+    if mismatches:
+        print(f"\n⚠️ Найдено несоответствий: {len(mismatches)}")
+        print("-" * 60)
+        for i, mismatch in enumerate(mismatches, 1):
+            print(f"\n{i}. URL: {mismatch['url']}")
+            print(f"   Название в Digest: {mismatch['name']}")
+            if mismatch.get('error'):
+                print(f"   Ошибка: {mismatch['error']}")
+            else:
+                print(f"   Фактическое название: {mismatch['actual_title']}")
+    else:
+        print("✅ Все названия соответствуют фактическим заголовкам статей")
 
 
 if __name__ == "__main__":
