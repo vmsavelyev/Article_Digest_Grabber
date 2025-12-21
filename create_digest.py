@@ -873,6 +873,40 @@ def get_date_range_from_user() -> Tuple[datetime, datetime]:
     return start_date, end_date
 
 
+def get_template_path_from_user() -> str:
+    """
+    Запрашивает путь к файлу шаблона у пользователя
+
+    Returns:
+        Путь к файлу шаблона
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    print("\n" + "=" * 60)
+    print("Выбор файла шаблона")
+    print("=" * 60)
+
+    while True:
+        template_input = input("\nВведите путь к файлу шаблона: ").strip()
+
+        if not template_input:
+            print("Ошибка: путь не может быть пустым")
+            continue
+
+        # Расширяем ~ до домашней директории
+        template_path = os.path.expanduser(template_input)
+
+        # Если путь относительный, делаем его относительно директории скрипта
+        if not os.path.isabs(template_path):
+            template_path = os.path.join(script_dir, template_path)
+
+        if not os.path.exists(template_path):
+            print(f"Ошибка: файл не найден: {template_path}")
+            continue
+
+        return template_path
+
+
 def main():
     """Основная функция"""
     # Получаем токен из переменных окружения или аргументов
@@ -897,14 +931,8 @@ def main():
     # Запрашиваем URL баз данных
     blog_db_id, news_db_id = get_database_urls_from_user()
 
-    # Определяем путь к шаблону (рядом со скриптом)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(script_dir, "digest_template.md")
-
-    if not os.path.exists(template_path):
-        print(f"\n❌ Ошибка: файл шаблона не найден: {template_path}")
-        print("   Создайте файл digest_template.md рядом со скриптом")
-        sys.exit(1)
+    # Запрашиваем путь к шаблону
+    template_path = get_template_path_from_user()
 
     print(f"\n📋 Используется шаблон: {template_path}")
 
