@@ -24,6 +24,175 @@ from collections import defaultdict
 from notion_client import Client
 
 
+def markdown_to_notion_blocks(markdown_content: str) -> List[dict]:
+    """
+    Конвертирует Markdown контент в блоки Notion API.
+    Поддерживает: заголовки H1-H3, списки, toggle (blockquote), параграфы, изображения.
+    """
+    blocks = []
+    lines = markdown_content.split('\n')
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+
+        # Пропускаем пустые строки
+        if not stripped:
+            i += 1
+            continue
+
+        # Заголовок H3 (### )
+        if stripped.startswith('### '):
+            blocks.append({
+                "object": "block",
+                "type": "heading_3",
+                "heading_3": {
+                    "rich_text": [{"type": "text", "text": {"content": stripped[4:].strip()}}]
+                }
+            })
+            i += 1
+            continue
+
+        # Заголовок H2 (## )
+        if stripped.startswith('## '):
+            blocks.append({
+                "object": "block",
+                "type": "heading_2",
+                "heading_2": {
+                    "rich_text": [{"type": "text", "text": {"content": stripped[3:].strip()}}]
+                }
+            })
+            i += 1
+            continue
+
+        # Заголовок H1 (# )
+        if stripped.startswith('# '):
+            blocks.append({
+                "object": "block",
+                "type": "heading_1",
+                "heading_1": {
+                    "rich_text": [{"type": "text", "text": {"content": stripped[2:].strip()}}]
+                }
+            })
+            i += 1
+            continue
+
+        # Изображение ![alt](url)
+        img_match = re.match(r'!\[([^\]]*)\]\(([^)]+)\)', stripped)
+        if img_match:
+            blocks.append({
+                "object": "block",
+                "type": "image",
+                "image": {
+                    "type": "external",
+                    "external": {"url": img_match.group(2)}
+                }
+            })
+            i += 1
+            continue
+
+        # Маркированный список (- item)
+        if stripped.startswith('- '):
+            while i < len(lines) and lines[i].strip().startswith('- '):
+                item_text = lines[i].strip()[2:].strip()
+                if item_text:
+                    blocks.append({
+                        "object": "block",
+                        "type": "bulleted_list_item",
+                        "bulleted_list_item": {
+                            "rich_text": [{"type": "text", "text": {"content": item_text}}]
+                        }
+                    })
+                i += 1
+            continue
+
+        # Нумерованный список (1. item)
+        if re.match(r'^\d+\.\s', stripped):
+            while i < len(lines) and re.match(r'^\d+\.\s', lines[i].strip()):
+                item_text = re.sub(r'^\d+\.\s', '', lines[i].strip()).strip()
+                if item_text:
+                    blocks.append({
+                        "object": "block",
+                        "type": "numbered_list_item",
+                        "numbered_list_item": {
+                            "rich_text": [{"type": "text", "text": {"content": item_text}}]
+                        }
+                    })
+                i += 1
+            continue
+
+        # Toggle блок (> заголовок) — blockquote становится toggle
+        if stripped.startswith('> '):
+            toggle_title = stripped[2:].strip()
+            toggle_content_lines = []
+            i += 1
+
+            # Пропускаем пустые строки после заголовка
+            while i < len(lines) and lines[i].strip() == '':
+                i += 1
+
+            # Собираем контент до следующего toggle, заголовка H1, или конца
+            while i < len(lines):
+                current = lines[i]
+                current_stripped = current.strip()
+                # Останавливаемся на новом toggle или H1 заголовке
+                if current_stripped.startswith('> ') or (current_stripped.startswith('# ') and not current_stripped.startswith('## ') and not current_stripped.startswith('### ')):
+                    break
+                toggle_content_lines.append(current)
+                i += 1
+
+            # Убираем trailing пустые строки
+            while toggle_content_lines and toggle_content_lines[-1].strip() == '':
+                toggle_content_lines.pop()
+
+            # Создаём toggle с вложенным контентом
+            toggle_block = {
+                "object": "block",
+                "type": "toggle",
+                "toggle": {
+                    "rich_text": [{"type": "text", "text": {"content": toggle_title}}],
+                    "children": []
+                }
+            }
+
+            # Добавляем содержимое toggle как вложенные блоки
+            if toggle_content_lines:
+                content_text = '\n'.join(toggle_content_lines)
+                toggle_block["toggle"]["children"].append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [{"type": "text", "text": {"content": content_text}}]
+                    }
+                })
+
+            blocks.append(toggle_block)
+            continue
+
+        # Горизонтальная линия (---)
+        if stripped == '---' or stripped == '***' or stripped == '___':
+            blocks.append({
+                "object": "block",
+                "type": "divider",
+                "divider": {}
+            })
+            i += 1
+            continue
+
+        # Обычный текст — параграф
+        blocks.append({
+            "object": "block",
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": [{"type": "text", "text": {"content": stripped}}]
+            }
+        })
+        i += 1
+
+    return blocks
+
+
 def extract_database_id(url_or_id: str) -> str:
     """
     Извлекает Database ID из URL или возвращает ID как есть
@@ -314,7 +483,7 @@ class TitleVerifier:
 class DigestCreator:
     """Класс для создания AI Digest в Notion"""
 
-    def __init__(self, notion_token: str, blog_db_id: str, news_db_id: str):
+    def __init__(self, notion_token: str, blog_db_id: str, news_db_id: str, template_path: Optional[str] = None):
         """
         Инициализация
 
@@ -322,11 +491,13 @@ class DigestCreator:
             notion_token: API токен Notion
             blog_db_id: ID базы данных "Личный блог"
             news_db_id: ID базы данных "Обзор рынка технологии машинного обучения"
+            template_path: Путь к Markdown файлу шаблона (опционально)
         """
         self.notion = Client(auth=notion_token)
         self.notion_token = notion_token
         self.blog_db_id = blog_db_id
         self.news_db_id = news_db_id
+        self.template_path = template_path
 
     def get_current_week_info(self) -> Tuple[int, int]:
         """
@@ -374,8 +545,8 @@ class DigestCreator:
             }
         }
 
-        # Шаблон контента страницы
-        template_blocks = self._create_template_blocks()
+        # Загружаем шаблон из Markdown файла и конвертируем в блоки Notion
+        template_blocks = self._load_template_blocks()
 
         # Создаем страницу
         response = self.notion.pages.create(
@@ -384,184 +555,20 @@ class DigestCreator:
             children=template_blocks
         )
 
-        page_id = response["id"]
+        return response["id"]
 
-        # Добавляем контент в toggle блоки
-        self._populate_toggle_blocks(page_id)
+    def _load_template_blocks(self) -> List[dict]:
+        """Загружает шаблон из Markdown файла и конвертирует в блоки Notion"""
+        if not self.template_path:
+            raise FileNotFoundError("Путь к файлу шаблона не указан")
 
-        return page_id
+        if not os.path.exists(self.template_path):
+            raise FileNotFoundError(f"Файл шаблона не найден: {self.template_path}")
 
-    def _populate_toggle_blocks(self, page_id: str):
-        """
-        Добавляет контент в toggle блоки после создания страницы
+        with open(self.template_path, 'r', encoding='utf-8') as f:
+            markdown_content = f.read()
 
-        Args:
-            page_id: ID созданной страницы
-        """
-        # Получаем все блоки страницы
-        blocks_response = self.notion.blocks.children.list(block_id=page_id)
-        blocks = blocks_response.get("results", [])
-
-        # Находим toggle блоки и добавляем в них контент
-        toggle_contents = self._get_toggle_content_blocks()
-
-        toggle_index = 0
-        for block in blocks:
-            if block.get("type") == "toggle":
-                if toggle_index < len(toggle_contents):
-                    _, children = toggle_contents[toggle_index]
-                    block_id = block.get("id")
-                    if block_id and children:
-                        self.notion.blocks.children.append(
-                            block_id=block_id,
-                            children=children
-                        )
-                    toggle_index += 1
-
-    def _create_template_blocks(self) -> List[dict]:
-        """Создает блоки шаблона для страницы (без вложенных children)"""
-        blocks = [
-            # # Research
-            {
-                "object": "block",
-                "type": "heading_1",
-                "heading_1": {
-                    "rich_text": [{"type": "text", "text": {"content": "Research"}}]
-                }
-            },
-            # Пустой параграф
-            {
-                "object": "block",
-                "type": "paragraph",
-                "paragraph": {"rich_text": []}
-            },
-            # # Notes
-            {
-                "object": "block",
-                "type": "heading_1",
-                "heading_1": {
-                    "rich_text": [{"type": "text", "text": {"content": "Notes"}}]
-                }
-            },
-            # Пункт списка: Шрифты для Linked IN
-            {
-                "object": "block",
-                "type": "bulleted_list_item",
-                "bulleted_list_item": {
-                    "rich_text": [{"type": "text", "text": {"content": "Шрифты для Linked IN - Time New Romans. Прозрачность примерно 53%"}}]
-                }
-            },
-            # Toggle: Промпт для нормализации текста
-            {
-                "object": "block",
-                "type": "toggle",
-                "toggle": {
-                    "rich_text": [{"type": "text", "text": {"content": "Промпт для нормализации текста"}}]
-                }
-            },
-            # Toggle: Промпт с переводом
-            {
-                "object": "block",
-                "type": "toggle",
-                "toggle": {
-                    "rich_text": [{"type": "text", "text": {"content": "Тут я тестирую версию промпта с переводом"}}]
-                }
-            },
-            # Toggle: Промпт для вступительного абзаца
-            {
-                "object": "block",
-                "type": "toggle",
-                "toggle": {
-                    "rich_text": [{"type": "text", "text": {"content": "Промпт для вступительного абзаца"}}]
-                }
-            },
-            # Toggle: Промпт для генерации названия темы
-            {
-                "object": "block",
-                "type": "toggle",
-                "toggle": {
-                    "rich_text": [{"type": "text", "text": {"content": "Промпт для генерации названия темы"}}]
-                }
-            },
-            # # Draft
-            {
-                "object": "block",
-                "type": "heading_1",
-                "heading_1": {
-                    "rich_text": [{"type": "text", "text": {"content": "Draft"}}]
-                }
-            },
-        ]
-
-        return blocks
-
-    def _get_toggle_content_blocks(self) -> List[Tuple[int, List[dict]]]:
-        """
-        Возвращает контент для toggle блоков (будет добавлен после создания страницы)
-
-        Returns:
-            Список кортежей (индекс_toggle_блока, [дочерние_блоки])
-        """
-        return [
-            # Промпт для нормализации текста (индекс 4)
-            (4, [
-                {
-                    "object": "block",
-                    "type": "paragraph",
-                    "paragraph": {
-                        "rich_text": [{"type": "text", "text": {"content": """В это список идет список новостей в формате Название новости Ссылка на новость Дата новости
-
-Агрегируй эти новости по дате в формет
-
-Дата
-
-Список новостей
-
-Оригинальный текст названия новости не меняй. Ссылку на новости добавь во внутрь названия новости.  Дату измени в формат через точку."""}}]
-                    }
-                }
-            ]),
-            # Промпт с переводом (индекс 5)
-            (5, [
-                {
-                    "object": "block",
-                    "type": "paragraph",
-                    "paragraph": {
-                        "rich_text": [{"type": "text", "text": {"content": """В это список идет список новостей в формате Название новости Ссылка на новость Дата новости
-
-Агрегируй эти новости по дате в формет
-
-Дата
-
-Список новостей
-
-Ссылку на новости добавь во внутрь названия новости.  Дату измени в формат через точку. Названия статей переведи на русский.
-
-Перевод не должен быть дословным, он дожен  передавать смысл статьи и быть адаптированным под русскоговорящего человека.  Используй англицизмы в переводе согласно последним веяниям разговорнгй моды. Изменяй граматику и пунктуацию и расстановку слов  так что бы твой перевол выглядел естественно. Перевод не должен выглядит топорно, он должен быть креативным и изобритетельным."""}}]
-                    }
-                }
-            ]),
-            # Промпт для вступительного абзаца (индекс 6)
-            (6, [
-                {
-                    "object": "block",
-                    "type": "paragraph",
-                    "paragraph": {
-                        "rich_text": [{"type": "text", "text": {"content": "Отлично, теперь ты дожен составить вступительный абзац для дайжества который будет опубликован в телеграмм. Во вступительном абаце нужно выделить 3 произволных новости кратко рассказав о них. Новости должны быть произвольно выбраныы из разных дат дайджеста."}}]
-                    }
-                }
-            ]),
-            # Промпт для генерации названия темы (индекс 7)
-            (7, [
-                {
-                    "object": "block",
-                    "type": "paragraph",
-                    "paragraph": {
-                        "rich_text": [{"type": "text", "text": {"content": "Придумай максимально точное название для этой статьи которое бы наиболее прозрачно описывваала суть этой стать. Вот пример хорошей темы **Google обновила Gemini 2.5 Pro - теперь модель лучше справляется с программированием и сложными вычислениями**"}}]
-                    }
-                }
-            ]),
-        ]
+        return markdown_to_notion_blocks(markdown_content)
 
     def fetch_news_from_database(self, start_date: datetime, end_date: datetime) -> List[Dict]:
         """
@@ -890,8 +897,19 @@ def main():
     # Запрашиваем URL баз данных
     blog_db_id, news_db_id = get_database_urls_from_user()
 
+    # Определяем путь к шаблону (рядом со скриптом)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(script_dir, "digest_template.md")
+
+    if not os.path.exists(template_path):
+        print(f"\n❌ Ошибка: файл шаблона не найден: {template_path}")
+        print("   Создайте файл digest_template.md рядом со скриптом")
+        sys.exit(1)
+
+    print(f"\n📋 Используется шаблон: {template_path}")
+
     # Создаем экземпляр
-    creator = DigestCreator(notion_token, blog_db_id, news_db_id)
+    creator = DigestCreator(notion_token, blog_db_id, news_db_id, template_path=template_path)
 
     # Получаем номер недели и год
     week_number, year = creator.get_current_week_info()
