@@ -22,6 +22,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 from collections import defaultdict
 from notion_client import Client
+from googletrans import Translator
 
 
 def markdown_to_notion_blocks(markdown_content: str) -> List[dict]:
@@ -478,6 +479,117 @@ class TitleVerifier:
     def verify_titles(self, news_items: List[Dict], log_file: Optional[str] = None) -> List[Dict]:
         """Синхронная обертка для проверки названий"""
         return asyncio.run(self.verify_titles_async(news_items, log_file))
+
+
+class ArticleTranslator:
+    """Класс для перевода заголовков статей с английского на русский"""
+
+    def __init__(self):
+        self.translator = Translator()
+        self._cache: Dict[str, str] = {}
+
+    def is_english(self, text: str) -> bool:
+        """
+        Определяет, написан ли текст на английском языке.
+        Использует эвристику на основе ASCII символов.
+
+        Args:
+            text: Текст для проверки
+
+        Returns:
+            True если текст на английском
+        """
+        if not text or not text.strip():
+            return False
+
+        # Проверяем по ASCII символам
+        # Если большинство букв - латиница, считаем английским
+        letters = [c for c in text if c.isalpha()]
+        if not letters:
+            return False
+
+        ascii_letters = [c for c in letters if ord(c) < 128]
+        # Если более 80% букв - ASCII (латиница), считаем английским
+        return len(ascii_letters) / len(letters) > 0.8
+
+    async def translate_to_russian_async(self, text: str) -> str:
+        """
+        Асинхронно переводит текст с английского на русский.
+
+        Args:
+            text: Текст для перевода
+
+        Returns:
+            Переведённый текст или оригинал при ошибке
+        """
+        if not text or not text.strip():
+            return text
+
+        # Проверяем кэш
+        if text in self._cache:
+            return self._cache[text]
+
+        try:
+            result = await self.translator.translate(text, src='en', dest='ru')
+            translated = result.text
+            self._cache[text] = translated
+            return translated
+        except Exception as e:
+            print(f"⚠️ Ошибка перевода '{text[:50]}...': {e}")
+            return text
+
+    async def translate_if_english_async(self, text: str) -> Tuple[str, bool]:
+        """
+        Переводит текст, если он на английском языке.
+
+        Args:
+            text: Текст для проверки и перевода
+
+        Returns:
+            Tuple[переведённый_текст, был_ли_перевод]
+        """
+        if not text or not text.strip():
+            return text, False
+
+        if self.is_english(text):
+            translated = await self.translate_to_russian_async(text)
+            return translated, translated != text
+
+        return text, False
+
+    async def translate_news_titles_async(self, news_items: List[Dict]) -> List[Dict]:
+        """
+        Асинхронно переводит заголовки новостей, если они на английском.
+
+        Args:
+            news_items: Список новостей с полем 'name'
+
+        Returns:
+            Список новостей с переведёнными заголовками
+        """
+        translated_items = []
+        translated_count = 0
+
+        for item in news_items:
+            new_item = item.copy()
+            name = item.get('name', '')
+
+            translated_name, was_translated = await self.translate_if_english_async(name)
+            if was_translated:
+                new_item['name'] = translated_name
+                new_item['original_name'] = name  # Сохраняем оригинал
+                translated_count += 1
+
+            translated_items.append(new_item)
+
+        if translated_count > 0:
+            print(f"🌐 Переведено заголовков: {translated_count}")
+
+        return translated_items
+
+    def translate_news_titles(self, news_items: List[Dict]) -> List[Dict]:
+        """Синхронная обёртка для перевода заголовков"""
+        return asyncio.run(self.translate_news_titles_async(news_items))
 
 
 class DigestCreator:
@@ -983,40 +1095,10 @@ def main():
         print("Страница создана с пустой секцией Draft.")
         sys.exit(0)
 
-    # Шаг 3: Агрегируем по датам
-    print("\n" + "-" * 60)
-    print("📊 Агрегация новостей по датам...")
-
-    aggregated = creator.aggregate_news_by_date(news_items)
-    print(f"✅ Уникальных дат: {len(aggregated)}")
-
-    for date, items in sorted(aggregated.items(), key=lambda x: datetime.strptime(x[0], "%d.%m.%Y") if x[0] != "Без даты" else datetime.min, reverse=True):
-        print(f"   {date}: {len(items)} новостей")
-
-    # Шаг 4: Форматируем и добавляем в страницу
-    print("\n" + "-" * 60)
-    print("📝 Добавление новостей в секцию Draft...")
-
-    try:
-        news_blocks = creator.format_news_as_markdown_blocks(aggregated)
-        creator.append_blocks_to_page(page_id, news_blocks)
-        print(f"✅ Добавлено блоков: {len(news_blocks)}")
-    except Exception as e:
-        print(f"❌ Ошибка при добавлении контента: {e}")
-        sys.exit(1)
-
-    # Готово
-    print("\n" + "=" * 60)
-    print("🎉 AI Digest успешно создан!")
-    print(f"📄 Страница: AI Digest - Week {week_number} {year}")
-    print(f"🔗 ID: {page_id}")
-    print("=" * 60)
-
-    # Шаг 5: Проверка соответствия названий статей
+    # Шаг 3: Проверка соответствия названий статей (до перевода!)
     print("\n" + "-" * 60)
     print("🔍 Проверка соответствия названий статей...")
 
-    # Формируем имя лог-файла с датой и номером недели
     log_filename = f"title_verification_week{week_number}_{year}.log"
     verifier = TitleVerifier(max_concurrent=5)
     mismatches = verifier.verify_titles(news_items, log_file=log_filename)
@@ -1035,6 +1117,45 @@ def main():
                 print(f"   Фактическое название: {mismatch['actual_title']}")
     else:
         print("✅ Все названия соответствуют фактическим заголовкам статей")
+
+    # Шаг 4: Перевод английских заголовков
+    print("\n" + "-" * 60)
+    print("🌐 Перевод английских заголовков...")
+
+    try:
+        translator = ArticleTranslator()
+        news_items = translator.translate_news_titles(news_items)
+    except Exception as e:
+        print(f"⚠️ Ошибка при переводе (продолжаем без перевода): {e}")
+
+    # Шаг 5: Агрегация по датам
+    print("\n" + "-" * 60)
+    print("📊 Агрегация новостей по датам...")
+
+    aggregated = creator.aggregate_news_by_date(news_items)
+    print(f"✅ Уникальных дат: {len(aggregated)}")
+
+    for date, items in sorted(aggregated.items(), key=lambda x: datetime.strptime(x[0], "%d.%m.%Y") if x[0] != "Без даты" else datetime.min, reverse=True):
+        print(f"   {date}: {len(items)} новостей")
+
+    # Шаг 6: Форматируем и добавляем в страницу
+    print("\n" + "-" * 60)
+    print("📝 Добавление новостей в секцию Draft...")
+
+    try:
+        news_blocks = creator.format_news_as_markdown_blocks(aggregated)
+        creator.append_blocks_to_page(page_id, news_blocks)
+        print(f"✅ Добавлено блоков: {len(news_blocks)}")
+    except Exception as e:
+        print(f"❌ Ошибка при добавлении контента: {e}")
+        sys.exit(1)
+
+    # Готово
+    print("\n" + "=" * 60)
+    print("🎉 AI Digest успешно создан!")
+    print(f"📄 Страница: AI Digest - Week {week_number} {year}")
+    print(f"🔗 ID: {page_id}")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
