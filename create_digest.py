@@ -823,7 +823,7 @@ class DigestCreator:
         sorted_dates = sorted(
             aggregated_news.keys(),
             key=lambda x: datetime.strptime(x, "%d.%m.%Y") if x != "Без даты" else datetime.min,
-            reverse=True
+            reverse=False
         )
 
         for date in sorted_dates:
@@ -1135,7 +1135,7 @@ def main():
     aggregated = creator.aggregate_news_by_date(news_items)
     print(f"✅ Уникальных дат: {len(aggregated)}")
 
-    for date, items in sorted(aggregated.items(), key=lambda x: datetime.strptime(x[0], "%d.%m.%Y") if x[0] != "Без даты" else datetime.min, reverse=True):
+    for date, items in sorted(aggregated.items(), key=lambda x: datetime.strptime(x[0], "%d.%m.%Y") if x[0] != "Без даты" else datetime.min, reverse=False):
         print(f"   {date}: {len(items)} новостей")
 
     # Шаг 6: Форматируем и добавляем в страницу
