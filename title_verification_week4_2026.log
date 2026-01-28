@@ -1,0 +1,278 @@
+# Лог проверки соответствия названий статей
+# Дата: 2026-01-21 11:13:02
+# Всего проверено: 54
+# Совпадений: 54
+# Несоответствий: 0
+# Ошибок: 0
+================================================================================
+
+1. [MATCH] ✅
+   URL: https://habr.com/ru/news/986254/
+   Название в Digest:    «20 минут вместо месяцев»: как ИИ Claude меняет работу ученых
+   Фактическое название: «20 минут вместо месяцев»: как ИИ Claude меняет работу ученых
+
+2. [MATCH] ✅
+   URL: https://habr.com/ru/news/986156/
+   Название в Digest:    ИИ-кластер xAI Colossus 2 потребляет 1 ГВт мощности — больше, чем Сан-Франциско
+   Фактическое название: ИИ-кластер xAI Colossus 2 потребляет 1 ГВт мощности — больше, чем Сан-Франциско
+
+3. [MATCH] ✅
+   URL: https://habr.com/ru/news/986124/
+   Название в Digest:    Claude Code теперь можно запускать с локальными open-source моделями
+   Фактическое название: Claude Code теперь можно запускать с локальными open-source моделями
+
+4. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/986092/
+   Название в Digest:    Стартап Replit представил ИИ-инструмент, который пишет готовые приложения для iPhone по текстовому запросу
+   Фактическое название: Стартап Replit представил ИИ-инструмент, который пишет готовые приложения для iPhone по текстовому запросу
+
+5. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/986074/
+   Название в Digest:    NASA запускает ИИ-инициативу для Луны и Марса
+   Фактическое название: NASA запускает ИИ-инициативу для Луны и Марса
+
+6. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/986046/
+   Название в Digest:    OpenAI запустила дешевую подписку на ChatGPT по всему миру
+   Фактическое название: OpenAI запустила дешевую подписку на ChatGPT по всему миру
+
+7. [MATCH] ✅
+   URL: https://habr.com/ru/news/985808/
+   Название в Digest:    Качественный перевод прямо на смартфоне: вышла Google TranslateGemma
+   Фактическое название: Качественный перевод прямо на смартфоне: вышла Google TranslateGemma
+
+8. [MATCH] ✅
+   URL: https://habr.com/ru/news/985772/
+   Название в Digest:    В ChatGPT появилась поддержка расширенного поиска по истории чатов
+   Фактическое название: В ChatGPT появилась поддержка расширенного поиска по истории чатов
+
+9. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/985786/
+   Название в Digest:    Parloa привлек 350 миллионов долларов на развитие AI для клиентской поддержки
+   Фактическое название: Parloa привлек 350 миллионов долларов на развитие AI для клиентской поддержки
+
+10. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/16/ai-cloud-startup-runpod-hits-120m-in-arr-and-it-started-with-a-reddit-post/
+   Название в Digest:    AI cloud startup Runpod hits $120M in ARR — and it started with a Reddit post
+   Фактическое название: AI cloud startup Runpod hits $120M in ARR — and it started with a Reddit post
+
+11. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/16/chatgpt-users-are-about-to-get-hit-with-targeted-ads/
+   Название в Digest:    ChatGPT users are about to get hit with targeted ads
+   Фактическое название: ChatGPT users are about to get hit with targeted ads
+
+12. [MATCH] ✅
+   URL: https://habr.com/ru/news/985640/
+   Название в Digest:    TSMC вложит $56 млрд в производство ИИ-чипов на фоне рекордной прибыли
+   Фактическое название: TSMC вложит $56 млрд в производство ИИ-чипов на фоне рекордной прибыли
+
+13. [MATCH] ✅
+   URL: https://habr.com/ru/news/985642/
+   Название в Digest:    Raspberry Pi представила AI HAT+ 2 — модуль для локального запуска генеративных моделей
+   Фактическое название: Raspberry Pi представила AI HAT+ 2 — модуль для локального запуска генеративных моделей
+
+14. [MATCH] ✅
+   URL: https://habr.com/ru/news/985564/
+   Название в Digest:    Games Workshop запретила использование генеративного ИИ в своём контенте и процессах разработки
+   Фактическое название: Games Workshop запретила использование генеративного ИИ в своём контенте и процессах разработки
+
+15. [MATCH] ✅
+   URL: https://habr.com/ru/news/985370/
+   Название в Digest:    OpenAI внедрила аналог Google Translate в ChatGPT
+   Фактическое название: OpenAI внедрила аналог Google Translate в ChatGPT
+
+16. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/15/ai-video-startup-higgsfield-founded-by-ex-snap-exec-lands-1-3b-valuation/
+   Название в Digest:    AI video startup, Higgsfield, founded by ex-Snap exec, lands $1.3B valuation
+   Фактическое название: AI video startup, Higgsfield, founded by ex-Snap exec, lands $1.3B valuation
+
+17. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/15/ai-journalism-startup-symbolic-ai-signs-deal-with-rupert-murdochs-news-corp/
+   Название в Digest:    AI journalism startup Symbolic.ai signs deal with Rupert Murdoch’s News Corp
+   Фактическое название: AI journalism startup Symbolic.ai signs deal with Rupert Murdoch’s News Corp
+
+18. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/15/the-us-imposes-25-tariff-on-nvidias-h200-ai-chips-headed-to-china/
+   Название в Digest:    The US imposes 25% tariff on Nvidia’s H200 AI chips headed to China
+   Фактическое название: The US imposes 25% tariff on Nvidia’s H200 AI chips headed to China
+
+19. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/15/openai-invests-in-sam-altmans-brain-computer-interface-startup-merge-labs/
+   Название в Digest:    OpenAI invests in Sam Altman’s brain computer interface startup Merge Labs
+   Фактическое название: OpenAI invests in Sam Altman’s brain computer interface startup Merge Labs
+
+20. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/15/wikimedia-foundation-announces-new-ai-partnerships-with-amazon-meta-microsoft-perplexity-and-others/
+   Название в Digest:    Wikimedia Foundation announces new AI partnerships with Amazon, Meta, Microsoft, Perplexity, and others
+   Фактическое название: Wikimedia Foundation announces new AI partnerships with Amazon, Meta, Microsoft, Perplexity, and others
+
+21. [MATCH] ✅
+   URL: https://vc.ru/legal/2688698-zapret-na-dipfeyki-v-ssha?from=rss
+   Название в Digest:    США одобрили запрет на создание с помощью ИИ порнографических дипфейков реальных людей без их согласия
+   Фактическое название: США одобрили запрет на создание с помощью ИИ порнографических дипфейков реальных людей без их согласия
+
+22. [MATCH] ✅
+   URL: https://habr.com/ru/news/985290/
+   Название в Digest:    Вышла GLM-Image: открытая модель создания изображений «промышленного уровня»
+   Фактическое название: Вышла GLM-Image: открытая модель создания изображений «промышленного уровня»
+
+23. [MATCH] ✅
+   URL: https://habr.com/ru/news/985256/
+   Название в Digest:    В McKinsey около 60 тысяч сотрудников, из которых около 20 тысяч — ИИ-агенты
+   Фактическое название: В McKinsey около 60 тысяч сотрудников, из которых около 20 тысяч — ИИ-агенты
+
+24. [MATCH] ✅
+   URL: https://habr.com/ru/news/985146/
+   Название в Digest:    OpenAI, Anthropic и Google будут вместе бороться с галлюцинациями ИИ
+   Фактическое название: OpenAI, Anthropic и Google будут вместе бороться с галлюцинациями ИИ
+
+25. [MATCH] ✅
+   URL: https://habr.com/ru/news/985028/
+   Название в Digest:    «Яндекс» обучил нейросеть «Алиса AI» удобному подбору товаров прямо в чате
+   Фактическое название: «Яндекс» обучил нейросеть «Алиса AI» удобному подбору товаров прямо в чате
+
+26. [MATCH] ✅
+   URL: https://habr.com/ru/news/985098/
+   Название в Digest:    Создатель Signal разработал ИИ-ассистента для сокрытия данных от операторов и правоохранителей
+   Фактическое название: Создатель Signal разработал ИИ-ассистента для сокрытия данных от операторов и правоохранителей
+
+27. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/14/openai-signs-deal-reportedly-worth-10-billion-for-compute-from-cerebras/
+   Название в Digest:    OpenAI signs deal, worth $10B, for compute from Cerebras
+   Фактическое название: OpenAI signs deal, worth $10B, for compute from Cerebras
+
+28. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/14/googles-trends-explore-page-gets-new-gemini-capabilities/
+   Название в Digest:    Google’s Trends Explore page gets new Gemini capabilities
+   Фактическое название: Google’s Trends Explore page gets new Gemini capabilities
+
+29. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/14/bandcamp-takes-a-stand-against-ai-music-banning-it-from-the-platform/
+   Название в Digest:    Bandcamp takes a stand against AI music, banning it from the platform
+   Фактическое название: Bandcamp takes a stand against AI music, banning it from the platform
+
+30. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/14/geminis-new-beta-feature-provides-proactive-responses-based-on-your-photos-emails-and-more/
+   Название в Digest:    Gemini’s new beta feature provides proactive responses based on your photos, emails, and more
+   Фактическое название: Gemini’s new beta feature provides proactive responses based on your photos, emails, and more
+
+31. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/14/ai-security-firm-depthfirst-announces-40-million-series-a/
+   Название в Digest:    AI security firm, depthfirst, announces $40 million Series A
+   Фактическое название: AI security firm, depthfirst, announces $40 million Series A
+
+32. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/14/voicerun-nabs-5-5m-to-build-voice-agent-factory/
+   Название в Digest:    VoiceRun nabs $5.5M to build a voice agent factory
+   Фактическое название: VoiceRun nabs $5.5M to build a voice agent factory
+
+33. [MATCH] ✅
+   URL: https://vc.ru/legal/2687349-v-velikobritanii-ugolovnaya-otvetstvennost-za-intimnye-izobrazheniya?from=rss
+   Название в Digest:    В Великобритании введут уголовную ответственность за распространение инструментов для создания интимных изображений реальных людей без их согласия
+   Фактическое название: В Великобритании введут уголовную ответственность за распространение инструментов для создания интимных изображений реальных людей без их согласия
+
+34. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/984984/
+   Название в Digest:    Новое в видеогенераторе Veo 3.1: поддержка исходников для 9:16, улучшили связность и 4K-режим
+   Фактическое название: Новое в видеогенераторе Veo 3.1: поддержка исходников для 9:16, улучшили связность и 4K-режим
+
+35. [MATCH] ✅
+   URL: https://habr.com/ru/news/984902/
+   Название в Digest:    Grok и Gemini получат доступ к секретным сетям Пентагона к концу января
+   Фактическое название: Grok и Gemini получат доступ к секретным сетям Пентагона к концу января
+
+36. [MATCH] ✅
+   URL: https://habr.com/ru/news/984696/
+   Название в Digest:    Исследователи DeepSeek добавили в ИИ память — но улучшились рассуждения, а не знание фактов
+   Фактическое название: Исследователи DeepSeek добавили в ИИ память — но улучшились рассуждения, а не знание фактов
+
+37. [MATCH] ✅
+   URL: https://habr.com/ru/news/984878/
+   Название в Digest:    Anthropic инвестируют $1.5 млн в Python — и делают ставку на безопасность open source
+   Фактическое название: Anthropic инвестируют $1.5 млн в Python — и делают ставку на безопасность open source
+
+38. [MATCH] ✅
+   URL: https://habr.com/ru/news/984674/
+   Название в Digest:    Microsoft постепенно превращает Edge в ещё одно приложение Copilot
+   Фактическое название: Microsoft постепенно превращает Edge в ещё одно приложение Copilot
+
+39. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/13/a-consumer-watchdog-issued-a-warning-about-googles-ai-agent-shopping-protocol-google-says-shes-wrong/
+   Название в Digest:    A consumer watchdog issued a warning about Google’s AI agent shopping protocol — Google says she’s wrong
+   Фактическое название: A consumer watchdog issued a warning about Google’s AI agent shopping protocol — Google says she’s wrong
+
+40. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/13/slackbot-is-an-ai-agent-now/
+   Название в Digest:    Slackbot is an AI agent now
+   Фактическое название: Slackbot is an AI agent now
+
+41. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/13/elevenlabs-ceo-says-the-voice-ai-startup-crossed-330-million-arr-last-year/
+   Название в Digest:    ElevenLabs CEO says the voice AI startup crossed $330M ARR last year
+   Фактическое название: ElevenLabs CEO says the voice AI startup crossed $330M ARR last year
+
+42. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/12/googles-gemini-to-power-apples-ai-features-like-siri/
+   Название в Digest:    Google’s Gemini to power Apple’s AI features like Siri
+   Фактическое название: Google’s Gemini to power Apple’s AI features like Siri
+
+43. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/12/harmattan-ai-raises-200m-series-b-led-by-dassault-aviation-becomes-defense-unicorn/
+   Название в Digest:    Harmattan AI raises $200M Series B led by Dassault Aviation, becomes defense unicorn
+   Фактическое название: Harmattan AI raises $200M Series B led by Dassault Aviation, becomes defense unicorn
+
+44. [MATCH] ✅
+   URL: https://habr.com/ru/news/984644/
+   Название в Digest:    Anthropic представила Cowork — ИИ-агента на базе Claude Code для широких задач
+   Фактическое название: Anthropic представила Cowork — ИИ-агента на базе Claude Code для широких задач
+
+45. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/984602/
+   Название в Digest:    Gemini заключает новую сделку с Walmart, уменьшая отрыв от ChatGPT
+   Фактическое название: Gemini заключает новую сделку с Walmart, уменьшая отрыв от ChatGPT
+
+46. [MATCH] ✅
+   URL: https://habr.com/ru/companies/bothub/news/984582/
+   Название в Digest:    В поисках «золотого датасета»: OpenAI собирает реальные рабочие задачи и файлы для тренировки будущих ИИ-агентов
+   Фактическое название: В поисках «золотого датасета»: OpenAI собирает реальные рабочие задачи и файлы для тренировки будущих ИИ-агентов
+
+47. [MATCH] ✅
+   URL: https://habr.com/ru/news/984592/
+   Название в Digest:    В Chrome Web Store нашли два расширения, которые крадут переписку с ChatGPT и DeepSeek
+   Фактическое название: В Chrome Web Store нашли два расширения, которые крадут переписку с ChatGPT и DeepSeek
+
+48. [MATCH] ✅
+   URL: https://habr.com/ru/news/984570/
+   Название в Digest:    «Икс 5 Диджитал» подал в Роспатент права на товарный знак «ГаляGPT»
+   Фактическое название: «Икс 5 Диджитал» подал в Роспатент права на товарный знак «ГаляGPT»
+
+49. [MATCH] ✅
+   URL: https://habr.com/ru/news/984568/
+   Название в Digest:    ChatGPT протестирует новую функцию Jobs для поиска работы и улучшения резюме
+   Фактическое название: ChatGPT протестирует новую функцию Jobs для поиска работы и улучшения резюме
+
+50. [MATCH] ✅
+   URL: https://habr.com/ru/news/984464/
+   Название в Digest:    Microsoft купила платформу для обработки данных Osmos
+   Фактическое название: Microsoft купила платформу для обработки данных Osmos
+
+51. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/12/meta-backed-hupo-finds-growth-after-pivot-to-ai-sales-coaching-from-mental-wellness/
+   Название в Digest:    Meta-backed Hupo finds growth after pivot to AI sales coaching from mental wellness
+   Фактическое название: Meta-backed Hupo finds growth after pivot to AI sales coaching from mental wellness
+
+52. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/12/anthropic-announces-claude-for-healthcare-following-openais-chatgpt-health-reveal/
+   Название в Digest:    Anthropic announces Claude for Healthcare following OpenAI’s ChatGPT Health reveal
+   Фактическое название: Anthropic announces Claude for Healthcare following OpenAI’s ChatGPT Health reveal
+
+53. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/12/mark-zuckerberg-says-meta-is-launching-its-own-ai-infrastructure-initiative/
+   Название в Digest:    Mark Zuckerberg says Meta is launching its own AI infrastructure initiative
+   Фактическое название: Mark Zuckerberg says Meta is launching its own AI infrastructure initiative
+
+54. [MATCH] ✅
+   URL: https://techcrunch.com/2026/01/12/openai-buys-tiny-health-records-startup-torch-for-reportedly-100m/
+   Название в Digest:    OpenAI buys tiny health records startup Torch for, reportedly, $100M
+   Фактическое название: OpenAI buys tiny health records startup Torch for, reportedly, $100M
+

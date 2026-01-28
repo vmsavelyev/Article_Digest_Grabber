@@ -1,0 +1,201 @@
+Microsoft Releases Azure Functions Support for Model Context Protocol Servers - InfoQ
+https://www.infoq.com/news/2026/01/azure-functions-mcp-support/?utm_campaign=infoq_content&utm_source=infoq&utm_medium=feed&utm_term=global
+
+OpenEvidence, An AI-Powered ‘Brain Extender’ For Doctors, Doubles Valuation To $12B With $250M Series D
+https://news.crunchbase.com/venture/openevidence-ai-doctors-doubles-valuation-seriesd/
+
+Quadric rides the shift from cloud AI to on-device inference — and it's paying off | TechCrunch
+https://techcrunch.com/2026/01/22/quadric-rides-the-shift-from-cloud-ai-to-on-device-inference-and-its-paying-off/
+
+Apple plans to make Siri an AI chatbot, report says | TechCrunch
+https://techcrunch.com/2026/01/21/apple-plans-to-make-siri-an-ai-chatbot-report-says/
+
+Anthropic revises Claude's 'Constitution,' and hints at chatbot consciousness | TechCrunch
+https://techcrunch.com/2026/01/21/anthropic-revises-claudes-constitution-and-hints-at-chatbot-consciousness/
+
+YouTube will soon let creators make Shorts with their own AI likeness | TechCrunch
+https://techcrunch.com/2026/01/21/youtube-will-soon-let-creators-make-shorts-with-their-own-ai-likeness/
+
+Adobe Acrobat now lets you edit files using prompts, generate podcast summaries | TechCrunch
+https://techcrunch.com/2026/01/21/adobe-acrobat-now-lets-you-edit-files-using-prompts-generate-podcast-summaries/
+
+In an effort to protect young users, ChatGPT will now predict how old you are | TechCrunch
+https://techcrunch.com/2026/01/20/in-an-effort-to-protect-young-users-chatgpt-will-now-predict-how-old-you-are/
+
+Indian vibe-coding startup Emergent triples valuation to $300M with $70M fundraise | TechCrunch
+https://techcrunch.com/2026/01/20/indian-vibe-coding-startup-emergent-raises-70m-at-300m-valuation-from-softbank-khosla-ventures/
+
+Разработчик научил ИИ извлекать React-компоненты с любого сайта — без исходников / Хабр
+https://habr.com/ru/news/987844/
+
+Бесплатно тестируем 55 видеомоделей: LMArena открыла Video Arena для всех / Хабр
+https://habr.com/ru/news/987830/
+
+ElevenLabs выпустила сгенерированный ИИ музыкальный альбом ради рекламы / Хабр
+https://habr.com/ru/news/987726/
+
+Humans& привлекла $480 млн без продукта. Рынок снова голосует за имена / Хабр
+https://habr.com/ru/companies/bothub/news/987702/
+
+Глава Anthropic назвал поставки чипов Nvidia в Китай угрозой безопасности США / Хабр
+https://habr.com/ru/companies/bothub/news/987588/
+
+Разработчик представил Cupertino — MCP-сервер для документации Apple / Хабр
+https://habr.com/ru/news/987504/
+
+Генеральный директор Nvidia заявил, что ИИ создаст рабочие места для электриков, сантехников и строителей / Хабр
+https://habr.com/ru/news/987502/
+
+Генеративный ИИ начали использовать в России для проверки медицинской документации / Хабр
+https://habr.com/ru/news/987472/
+
+«50% джуниоров потеряют работу за 5 лет»: прогноз CEO Anthropic / Хабр
+https://habr.com/ru/news/987442/
+
+Cloudflare купил Human Native и строит рынок данных для обучения ИИ / Хабр
+https://habr.com/ru/companies/bothub/news/987300/
+
+Выходцы из MIT создали рассуждающий ИИ для смартфонов — он занимает всего 720 МБ / Хабр
+https://habr.com/ru/news/987200/
+
+Code.org запретила соискателям пользоваться ИИ на собеседованиях / Хабр
+https://habr.com/ru/news/987160/
+
+Volvo EX60: первый в мире электрокар с Gemini AI почти здесь / Хабр
+https://habr.com/ru/companies/bothub/news/987128/
+
+Голоса в голове делают ответы ИИ лучше — исследование Google / Хабр
+https://habr.com/ru/news/987042/
+
+Илон Маск снова почти закончил ИИ-процессор Tesla AI5 / Хабр
+https://habr.com/ru/companies/bothub/news/986394/
+
+1X представила новую модель искусственного интеллекта, которая поможет роботам быстрее усваивать новые навыки / Хабр
+https://habr.com/ru/news/986478/
+
+Глава Salesforce: ИИ сделал инженеров Salesforce более продуктивными, и компания прекратила наём / Хабр
+https://habr.com/ru/news/986602/
+
+Европейский DeepSeek: ЕС ускоряет разработку своих языковых моделей / Хабр
+https://habr.com/ru/companies/bothub/news/986692/
+
+Anthropic тестирует базы знаний для Claude Cowork / Хабр
+https://habr.com/ru/companies/bothub/news/986712/
+
+Valve изменила раздел об ИИ в форме для разработчиков в Steam и уточнила правила маркировки игр / Хабр
+https://habr.com/ru/news/986736/
+
+Теперь Manus⚹ берет на себя упаковку и загрузку ваших приложений в Google Play и App Store / Хабр
+https://habr.com/ru/companies/bothub/news/986778/
+
+GLM-4.7-Flash обходит модели вдвое крупнее — и запускается на ноутбуке / Хабр
+https://habr.com/ru/news/986792/
+
+ClickHouse приобрела разработчика ИИ-решений Langfuse / Хабр
+https://habr.com/ru/news/986896/
+
+Nvidia обвинили в попытке доступа к миллионам пиратских книг через Anna's Archive для обучения ИИ / Хабр
+https://habr.com/ru/news/986996/
+
+В Anthropic показали, что «характер» в LLM — это отдельное направление в нейросети / Хабр
+https://habr.com/ru/news/987000/
+
+В Google Chrome разрешили отключать локальный ИИ для защиты от мошенников / Хабр
+https://habr.com/ru/companies/bothub/news/986364/
+
+Exclusive: Cambio Lands $18M At $100M Valuation For AI-Powered Commercial Real Estate Software
+https://news.crunchbase.com/real-estate-property-tech/cambio-cre-ai-asset-management-saas-software-funding/
+
+Legal AI giant Harvey acquires Hexus as competition heats up in legal tech | TechCrunch
+https://techcrunch.com/2026/01/23/legal-ai-giant-harvey-acquires-hexus-as-competition-heats-up-in-legal-tech/
+
+Google Photos' latest feature lets you meme yourself | TechCrunch
+https://techcrunch.com/2026/01/23/google-photos-latest-feature-lets-you-meme-yourself/
+
+Meta pauses teen access to AI characters ahead of new version | TechCrunch
+https://techcrunch.com/2026/01/23/meta-pauses-teen-access-to-ai-characters-ahead-of-new-version/
+
+OpenAI chief Sam Altman plans India visit as AI leaders converge in New Delhi: sources | TechCrunch
+https://techcrunch.com/2026/01/23/openai-chief-sam-altman-plans-india-visit-as-ai-leaders-converge-in-new-delhi-sources/
+
+OpenAI is coming for those sweet enterprise dollars in 2026 | TechCrunch
+https://techcrunch.com/2026/01/22/openai-is-coming-for-those-sweet-enterprise-dollars-in-2026/
+
+Voice AI engine and OpenAI partner LiveKit hits $1B valuation | TechCrunch
+https://techcrunch.com/2026/01/22/voice-ai-engine-and-openai-partner-livekit-hits-1b-valuation/
+
+Inference startup Inferact lands $150M to commercialize vLLM | TechCrunch
+https://techcrunch.com/2026/01/22/inference-startup-inferact-lands-150m-to-commercialize-vllm/
+
+Are AI agents ready for the workplace? A new benchmark raises doubts | TechCrunch
+https://techcrunch.com/2026/01/22/are-ai-agents-ready-for-the-workplace-a-new-benchmark-raises-doubts/
+
+Google DeepMind CEO is 'surprised' OpenAI is rushing forward with ads in ChatGPT | TechCrunch
+https://techcrunch.com/2026/01/22/google-deepmind-ceo-is-surprised-openai-is-rushing-forward-with-ads-in-chatgpt/
+
+Google now offers free SAT practice exams, powered by Gemini | TechCrunch
+https://techcrunch.com/2026/01/22/google-now-offers-free-sat-practice-exams-powered-by-gemini/
+
+Google's AI Mode can now tap into your Gmail and Photos to provide tailored responses | TechCrunch
+https://techcrunch.com/2026/01/22/googles-ai-mode-can-now-tap-into-your-gmail-and-photos-to-provide-tailored-responses/
+
+Google snags team behind AI voice startup Hume AI | TechCrunch
+https://techcrunch.com/2026/01/22/google-reportedly-snags-up-team-behind-ai-voice-startup-hume-ai/
+
+Spotify brings AI-powered Prompted Playlists to the US and Canada | TechCrunch
+https://techcrunch.com/2026/01/22/spotify-brings-ai-powered-prompted-playlists-to-the-u-s-and-canada/
+
+GitHub открыла доступ к агентным возможностям Copilot через SDK / Хабр
+https://habr.com/ru/companies/bothub/news/988504/
+
+OpenAI хочет получать долю с открытий, сделанных с помощью ИИ / Хабр
+https://habr.com/ru/news/988492/
+
+Apple готовит носимый ИИ-гаджет в формате AirTag / Хабр
+https://habr.com/ru/companies/bothub/news/988372/
+
+Китай вводит «пакетное условие» на покупку ускорителей Nvidia / Хабр
+https://habr.com/ru/companies/bothub/news/988382/
+
+На San Diego Comic‑Con полностью запретили созданное с помощью ИИ искусство после шквала жалоб от художников / Хабр
+https://habr.com/ru/news/988352/
+
+Южная Корея ввела закон по регулированию ИИ / Хабр
+https://habr.com/ru/news/988140/
+
+Superintelligence Labs передала первые ИИ-модели на внутреннее тестирование / Хабр
+https://habr.com/ru/companies/bothub/news/988136/
+
+Qwen3-TTS. Большой open-source шаг в сторону голосовых технологий / Хабр
+https://habr.com/ru/companies/bothub/news/988110/
+
+NVIDIA и Eli Lilly вложат $1 млрд в ИИ-лабораторию лекарств / Хабр
+https://habr.com/ru/news/988064/
+
+Apple выпустила руководство по промптингу локальных моделей из Foundation Models / Хабр
+https://habr.com/ru/news/988062/
+
+Бесплатный ИИ уровня GPT-5 и Gemini 3: Baidu выпустила ERNIE 5.0 / Хабр
+https://habr.com/ru/news/988036/
+
+Ollama добавила генерацию изображений и превратилась в универсальный локальный AI-хаб / Хабр
+https://habr.com/ru/companies/bothub/news/988034/
+
+Overworld открыла Waypoint-1. Реалтайм-модель мира для игр и симуляций / Хабр
+https://habr.com/ru/companies/bothub/news/987714/
+
+Вышла Chroma 1.0. Первая полностью открытая speech to speech модель с клонированием голоса в реальном времени / Хабр
+https://habr.com/ru/companies/bothub/news/987646/
+
+PayPal покупает стартап Cymbio и усиливает ставку на продажу товаров через ИИ-чат-боты / Хабр
+https://habr.com/ru/companies/technokratos/news/987958/
+
+Claude Code научили писать человечнее, использовав гайд Википедии для борьбы с ИИ-текстами / Хабр
+https://habr.com/ru/news/987956/
+
+Сотни деятелей культуры поддержали кампанию «Кража — не инновация» против незаконного использования контента для ИИ / Хабр
+https://habr.com/ru/news/987938/
+
+Wildberries расширил тестирование нейропересказов в отзывах — доступ открыли большинству пользователей приложения — Маркетплейсы на vc.ru
+https://vc.ru/marketplace/2700808-wildberries-rasshiril-testirovanie-neyropereskazov?from=rss
+
