@@ -15,6 +15,7 @@ import re
 import os
 import shutil
 import time
+import random
 from datetime import datetime
 from typing import List, Dict, Optional
 
@@ -22,11 +23,27 @@ from typing import List, Dict, Optional
 class ArticleParser:
     """Класс для парсинга статей с разных сайтов"""
     
-    def __init__(self, max_concurrent: int = 10):
+    def __init__(self, max_concurrent: int = 10, retry_count: int = 3, min_delay: float = 0.5, max_delay: float = 2.0):
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8',
+            'Accept-Encoding': 'gzip, deflate',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
         }
         self.max_concurrent = max_concurrent
+        self.retry_count = retry_count
+        self.min_delay = min_delay
+        self.max_delay = max_delay
         self.session = None
     
     def detect_site_type(self, url: str) -> str:
@@ -899,10 +916,41 @@ class ArticleParser:
         return filename.strip('_')
     
     async def _fetch_url(self, session: aiohttp.ClientSession, url: str) -> bytes:
-        """Асинхронно загружает страницу"""
-        async with session.get(url, headers=self.headers, timeout=aiohttp.ClientTimeout(total=15)) as response:
-            response.raise_for_status()
-            return await response.read()
+        """Асинхронно загружает страницу с retry логикой"""
+        last_error = None
+
+        for attempt in range(self.retry_count):
+            try:
+                # Добавляем случайную задержку перед запросом (кроме первой попытки)
+                if attempt > 0:
+                    delay = random.uniform(self.min_delay * (attempt + 1), self.max_delay * (attempt + 1))
+                    print(f"  Повторная попытка {attempt + 1}/{self.retry_count} через {delay:.1f}с...")
+                    await asyncio.sleep(delay)
+
+                async with session.get(url, headers=self.headers, timeout=aiohttp.ClientTimeout(total=15)) as response:
+                    if response.status == 403:
+                        last_error = aiohttp.ClientResponseError(
+                            response.request_info,
+                            response.history,
+                            status=403,
+                            message='Forbidden'
+                        )
+                        continue  # Пробуем ещё раз
+                    response.raise_for_status()
+                    return await response.read()
+
+            except aiohttp.ClientResponseError as e:
+                last_error = e
+                if e.status != 403:
+                    raise  # Другие ошибки пробрасываем сразу
+            except asyncio.TimeoutError:
+                last_error = asyncio.TimeoutError(f"Timeout при загрузке {url}")
+                continue
+
+        # Если все попытки исчерпаны
+        if last_error:
+            raise last_error
+        raise aiohttp.ClientError(f"Не удалось загрузить {url} после {self.retry_count} попыток")
     
     async def parse_article_async(self, session: aiohttp.ClientSession, url: str) -> Dict:
         """Асинхронно парсит статью по URL"""
@@ -975,9 +1023,11 @@ class ArticleParser:
         """Асинхронно парсит список статей"""
         async with aiohttp.ClientSession() as session:
             semaphore = asyncio.Semaphore(self.max_concurrent)
-            
+
             async def parse_with_semaphore(url: str) -> Dict:
                 async with semaphore:
+                    # Небольшая случайная задержка для имитации естественного поведения
+                    await asyncio.sleep(random.uniform(0.1, 0.5))
                     return await self.parse_article_async(session, url)
             
             tasks = [parse_with_semaphore(url) for url in urls]
