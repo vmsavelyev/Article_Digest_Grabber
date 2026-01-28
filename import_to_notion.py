@@ -423,7 +423,7 @@ class NotionImporter:
     def create_page(self, article_data: dict, field_mapping: dict = None) -> str:
         """
         Создает страницу в Notion Database
-        
+
         Args:
             article_data: Данные статьи для импорта
             field_mapping: Маппинг полей (если None, используется стандартный)
@@ -435,11 +435,11 @@ class NotionImporter:
                 'url': 'URL',
                 'date': 'Дата публикации'
             }
-        
+
         # Подготовка properties
         properties = {}
         title_text = article_data.get('title') or "Без заголовка"
-        
+
         # Title property
         title_field = field_mapping.get('title')
         if title_field:
@@ -453,14 +453,14 @@ class NotionImporter:
                     }
                 ]
             }
-        
+
         # URL property
         url_field = field_mapping.get('url')
         if url_field and article_data.get('url'):
             properties[url_field] = {
                 "url": article_data['url']
             }
-        
+
         # Дата публикации property
         date_field = field_mapping.get('date')
         if date_field and article_data.get('date'):
@@ -469,18 +469,33 @@ class NotionImporter:
                 properties[date_field] = {
                     "date": date_obj
                 }
-        
+
         # Конвертируем markdown body в блоки Notion
         blocks = self.markdown_to_notion_blocks(article_data['body'])
-        
-        # Создаем страницу
+
+        # Notion API ограничивает количество блоков до 100 за один запрос
+        BLOCK_LIMIT = 100
+        initial_blocks = blocks[:BLOCK_LIMIT]
+        remaining_blocks = blocks[BLOCK_LIMIT:]
+
+        # Создаем страницу с первыми 100 блоками
         try:
             response = self.notion.pages.create(
                 parent={"database_id": self.database_id},
                 properties=properties,
-                children=blocks
+                children=initial_blocks
             )
-            return response['id']
+            page_id = response['id']
+
+            # Добавляем оставшиеся блоки порциями по 100
+            for i in range(0, len(remaining_blocks), BLOCK_LIMIT):
+                chunk = remaining_blocks[i:i + BLOCK_LIMIT]
+                self.notion.blocks.children.append(
+                    block_id=page_id,
+                    children=chunk
+                )
+
+            return page_id
         except Exception as e:
             print(f"  Ошибка при создании страницы: {e}")
             raise
@@ -488,12 +503,12 @@ class NotionImporter:
     async def create_page_async(self, async_client: AsyncClient, article_data: dict, field_mapping: dict = None) -> Tuple[str, Optional[str], Optional[str]]:
         """
         Асинхронно создает страницу в Notion Database
-        
+
         Args:
             async_client: Асинхронный клиент Notion
             article_data: Данные статьи для импорта
             field_mapping: Маппинг полей
-            
+
         Returns:
             Tuple[title, page_id или None, error или None]
         """
@@ -503,12 +518,12 @@ class NotionImporter:
                 'url': 'URL',
                 'date': 'Дата публикации'
             }
-        
+
         title_text = article_data.get('title') or "Без заголовка"
-        
+
         # Подготовка properties
         properties = {}
-        
+
         # Title property
         title_field = field_mapping.get('title')
         if title_field:
@@ -522,14 +537,14 @@ class NotionImporter:
                     }
                 ]
             }
-        
+
         # URL property
         url_field = field_mapping.get('url')
         if url_field and article_data.get('url'):
             properties[url_field] = {
                 "url": article_data['url']
             }
-        
+
         # Дата публикации property
         date_field = field_mapping.get('date')
         if date_field and article_data.get('date'):
@@ -538,17 +553,33 @@ class NotionImporter:
                 properties[date_field] = {
                     "date": date_obj
                 }
-        
+
         # Конвертируем markdown body в блоки Notion
         blocks = self.markdown_to_notion_blocks(article_data['body'])
-        
+
+        # Notion API ограничивает количество блоков до 100 за один запрос
+        BLOCK_LIMIT = 100
+        initial_blocks = blocks[:BLOCK_LIMIT]
+        remaining_blocks = blocks[BLOCK_LIMIT:]
+
         try:
+            # Создаем страницу с первыми 100 блоками
             response = await async_client.pages.create(
                 parent={"database_id": self.database_id},
                 properties=properties,
-                children=blocks
+                children=initial_blocks
             )
-            return (title_text, response['id'], None)
+            page_id = response['id']
+
+            # Добавляем оставшиеся блоки порциями по 100
+            for i in range(0, len(remaining_blocks), BLOCK_LIMIT):
+                chunk = remaining_blocks[i:i + BLOCK_LIMIT]
+                await async_client.blocks.children.append(
+                    block_id=page_id,
+                    children=chunk
+                )
+
+            return (title_text, page_id, None)
         except Exception as e:
             return (title_text, None, str(e))
     
@@ -628,7 +659,8 @@ class NotionImporter:
         # Подготавливаем данные статей
         articles_data = []
         skipped = 0
-        
+        large_block_files = []  # Файлы с количеством блоков > 100
+
         for i, md_file in enumerate(md_files, 1):
             try:
                 # Парсим markdown файл
@@ -660,7 +692,13 @@ class NotionImporter:
                     print(f"  ⚠ [{i}/{len(md_files)}] {md_file.name} - заголовок не найден, пропускаю")
                     skipped += 1
                     continue
-                
+
+                # Подсчитываем количество блоков и отслеживаем большие файлы
+                blocks = self.markdown_to_notion_blocks(article_data['body'])
+                block_count = len(blocks)
+                if block_count > 100:
+                    large_block_files.append((article_data['title'], block_count))
+
                 articles_data.append(article_data)
                 
             except Exception as e:
@@ -705,6 +743,13 @@ class NotionImporter:
             print(f"Пропущено (ошибки парсинга): {skipped}")
         if imported > 0:
             print(f"Средняя скорость: {imported / elapsed_time:.2f} статей/сек")
+
+        # Выводим список статей с количеством блоков > 100
+        if large_block_files:
+            print("\n" + "-" * 80)
+            print(f"📄 Статьи с количеством блоков > 100 ({len(large_block_files)} шт.):")
+            for title, block_count in large_block_files:
+                print(f"  • {title}: {block_count} блоков")
 
 
 def extract_database_id(input_value: str) -> str:
