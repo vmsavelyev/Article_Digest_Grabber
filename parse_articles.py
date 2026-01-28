@@ -49,13 +49,17 @@ class ArticleParser:
     def detect_site_type(self, url: str) -> str:
         """Определяет тип сайта по URL"""
         domain = urlparse(url).netloc.lower()
-        
+
         if 'vc.ru' in domain:
             return 'vcru'
         elif 'techcrunch.com' in domain:
             return 'techcrunch'
         elif 'habr.com' in domain:
             return 'habr'
+        elif 'crunchbase.com' in domain:
+            return 'crunchbase'
+        elif 'infoq.com' in domain:
+            return 'infoq'
         else:
             return 'unknown'
     
@@ -88,6 +92,10 @@ class ArticleParser:
                 '%Y-%m-%dT%H:%M:%S.%f',  # 2025-11-10T19:24:46.000
                 '%Y-%m-%dT%H:%M:%S',     # 2025-11-10T19:24:46
                 '%Y-%m-%d',              # 2025-11-10
+                '%B %d, %Y',             # January 22, 2026
+                '%b %d, %Y',             # Jan 22, 2026
+                '%B %d %Y',              # January 22 2026
+                '%b %d %Y',              # Jan 22 2026
             ]
             
             for fmt in formats:
@@ -463,9 +471,160 @@ class ArticleParser:
                         'url': img_src,
                         'alt': img_alt
                     })
-        
+
         return result
-    
+
+    def parse_crunchbase(self, soup: BeautifulSoup, url: str) -> Dict:
+        """Парсинг статей с news.crunchbase.com"""
+        result = {
+            'title': None,
+            'date': None,
+            'text': '',
+            'images': []
+        }
+
+        # Извлечение заголовка
+        title_tag = soup.find('h1', class_='entry-title')
+        if title_tag:
+            result['title'] = title_tag.get_text(strip=True)
+
+        # Извлечение даты публикации из <span class="updated">
+        date_span = soup.find('span', class_='updated')
+        if date_span:
+            date_text = date_span.get_text(strip=True)
+            if date_text:
+                result['date'] = self.format_date(date_text)
+
+        # Извлечение тела статьи из herald-entry-content
+        content_div = soup.find('div', class_='herald-entry-content')
+        if content_div:
+            # Удаляем рекламные блоки herald-ad
+            for ad in content_div.find_all('div', class_='herald-ad'):
+                ad.decompose()
+
+            # Удаляем скрипты и стили
+            for script in content_div.find_all(['script', 'style']):
+                script.decompose()
+
+            # Удаляем формы (например, iterable подписки)
+            for form in content_div.find_all('form'):
+                form.decompose()
+
+            # Извлекаем текст из параграфов
+            text_blocks = []
+            for p in content_div.find_all('p'):
+                text = p.get_text(separator=' ', strip=True)
+                text = re.sub(r'\s+', ' ', text).strip()
+                if text and len(text) > 10:
+                    text_blocks.append(text)
+
+            result['text'] = '\n\n'.join(text_blocks)
+
+            # Извлечение изображений
+            for img in content_div.find_all('img'):
+                img_src = img.get('src') or img.get('data-src')
+                if img_src:
+                    if img_src.startswith('//'):
+                        img_src = 'https:' + img_src
+                    elif img_src.startswith('/'):
+                        img_src = urljoin(url, img_src)
+                    elif not img_src.startswith('http'):
+                        img_src = urljoin(url, img_src)
+
+                    if img_src.startswith('data:'):
+                        continue
+
+                    if any(existing_img['url'] == img_src for existing_img in result['images']):
+                        continue
+
+                    img_alt = img.get('alt', '')
+                    result['images'].append({
+                        'url': img_src,
+                        'alt': img_alt
+                    })
+
+        return result
+
+    def parse_infoq(self, soup: BeautifulSoup, url: str) -> Dict:
+        """Парсинг статей с www.infoq.com"""
+        result = {
+            'title': None,
+            'date': None,
+            'text': '',
+            'images': []
+        }
+
+        # Извлечение заголовка
+        title_tag = soup.find('h1', class_='article__title')
+        if not title_tag:
+            title_tag = soup.find('h1')
+        if title_tag:
+            result['title'] = title_tag.get_text(strip=True)
+
+        # Извлечение даты из <p class="article__readTime date">
+        date_p = soup.find('p', class_='article__readTime')
+        if date_p:
+            # Извлекаем только текст даты (до span с dot)
+            date_text = ''
+            for child in date_p.children:
+                if hasattr(child, 'name'):
+                    if child.name == 'span' and 'dot' in child.get('class', []):
+                        break
+                else:
+                    date_text += str(child)
+            date_text = date_text.strip()
+            if date_text:
+                result['date'] = self.format_date(date_text)
+
+        # Извлечение тела статьи из article__data
+        content_div = soup.find('div', class_='article__data')
+        if content_div:
+            # Удаляем скрипты и стили
+            for script in content_div.find_all(['script', 'style']):
+                script.decompose()
+
+            # Удаляем рекламные блоки
+            for ad in content_div.find_all('div', class_=lambda x: x and 'ad' in x.lower()):
+                ad.decompose()
+
+            # Извлекаем текст из параграфов
+            text_blocks = []
+            for p in content_div.find_all('p'):
+                text = p.get_text(separator=' ', strip=True)
+                text = re.sub(r'\s+', ' ', text).strip()
+                if text and len(text) > 10:
+                    text_blocks.append(text)
+
+            result['text'] = '\n\n'.join(text_blocks)
+
+            # Извлечение изображений (включая из параграфов)
+            for img in content_div.find_all('img'):
+                img_src = (img.get('src') or
+                          img.get('data-src') or
+                          img.get('data-lazy-src') or
+                          img.get('data-original'))
+                if img_src:
+                    if img_src.startswith('//'):
+                        img_src = 'https:' + img_src
+                    elif img_src.startswith('/'):
+                        img_src = urljoin(url, img_src)
+                    elif not img_src.startswith('http'):
+                        img_src = urljoin(url, img_src)
+
+                    if img_src.startswith('data:'):
+                        continue
+
+                    if any(existing_img['url'] == img_src for existing_img in result['images']):
+                        continue
+
+                    img_alt = img.get('alt', '')
+                    result['images'].append({
+                        'url': img_src,
+                        'alt': img_alt
+                    })
+
+        return result
+
     def extract_structured_content_vcru(self, soup: BeautifulSoup, url: str) -> List[Dict]:
         """Извлекает структурированный контент с vc.ru с сохранением порядка элементов"""
         content_items = []
@@ -826,9 +985,154 @@ class ArticleParser:
                                 # Проверяем на дубликаты
                                 if not any(item.get('url') == img_src for item in content_items if item.get('type') == 'image'):
                                     content_items.append({'type': 'image', 'url': img_src, 'alt': img_alt})
-        
+
         return content_items
-    
+
+    def extract_structured_content_crunchbase(self, soup: BeautifulSoup, url: str) -> List[Dict]:
+        """Извлекает структурированный контент с news.crunchbase.com с сохранением порядка элементов"""
+        content_items = []
+        content_div = soup.find('div', class_='herald-entry-content')
+
+        if content_div:
+            # Удаляем рекламные блоки herald-ad
+            for ad in content_div.find_all('div', class_='herald-ad'):
+                ad.decompose()
+
+            # Удаляем скрипты и стили
+            for script in content_div.find_all(['script', 'style']):
+                script.decompose()
+
+            # Удаляем формы подписки
+            for form in content_div.find_all('form'):
+                form.decompose()
+
+            processed_images = set()
+
+            # Проходим по всем элементам в порядке их появления
+            for element in content_div.descendants:
+                if hasattr(element, 'name'):
+                    if element.name == 'p':
+                        text = element.get_text(separator=' ', strip=True)
+                        text = re.sub(r'\s+', ' ', text).strip()
+                        if text and len(text) > 10:
+                            # Проверяем на дубликаты
+                            if not content_items or content_items[-1].get('type') != 'text' or content_items[-1].get('content') != text:
+                                content_items.append({'type': 'text', 'content': text})
+                    elif element.name == 'img':
+                        img_src = element.get('src') or element.get('data-src')
+                        if img_src:
+                            if img_src.startswith('//'):
+                                img_src = 'https:' + img_src
+                            elif img_src.startswith('/'):
+                                img_src = urljoin(url, img_src)
+                            elif not img_src.startswith('http'):
+                                img_src = urljoin(url, img_src)
+
+                            if not img_src.startswith('data:') and img_src not in processed_images:
+                                processed_images.add(img_src)
+                                img_alt = element.get('alt', '')
+                                content_items.append({'type': 'image', 'url': img_src, 'alt': img_alt})
+
+        return content_items
+
+    def extract_structured_content_infoq(self, soup: BeautifulSoup, url: str) -> List[Dict]:
+        """Извлекает структурированный контент с www.infoq.com с сохранением порядка элементов"""
+        content_items = []
+        content_div = soup.find('div', class_='article__data')
+
+        if content_div:
+            # Удаляем рекламные блоки
+            for ad in content_div.find_all('div', class_=lambda x: x and 'ad' in x.lower()):
+                ad.decompose()
+
+            # Удаляем скрипты и стили
+            for script in content_div.find_all(['script', 'style']):
+                script.decompose()
+
+            processed_images = set()
+            seen_texts = set()
+
+            def process_img(img_element):
+                """Обрабатывает img элемент и добавляет в content_items"""
+                img_src = (img_element.get('src') or
+                          img_element.get('data-src') or
+                          img_element.get('data-lazy-src') or
+                          img_element.get('data-original'))
+                if img_src:
+                    if img_src.startswith('//'):
+                        img_src = 'https:' + img_src
+                    elif img_src.startswith('/'):
+                        img_src = urljoin(url, img_src)
+                    elif not img_src.startswith('http'):
+                        img_src = urljoin(url, img_src)
+
+                    if not img_src.startswith('data:') and img_src not in processed_images:
+                        processed_images.add(img_src)
+                        img_alt = img_element.get('alt', '')
+                        content_items.append({'type': 'image', 'url': img_src, 'alt': img_alt})
+
+            # Обрабатываем прямых потомков article__data для сохранения порядка
+            for child in content_div.children:
+                if not hasattr(child, 'name'):
+                    continue
+
+                if child.name == 'p':
+                    # Сначала проверяем, есть ли изображения внутри параграфа
+                    imgs_in_p = child.find_all('img')
+
+                    # Извлекаем текст (без учёта alt текста изображений)
+                    text_parts = []
+                    for content in child.children:
+                        if hasattr(content, 'name'):
+                            if content.name == 'img':
+                                # Добавляем изображение в нужном месте
+                                if text_parts:
+                                    text = ' '.join(text_parts)
+                                    text = re.sub(r'\s+', ' ', text).strip()
+                                    if text and len(text) > 10:
+                                        text_key = text[:100]
+                                        if text_key not in seen_texts:
+                                            seen_texts.add(text_key)
+                                            content_items.append({'type': 'text', 'content': text})
+                                    text_parts = []
+                                process_img(content)
+                            else:
+                                text_parts.append(content.get_text(separator=' ', strip=True))
+                        else:
+                            text_str = str(content).strip()
+                            if text_str:
+                                text_parts.append(text_str)
+
+                    # Добавляем оставшийся текст после последнего изображения
+                    if text_parts:
+                        text = ' '.join(text_parts)
+                        text = re.sub(r'\s+', ' ', text).strip()
+                        if text and len(text) > 10:
+                            text_key = text[:100]
+                            if text_key not in seen_texts:
+                                seen_texts.add(text_key)
+                                content_items.append({'type': 'text', 'content': text})
+
+                    # Если параграф не содержал изображений, обрабатываем как обычный текст
+                    if not imgs_in_p:
+                        text = child.get_text(separator=' ', strip=True)
+                        text = re.sub(r'\s+', ' ', text).strip()
+                        if text and len(text) > 10:
+                            text_key = text[:100]
+                            if text_key not in seen_texts:
+                                seen_texts.add(text_key)
+                                content_items.append({'type': 'text', 'content': text})
+
+                elif child.name == 'img':
+                    process_img(child)
+
+                elif child.name in ['figure', 'div']:
+                    # Ищем изображения внутри figure или div
+                    for img in child.find_all('img'):
+                        process_img(img)
+
+        return content_items
+
     def article_content_to_notion_markdown(self, article_data: Dict, structured_content: List[Dict] = None) -> str:
         """Создает markdown контент только с телом статьи (без заголовка, URL, даты) для Notion"""
         md_lines = []
@@ -971,6 +1275,12 @@ class ArticleParser:
             elif site_type == 'habr':
                 parsed_data = self.parse_habr(soup, url)
                 structured_content = self.extract_structured_content_habr(soup, url)
+            elif site_type == 'crunchbase':
+                parsed_data = self.parse_crunchbase(soup, url)
+                structured_content = self.extract_structured_content_crunchbase(soup, url)
+            elif site_type == 'infoq':
+                parsed_data = self.parse_infoq(soup, url)
+                structured_content = self.extract_structured_content_infoq(soup, url)
             else:
                 # Универсальный парсинг для неизвестных сайтов
                 parsed_data = self.parse_generic(soup, url)
