@@ -166,44 +166,133 @@ class NotionImporter:
         
         print("-" * 80)
     
-    def explain_mapping(self, structure: dict) -> dict:
+    def map_multi_select_fields(self, md_fields: list, db_properties: dict) -> dict:
+        """
+        Сопоставляет multi_select поля из md с полями Database
+
+        Args:
+            md_fields: Список названий полей из md, которые должны быть multi_select
+            db_properties: Properties из Database структуры
+
+        Returns:
+            dict с маппингом {md_field: db_field}
+        """
+        mapping = {}
+
+        # Получаем список multi_select полей из Database
+        db_multi_select_fields = {}
+        for prop_name, prop_info in db_properties.items():
+            if prop_info['type'] == 'multi_select':
+                db_multi_select_fields[prop_name.lower()] = prop_name
+
+        # Автоматическое сопоставление по названию
+        unmapped_md_fields = []
+        for md_field in md_fields:
+            md_field_lower = md_field.lower()
+
+            # Прямое совпадение
+            if md_field_lower in db_multi_select_fields:
+                mapping[md_field] = db_multi_select_fields[md_field_lower]
+            # Частичное совпадение
+            else:
+                found = False
+                for db_field_lower, db_field in db_multi_select_fields.items():
+                    if md_field_lower in db_field_lower or db_field_lower in md_field_lower:
+                        mapping[md_field] = db_field
+                        found = True
+                        break
+                if not found:
+                    unmapped_md_fields.append(md_field)
+
+        # Если есть несопоставленные поля, запрашиваем у пользователя
+        if unmapped_md_fields and db_multi_select_fields:
+            print("\n" + "=" * 80)
+            print("⚠️  Не удалось автоматически сопоставить следующие поля:")
+            print("=" * 80)
+
+            available_db_fields = [name for name in db_multi_select_fields.values() if name not in mapping.values()]
+
+            for md_field in unmapped_md_fields:
+                print(f"\nПоле в md файле: '{md_field}'")
+                print(f"Доступные multi_select поля в Database:")
+
+                if not available_db_fields:
+                    print("  (нет доступных полей)")
+                    continue
+
+                for i, db_field in enumerate(available_db_fields, 1):
+                    print(f"  {i}. {db_field}")
+
+                print(f"  0. Пропустить это поле")
+
+                user_input = input(f"\nВыберите номер поля для '{md_field}' (или 0 для пропуска): ").strip()
+
+                try:
+                    choice = int(user_input)
+                    if choice == 0:
+                        print(f"  ✗ Поле '{md_field}' будет пропущено")
+                        continue
+                    elif 1 <= choice <= len(available_db_fields):
+                        selected_db_field = available_db_fields[choice - 1]
+                        mapping[md_field] = selected_db_field
+                        available_db_fields.remove(selected_db_field)
+                        print(f"  ✓ '{md_field}' → '{selected_db_field}'")
+                    else:
+                        print(f"  ✗ Неверный выбор, поле '{md_field}' будет пропущено")
+                except ValueError:
+                    print(f"  ✗ Неверный ввод, поле '{md_field}' будет пропущено")
+
+        return mapping
+
+    def explain_mapping(self, structure: dict, multi_select_md_fields: list = None) -> dict:
         """
         Объясняет, какие данные будут импортированы в какие поля
-        
+
+        Args:
+            structure: Структура Database
+            multi_select_md_fields: Список полей из md для импорта как multi_select
+
         Returns:
             dict с маппингом полей
         """
         mapping = {}
         properties = structure['properties']
-        
+
         # Автоматическое сопоставление полей
         # Ищем поля по стандартным названиям
         title_field = None
         url_field = None
         date_field = None
-        
+
         # Ищем поле типа Title для заголовка
         for prop_name, prop_info in properties.items():
             if prop_info['type'] == 'title':
                 title_field = prop_name
                 break
-        
+
         # Ищем поле URL
         for prop_name, prop_info in properties.items():
             if prop_info['type'] == 'url':
                 if url_field is None or 'url' in prop_name.lower():
                     url_field = prop_name
-        
+
         # Ищем поле Date
         for prop_name, prop_info in properties.items():
             if prop_info['type'] == 'date':
                 if date_field is None or 'дата' in prop_name.lower() or 'date' in prop_name.lower():
                     date_field = prop_name
-        
+
         mapping['title'] = title_field
         mapping['url'] = url_field
         mapping['date'] = date_field
-        
+
+        # Маппинг multi_select полей
+        if multi_select_md_fields:
+            multi_select_mapping = self.map_multi_select_fields(multi_select_md_fields, properties)
+            mapping['multi_select'] = multi_select_mapping
+        else:
+            mapping['multi_select'] = {}
+
         return mapping
     
     def display_mapping(self, mapping: dict, structure: dict):
@@ -211,36 +300,43 @@ class NotionImporter:
         print("\n" + "=" * 80)
         print("📋 Маппинг данных для импорта:")
         print("=" * 80)
-        
+
         print("\nБудут импортированы следующие данные:")
         print("-" * 80)
-        
+
         # Заголовок статьи
         title_field = mapping.get('title')
         if title_field:
             print(f"  ✓ Заголовок статьи → поле '{title_field}' (Title)")
         else:
             print(f"  ⚠ Заголовок статьи → НЕ НАЙДЕНО подходящее поле (нужно поле типа Title)")
-        
+
         # URL статьи
         url_field = mapping.get('url')
         if url_field:
             print(f"  ✓ URL статьи → поле '{url_field}' (URL)")
         else:
             print(f"  ⚠ URL статьи → НЕ НАЙДЕНО подходящее поле (нужно поле типа URL)")
-        
+
         # Дата публикации
         date_field = mapping.get('date')
         if date_field:
             print(f"  ✓ Дата публикации → поле '{date_field}' (Date)")
         else:
             print(f"  ⚠ Дата публикации → НЕ НАЙДЕНО подходящее поле (нужно поле типа Date)")
-        
+
+        # Multi-select поля
+        multi_select_mappings = mapping.get('multi_select', {})
+        if multi_select_mappings:
+            print("\nMulti-select поля:")
+            for md_field, db_field in multi_select_mappings.items():
+                print(f"  ✓ {md_field} → поле '{db_field}' (Multi-select)")
+
         print("\nКонтент статьи:")
         print("  ✓ Тело статьи будет добавлено как контент страницы (блоки)")
-        
+
         print("-" * 80)
-        
+
         # Предупреждения
         warnings = []
         if not title_field:
@@ -249,18 +345,84 @@ class NotionImporter:
             warnings.append("Не найдено поле типа URL для ссылки")
         if not date_field:
             warnings.append("Не найдено поле типа Date для даты")
-        
+
         if warnings:
             print("\n⚠ Предупреждения:")
             for warning in warnings:
                 print(f"  - {warning}")
             print("\nИмпорт продолжится, но эти данные не будут сохранены в properties.")
+
+    def parse_multi_select_value(self, value: str) -> list:
+        """
+        Парсит строку multi_select по разделителю запятая
+
+        Args:
+            value: Строка с значениями, разделенными запятыми
+
+        Returns:
+            Список очищенных значений
+        """
+        if not value:
+            return []
+
+        # Разделяем по запятой и очищаем только от пробелов по краям
+        # Специальные символы (точки и т.д.) сохраняются
+        items = [item.strip() for item in value.split(',')]
+        # Фильтруем пустые значения
+        return [item for item in items if item]
+
+    def has_multi_select_fields(self, db_properties: dict) -> bool:
+        """
+        Проверяет, есть ли в Database multi_select поля
+
+        Args:
+            db_properties: Properties из Database структуры
+
+        Returns:
+            True если есть хотя бы одно multi_select поле, иначе False
+        """
+        for prop_info in db_properties.values():
+            if prop_info.get('type') == 'multi_select':
+                return True
+        return False
+
+    def collect_custom_fields_from_directory(self, markdown_dir: str) -> dict:
+        """
+        Собирает только multi_select кастомные поля из всех markdown файлов в директории
+        Multi_select поля определяются по наличию нескольких значений, разделенных запятыми
+
+        Args:
+            markdown_dir: Путь к директории с markdown файлами
+
+        Returns:
+            dict с названиями multi_select полей и примерами значений
+        """
+        markdown_path = Path(markdown_dir)
+        if not markdown_path.exists():
+            return {}
+
+        md_files = list(markdown_path.glob('*.md'))
+        all_fields = {}
+
+        for md_file in md_files[:5]:  # Проверяем только первые 5 файлов для примера
+            try:
+                article_data = self.parse_markdown_file(str(md_file))
+                custom_fields = article_data.get('custom_fields', {})
+
+                for field_name, field_value in custom_fields.items():
+                    # Фильтруем только поля, содержащие запятые (потенциально multi_select)
+                    if ',' in field_value and field_name not in all_fields:
+                        all_fields[field_name] = field_value
+            except Exception:
+                continue
+
+        return all_fields
     
     def parse_markdown_file(self, filepath: str) -> dict:
         """Парсит markdown файл и извлекает метаданные и контент"""
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         # Извлекаем заголовок (первая строка с #)
         # Используем более надежный способ - ищем первую строку, начинающуюся с #
         lines = content.split('\n')
@@ -275,26 +437,32 @@ class NotionImporter:
                 # Берем все после первого #
                 title = stripped.lstrip('#').strip()
                 break
-        
-        # Извлекаем дату публикации
-        date_match = re.search(r'\*\*Дата публикации:\*\*\s+(\d{2}\.\d{2}\.\d{4})', content)
-        date_str = date_match.group(1) if date_match else None
-        
-        # Извлекаем URL источника
-        url_match = re.search(r'\*\*Источник:\*\*\s+(https?://[^\s]+)', content)
-        url = url_match.group(1) if url_match else None
-        
+
+        # Извлекаем все кастомные поля в формате **Название:** значение
+        custom_fields = {}
+        field_pattern = r'\*\*([^*:]+):\*\*\s+(.+)'
+        for match in re.finditer(field_pattern, content):
+            field_name = match.group(1).strip()
+            field_value = match.group(2).strip()
+            custom_fields[field_name] = field_value
+
+        # Извлекаем дату публикации (backward compatibility)
+        date_str = custom_fields.get('Дата публикации')
+
+        # Извлекаем URL источника (backward compatibility)
+        url = custom_fields.get('Источник')
+
         # Извлекаем только тело статьи (после разделителя ---)
         lines = content.split('\n')
         body_started = False
         body_lines = []
-        
+
         for line in lines:
             # Пропускаем заголовок
             if line.startswith('# '):
                 continue
-            # Пропускаем метаданные (дата, источник)
-            if line.startswith('**') and ('Дата' in line or 'Источник' in line):
+            # Пропускаем метаданные (все поля в формате **Название:**)
+            if line.startswith('**') and ':**' in line:
                 continue
             # Начинаем собирать тело после разделителя
             if line.strip() == '---':
@@ -304,19 +472,20 @@ class NotionImporter:
             if body_started:
                 body_lines.append(line)
             # Если разделителя нет, но мы уже прошли заголовок и метаданные
-            elif not body_started and not line.startswith('#') and not (line.startswith('**') and ('Дата' in line or 'Источник' in line)):
+            elif not body_started and not line.startswith('#') and not (line.startswith('**') and ':**' in line):
                 # Проверяем, что это не пустая строка между заголовком и метаданными
                 if line.strip() or body_lines:
                     body_started = True
                     body_lines.append(line)
-        
+
         body_content = '\n'.join(body_lines).strip()
-        
+
         return {
             'title': title,
             'date': date_str,
             'url': url,
-            'body': body_content
+            'body': body_content,
+            'custom_fields': custom_fields
         }
     
     def markdown_to_notion_blocks(self, markdown_content: str) -> list:
@@ -433,7 +602,8 @@ class NotionImporter:
             field_mapping = {
                 'title': 'Name',
                 'url': 'URL',
-                'date': 'Дата публикации'
+                'date': 'Дата публикации',
+                'multi_select': {}
             }
 
         # Подготовка properties
@@ -469,6 +639,20 @@ class NotionImporter:
                 properties[date_field] = {
                     "date": date_obj
                 }
+
+        # Multi-select properties
+        multi_select_mapping = field_mapping.get('multi_select', {})
+        custom_fields = article_data.get('custom_fields', {})
+
+        for md_field, db_field in multi_select_mapping.items():
+            if md_field in custom_fields:
+                field_value = custom_fields[md_field]
+                # Парсим значения по запятой
+                items = self.parse_multi_select_value(field_value)
+                if items:
+                    properties[db_field] = {
+                        "multi_select": [{"name": item} for item in items]
+                    }
 
         # Конвертируем markdown body в блоки Notion
         blocks = self.markdown_to_notion_blocks(article_data['body'])
@@ -516,7 +700,8 @@ class NotionImporter:
             field_mapping = {
                 'title': 'Name',
                 'url': 'URL',
-                'date': 'Дата публикации'
+                'date': 'Дата публикации',
+                'multi_select': {}
             }
 
         title_text = article_data.get('title') or "Без заголовка"
@@ -553,6 +738,20 @@ class NotionImporter:
                 properties[date_field] = {
                     "date": date_obj
                 }
+
+        # Multi-select properties
+        multi_select_mapping = field_mapping.get('multi_select', {})
+        custom_fields = article_data.get('custom_fields', {})
+
+        for md_field, db_field in multi_select_mapping.items():
+            if md_field in custom_fields:
+                field_value = custom_fields[md_field]
+                # Парсим значения по запятой
+                items = self.parse_multi_select_value(field_value)
+                if items:
+                    properties[db_field] = {
+                        "multi_select": [{"name": item} for item in items]
+                    }
 
         # Конвертируем markdown body в блоки Notion
         blocks = self.markdown_to_notion_blocks(article_data['body'])
@@ -807,11 +1006,71 @@ def get_user_confirmation(prompt: str, default: bool = False) -> bool:
     """Запрашивает подтверждение у пользователя"""
     default_text = "Y/n" if default else "y/N"
     response = input(f"{prompt} [{default_text}]: ").strip().lower()
-    
+
     if not response:
         return default
-    
+
     return response in ['y', 'yes', 'да', 'д']
+
+
+def ask_user_for_multi_select_fields(custom_fields: dict) -> list:
+    """
+    Запрашивает у пользователя, какие поля должны быть импортированы как multi_select
+
+    Args:
+        custom_fields: dict с кастомными полями и их примерами значений
+
+    Returns:
+        Список названий полей для импорта как multi_select
+    """
+    if not custom_fields:
+        return []
+
+    print("\n" + "=" * 80)
+    print("🏷️  Найдены следующие поля с множественными значениями (содержат ','):")
+    print("=" * 80)
+
+    field_list = list(custom_fields.items())
+    for i, (field_name, field_value) in enumerate(field_list, 1):
+        # Показываем превью значения (первые 60 символов)
+        value_preview = field_value[:60] + "..." if len(field_value) > 60 else field_value
+        print(f"  {i}. {field_name}")
+        print(f"     Пример: {value_preview}")
+
+    print("\n" + "-" * 80)
+    print("Укажите номера полей, которые должны быть импортированы как multi_select.")
+    print("(Значения будут разделены по запятым и импортированы как отдельные элементы)")
+    print("\nФормат: введите номера через запятую или пробел (например: 1,3 или 1 3)")
+    print("Нажмите Enter без ввода, чтобы пропустить импорт multi_select полей")
+    print("-" * 80)
+
+    user_input = input("\nВаш выбор: ").strip()
+
+    if not user_input:
+        return []
+
+    # Парсим ввод пользователя
+    selected_fields = []
+    # Разделяем по запятой или пробелу
+    parts = re.split(r'[,\s]+', user_input)
+
+    for part in parts:
+        try:
+            index = int(part.strip()) - 1
+            if 0 <= index < len(field_list):
+                field_name = field_list[index][0]
+                selected_fields.append(field_name)
+            else:
+                print(f"  ⚠ Предупреждение: номер {part} вне диапазона, пропускаю")
+        except ValueError:
+            print(f"  ⚠ Предупреждение: '{part}' не является числом, пропускаю")
+
+    if selected_fields:
+        print(f"\n✓ Выбрано полей для multi_select: {len(selected_fields)}")
+        for field in selected_fields:
+            print(f"  - {field}")
+
+    return selected_fields
 
 
 def main():
@@ -931,9 +1190,29 @@ def main():
     
     # Отображаем структуру Database
     importer.display_database_structure(structure)
-    
+
+    # Пути к файлам
+    markdown_dir = 'articles_markdown'
+
+    # Проверяем, есть ли multi_select поля в Database
+    multi_select_md_fields = []
+    has_multi_select = importer.has_multi_select_fields(structure['properties'])
+
+    if has_multi_select:
+        # Собираем кастомные поля из markdown файлов (только те, что содержат запятые)
+        print("\n🔍 Анализ markdown файлов для поиска multi_select полей...")
+        custom_fields = importer.collect_custom_fields_from_directory(markdown_dir)
+
+        # Спрашиваем пользователя, какие поля должны быть multi_select
+        if custom_fields:
+            multi_select_md_fields = ask_user_for_multi_select_fields(custom_fields)
+        else:
+            print("  ℹ️  Multi_select поля (с разделителем ',') в markdown файлах не найдены")
+    else:
+        print("\n  ℹ️  В Database отсутствуют multi_select поля, пропускаем этот шаг")
+
     # Объясняем маппинг данных
-    field_mapping = importer.explain_mapping(structure)
+    field_mapping = importer.explain_mapping(structure, multi_select_md_fields)
     importer.display_mapping(field_mapping, structure)
     
     # Запрашиваем подтверждение
@@ -941,9 +1220,8 @@ def main():
     if not get_user_confirmation("Продолжить импорт?", default=False):
         print("Импорт отменен пользователем.")
         sys.exit(0)
-    
-    # Пути к файлам
-    markdown_dir = 'articles_markdown'
+
+    # Путь к JSON файлу
     json_file = 'parsed_articles.json'
     
     # Запускаем импорт
