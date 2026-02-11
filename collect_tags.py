@@ -417,7 +417,7 @@ def insert_kompaniya_block(raw_lines: list[str], tags: list) -> list[str]:
         Новый список строк файла.
     """
     tags_str = ", ".join(tags)
-    kompaniya_line = f"**Компания:** {tags_str}\n"
+    kompaniya_line = f"**Компания:** {tags_str} <!-- multi-select -->\n"
 
     # Ищем позицию для вставки: после **Источник:**
     insert_after = None

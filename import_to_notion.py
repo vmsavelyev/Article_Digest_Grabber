@@ -389,7 +389,7 @@ class NotionImporter:
     def collect_custom_fields_from_directory(self, markdown_dir: str) -> dict:
         """
         Собирает только multi_select кастомные поля из всех markdown файлов в директории
-        Multi_select поля определяются по наличию нескольких значений, разделенных запятыми
+        Multi_select поля определяются по наличию маркера <!-- multi-select -->
 
         Args:
             markdown_dir: Путь к директории с markdown файлами
@@ -401,17 +401,17 @@ class NotionImporter:
         if not markdown_path.exists():
             return {}
 
-        md_files = list(markdown_path.glob('*.md'))
+        md_files = sorted(list(markdown_path.glob('*.md')))
         all_fields = {}
 
-        for md_file in md_files[:5]:  # Проверяем только первые 5 файлов для примера
+        for md_file in md_files:  # Проверяем все файлы
             try:
                 article_data = self.parse_markdown_file(str(md_file))
-                custom_fields = article_data.get('custom_fields', {})
+                multi_select_fields = article_data.get('multi_select_fields', {})
 
-                for field_name, field_value in custom_fields.items():
-                    # Фильтруем только поля, содержащие запятые (потенциально multi_select)
-                    if ',' in field_value and field_name not in all_fields:
+                # Добавляем поля с маркером multi-select
+                for field_name, field_value in multi_select_fields.items():
+                    if field_name not in all_fields:
                         all_fields[field_name] = field_value
             except Exception:
                 continue
@@ -439,12 +439,22 @@ class NotionImporter:
                 break
 
         # Извлекаем все кастомные поля в формате **Название:** значение
+        # Также проверяем наличие маркера <!-- multi-select --> для multi_select полей
         custom_fields = {}
+        multi_select_fields = {}
         field_pattern = r'\*\*([^*:]+):\*\*\s+(.+)'
         for match in re.finditer(field_pattern, content):
             field_name = match.group(1).strip()
             field_value = match.group(2).strip()
-            custom_fields[field_name] = field_value
+
+            # Проверяем наличие маркера multi-select
+            if '<!-- multi-select -->' in field_value:
+                # Убираем маркер из значения
+                clean_value = field_value.replace('<!-- multi-select -->', '').strip()
+                custom_fields[field_name] = clean_value
+                multi_select_fields[field_name] = clean_value
+            else:
+                custom_fields[field_name] = field_value
 
         # Извлекаем дату публикации (backward compatibility)
         date_str = custom_fields.get('Дата публикации')
@@ -485,7 +495,8 @@ class NotionImporter:
             'date': date_str,
             'url': url,
             'body': body_content,
-            'custom_fields': custom_fields
+            'custom_fields': custom_fields,
+            'multi_select_fields': multi_select_fields
         }
     
     def markdown_to_notion_blocks(self, markdown_content: str) -> list:
