@@ -4,9 +4,9 @@
 Скрипт для обработки статей через DeepSeek API
 
 Функционал:
-1. Последовательно читает .md файлы из каталога articles_markdown/
+1. Читает .md файлы из каталога articles_markdown/
 2. Извлекает тело статьи (без изображений)
-3. Отправляет текст в DeepSeek API с системным промптом из system_prompt.txt
+3. Отправляет текст в DeepSeek API с системным промптом из выбранного файла
 4. Записывает ответ API в заголовок H1 (# ) обработанного файла
 
 Использование:
@@ -19,7 +19,8 @@ import os
 import re
 import sys
 import glob
-from openai import OpenAI
+import asyncio
+from openai import AsyncOpenAI
 
 
 # Директория со статьями относительно расположения скрипта
@@ -30,6 +31,9 @@ SYSTEM_PROMPT_FILE = os.path.join(SCRIPT_DIR, "system_prompt.txt")
 # Модель DeepSeek
 DEEPSEEK_MODEL = "deepseek-chat"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+
+# Количество параллельных запросов по умолчанию
+DEFAULT_MAX_CONCURRENT = 5
 
 
 def load_system_prompt(prompt_file):
@@ -103,7 +107,7 @@ def get_h1_title(content):
     return ""
 
 
-def process_file(client, filepath, system_prompt):
+async def process_file(client, filepath, system_prompt, semaphore):
     """
     Обрабатывает один .md файл:
     1. Читает файл
@@ -111,10 +115,9 @@ def process_file(client, filepath, system_prompt):
     3. Отправляет в DeepSeek API
     4. Записывает ответ в H1 заголовок
 
-    Возвращает кортеж (успех, старый_заголовок, новый_заголовок) или (False, None, None).
+    Возвращает кортеж (успех, файл, старый_заголовок, новый_заголовок).
     """
     filename = os.path.basename(filepath)
-    print(f"\nОбработка: {filename}")
 
     # Читаем файл
     with open(filepath, "r", encoding="utf-8") as f:
@@ -125,43 +128,61 @@ def process_file(client, filepath, system_prompt):
     # Извлекаем тело статьи
     body = get_article_body(content)
     if not body:
-        print(f"  Пропуск: тело статьи пустое")
-        return False, None, None
+        print(f"  [{filename}] Пропуск: тело статьи пустое")
+        return False, filename, None, None
 
     # Удаляем изображения
     clean_body = remove_images(body)
     if not clean_body:
-        print(f"  Пропуск: после удаления изображений текст пуст")
-        return False, None, None
+        print(f"  [{filename}] Пропуск: после удаления изображений текст пуст")
+        return False, filename, None, None
 
-    print(f"  Отправка в DeepSeek API ({len(clean_body)} символов)...")
+    async with semaphore:
+        print(f"  [{filename}] Отправка в DeepSeek API ({len(clean_body)} символов)...")
 
-    try:
-        response = client.chat.completions.create(
-            model=DEEPSEEK_MODEL,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": clean_body},
-            ],
-        )
+        try:
+            response = await client.chat.completions.create(
+                model=DEEPSEEK_MODEL,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": clean_body},
+                ],
+            )
 
-        new_title = response.choices[0].message.content.strip()
+            new_title = response.choices[0].message.content.strip()
 
-        print(f"  Старый заголовок: {old_title}")
-        print(f"  Новый заголовок:  {new_title}")
+            print(f"  [{filename}] Старый заголовок: {old_title}")
+            print(f"  [{filename}] Новый заголовок:  {new_title}")
 
-        # Заменяем H1 заголовок на ответ API
-        updated_content = replace_h1(content, new_title)
+            # Заменяем H1 заголовок на ответ API
+            updated_content = replace_h1(content, new_title)
 
-        # Записываем обновлённый файл
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(updated_content)
+            # Записываем обновлённый файл
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(updated_content)
 
-        return True, old_title, new_title
+            return True, filename, old_title, new_title
 
-    except Exception as e:
-        print(f"  Ошибка API: {e}")
-        return False, None, None
+        except Exception as e:
+            print(f"  [{filename}] Ошибка API: {e}")
+            return False, filename, None, None
+
+
+async def run(api_key, system_prompt, md_files, max_concurrent):
+    """Запускает параллельную обработку файлов."""
+    client = AsyncOpenAI(
+        api_key=api_key,
+        base_url=DEEPSEEK_BASE_URL,
+    )
+
+    semaphore = asyncio.Semaphore(max_concurrent)
+
+    tasks = [
+        process_file(client, filepath, system_prompt, semaphore)
+        for filepath in md_files
+    ]
+
+    return await asyncio.gather(*tasks)
 
 
 def main():
@@ -198,6 +219,14 @@ def main():
     system_prompt = load_system_prompt(prompt_file)
     print(f"Системный промпт загружен из: {os.path.basename(prompt_file)} ({len(system_prompt)} символов)")
 
+    # Запрашиваем количество параллельных запросов
+    concurrent_input = input(f"Количество параллельных запросов (по умолчанию {DEFAULT_MAX_CONCURRENT}): ").strip()
+    if concurrent_input.isdigit() and int(concurrent_input) > 0:
+        max_concurrent = int(concurrent_input)
+    else:
+        max_concurrent = DEFAULT_MAX_CONCURRENT
+    print(f"Параллельных запросов: {max_concurrent}")
+
     # Проверяем наличие каталога со статьями
     if not os.path.isdir(ARTICLES_DIR):
         print(f"Ошибка: каталог со статьями не найден: {ARTICLES_DIR}")
@@ -211,26 +240,21 @@ def main():
 
     print(f"Найдено файлов: {len(md_files)}")
 
-    # Создаём клиент DeepSeek API (совместим с OpenAI SDK)
-    client = OpenAI(
-        api_key=api_key,
-        base_url=DEEPSEEK_BASE_URL,
-    )
+    # Запускаем параллельную обработку
+    results = asyncio.run(run(api_key, system_prompt, md_files, max_concurrent))
 
-    # Обрабатываем файлы последовательно
+    # Итоговый отчёт
+    report = []
     success_count = 0
     error_count = 0
-    report = []
 
-    for filepath in md_files:
-        success, old_title, new_title = process_file(client, filepath, system_prompt)
+    for success, filename, old_title, new_title in results:
         if success:
             success_count += 1
-            report.append((os.path.basename(filepath), old_title, new_title))
+            report.append((filename, old_title, new_title))
         else:
             error_count += 1
 
-    # Итоговый отчёт
     print(f"\n{'='*60}")
     print(f"ОТЧЁТ О ОБРАБОТКЕ")
     print(f"{'='*60}")
