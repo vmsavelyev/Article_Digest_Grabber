@@ -1,7 +1,8 @@
 .DS_Store
 my_urls.txt
-digest_template copy.md
+my_digest_template.md
 title_verification_week52_2025.log
 parsed_articles.json
 articles_markdown
 tags.txt
+my_system_prompt.txt
