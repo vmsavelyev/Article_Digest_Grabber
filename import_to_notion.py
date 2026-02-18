@@ -841,24 +841,14 @@ class NotionImporter:
             
             return (imported, errors)
     
-    def import_from_directory(self, markdown_dir: str, json_file: str = None, field_mapping: dict = None, use_async: bool = True):
+    def import_from_directory(self, markdown_dir: str, field_mapping: dict = None, use_async: bool = True):
         """Импортирует все markdown файлы из директории"""
         markdown_path = Path(markdown_dir)
         
         if not markdown_path.exists():
             print(f"Директория {markdown_dir} не найдена")
             return
-        
-        # Загружаем данные из JSON для получения метаданных
-        json_data = []
-        articles_metadata = {}
-        if json_file and os.path.exists(json_file):
-            with open(json_file, 'r', encoding='utf-8') as f:
-                json_data = json.load(f)
-                for article in json_data:
-                    if article.get('url'):
-                        articles_metadata[article['url']] = article
-        
+
         # Получаем все markdown файлы
         md_files = sorted(markdown_path.glob('*.md'))
         
@@ -875,28 +865,7 @@ class NotionImporter:
             try:
                 # Парсим markdown файл
                 article_data = self.parse_markdown_file(str(md_file))
-                
-                # Если есть метаданные из JSON, используем их (они более точные)
-                file_num = re.match(r'^(\d+)_', md_file.name)
-                if file_num and json_data:
-                    file_index = int(file_num.group(1)) - 1
-                    if 0 <= file_index < len(json_data):
-                        json_article = json_data[file_index]
-                        if json_article.get('title'):
-                            article_data['title'] = json_article['title']
-                        if json_article.get('date'):
-                            article_data['date'] = json_article['date']
-                        if json_article.get('url'):
-                            article_data['url'] = json_article['url']
-                elif article_data.get('url') and article_data['url'] in articles_metadata:
-                    json_article = articles_metadata[article_data['url']]
-                    if json_article.get('title'):
-                        article_data['title'] = json_article['title']
-                    if json_article.get('date'):
-                        article_data['date'] = json_article['date']
-                    if json_article.get('url'):
-                        article_data['url'] = json_article['url']
-                
+
                 # Проверяем, что есть необходимые данные
                 if not article_data.get('title'):
                     print(f"  ⚠ [{i}/{len(md_files)}] {md_file.name} - заголовок не найден, пропускаю")
@@ -1232,12 +1201,9 @@ def main():
         print("Импорт отменен пользователем.")
         sys.exit(0)
 
-    # Путь к JSON файлу
-    json_file = 'parsed_articles.json'
-    
     # Запускаем импорт
     print("\n🚀 Начинаем импорт...")
-    importer.import_from_directory(markdown_dir, json_file, field_mapping, use_async=use_async)
+    importer.import_from_directory(markdown_dir, field_mapping, use_async=use_async)
 
 
 if __name__ == "__main__":
