@@ -1029,17 +1029,40 @@ def get_date_range_from_user() -> Tuple[datetime, datetime]:
 
 def get_template_path_from_user() -> str:
     """
-    Запрашивает путь к файлу шаблона у пользователя
+    Сканирует директорию скрипта, показывает меню выбора MD-файлов шаблона.
 
     Returns:
         Путь к файлу шаблона
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
+    # Ищем все .md файлы в директории скрипта
+    md_files = sorted([
+        f for f in os.listdir(script_dir)
+        if f.lower().endswith('.md') and os.path.isfile(os.path.join(script_dir, f))
+    ])
+
     print("\n" + "=" * 60)
     print("Выбор файла шаблона")
     print("=" * 60)
 
+    if md_files:
+        print("\nНайденные Markdown-файлы:")
+        for i, fname in enumerate(md_files, 1):
+            print(f"  {i}. {fname}")
+        print(f"  0. Ввести путь вручную")
+
+        while True:
+            choice = input("\nВаш выбор: ").strip()
+            if choice == '0':
+                break
+            if choice.isdigit() and 1 <= int(choice) <= len(md_files):
+                return os.path.join(script_dir, md_files[int(choice) - 1])
+            print(f"Ошибка: введите число от 0 до {len(md_files)}")
+    else:
+        print("\nMD-файлы в директории скрипта не найдены. Введите путь вручную.")
+
+    # Ручной ввод
     while True:
         template_input = input("\nВведите путь к файлу шаблона: ").strip()
 
@@ -1047,10 +1070,8 @@ def get_template_path_from_user() -> str:
             print("Ошибка: путь не может быть пустым")
             continue
 
-        # Расширяем ~ до домашней директории
         template_path = os.path.expanduser(template_input)
 
-        # Если путь относительный, делаем его относительно директории скрипта
         if not os.path.isabs(template_path):
             template_path = os.path.join(script_dir, template_path)
 
