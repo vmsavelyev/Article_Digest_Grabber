@@ -18,7 +18,7 @@ import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
 from collections import defaultdict
 from notion_client import Client
@@ -623,18 +623,18 @@ class DigestCreator:
         year = now.year
         return week_number, year
 
-    def create_digest_page(self, week_number: int, year: int) -> str:
+    def create_digest_page(self, week_str: str, year: int) -> str:
         """
         Создает страницу AI Digest в Database "Личный блог"
 
         Args:
-            week_number: Номер недели
+            week_str: Номер недели в виде строки (например, "01", "23", "N")
             year: Год
 
         Returns:
             ID созданной страницы
         """
-        title = f"AI Digest - Week {week_number} {year}"
+        title = f"AI Digest - Week {week_str} {year}"
 
         # Properties для страницы
         properties = {
@@ -903,6 +903,48 @@ class DigestCreator:
             )
 
 
+def ask_mode() -> str:
+    """
+    Спрашивает пользователя о режиме создания дайджеста
+
+    Returns:
+        'previous_week' или 'custom'
+    """
+    print("\n" + "=" * 60)
+    print("Выберите режим создания дайджеста:")
+    print("  1. За предыдущую неделю")
+    print("  2. За произвольный период")
+    print("=" * 60)
+
+    while True:
+        choice = input("\nВаш выбор [1/2]: ").strip()
+        if choice == '1':
+            return 'previous_week'
+        elif choice == '2':
+            return 'custom'
+        print("Ошибка: введите 1 или 2")
+
+
+def get_previous_week_info() -> Tuple[str, int, datetime, datetime]:
+    """
+    Вычисляет информацию о предыдущей неделе относительно текущей даты
+
+    Returns:
+        Tuple[week_str, year, start_date, end_date]
+        week_str — номер недели в формате "01", "02", ...
+    """
+    today = datetime.now()
+    current_week_start = today - timedelta(days=today.weekday())
+    prev_week_start = current_week_start - timedelta(weeks=1)
+    prev_week_end = prev_week_start + timedelta(days=6)
+
+    week_number = prev_week_start.isocalendar()[1]
+    year = prev_week_start.year
+    week_str = f"{week_number:02d}"
+
+    return week_str, year, prev_week_start, prev_week_end
+
+
 def parse_date(date_str: str) -> Optional[datetime]:
     """
     Парсит дату в формате DD.MM.YYYY
@@ -1040,6 +1082,9 @@ def main():
     print("🚀 Создание AI Digest в Notion")
     print("=" * 60)
 
+    # Запрашиваем режим создания дайджеста
+    mode = ask_mode()
+
     # Запрашиваем URL баз данных
     blog_db_id, news_db_id = get_database_urls_from_user()
 
@@ -1051,16 +1096,17 @@ def main():
     # Создаем экземпляр
     creator = DigestCreator(notion_token, blog_db_id, news_db_id, template_path=template_path)
 
-    # Получаем номер недели и год
-    week_number, year = creator.get_current_week_info()
+    if mode == 'previous_week':
+        week_str, year, start_date, end_date = get_previous_week_info()
+        print(f"\n📅 Предыдущая неделя: {week_str}, Год: {year}")
+        print(f"📊 Период сбора новостей: {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}")
+    else:
+        year = datetime.now().year
+        week_str = "N"
+        start_date, end_date = get_date_range_from_user()
+        print(f"\n📊 Период сбора новостей: {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}")
 
-    print(f"\n📅 Текущая неделя: {week_number}, Год: {year}")
-    print(f"📝 Будет создана страница: AI Digest - Week {week_number} {year}")
-
-    # Запрашиваем диапазон дат
-    start_date, end_date = get_date_range_from_user()
-
-    print(f"\n📊 Период сбора новостей: {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}")
+    print(f"📝 Будет создана страница: AI Digest - Week {week_str} {year}")
 
     # Подтверждение
     confirm = input("\nПродолжить? [y/N]: ").strip().lower()
@@ -1073,7 +1119,7 @@ def main():
     print("📄 Создание страницы в Database 'Личный блог'...")
 
     try:
-        page_id = creator.create_digest_page(week_number, year)
+        page_id = creator.create_digest_page(week_str, year)
         print(f"✅ Страница создана! ID: {page_id}")
     except Exception as e:
         print(f"❌ Ошибка при создании страницы: {e}")
@@ -1101,7 +1147,7 @@ def main():
 
     logs_dir = "logs"
     os.makedirs(logs_dir, exist_ok=True)
-    log_filename = os.path.join(logs_dir, f"title_verification_week{week_number}_{year}.log")
+    log_filename = os.path.join(logs_dir, f"title_verification_week{week_str}_{year}.log")
     verifier = TitleVerifier(max_concurrent=5)
     mismatches = verifier.verify_titles(news_items, log_file=log_filename)
 
@@ -1155,7 +1201,7 @@ def main():
     # Готово
     print("\n" + "=" * 60)
     print("🎉 AI Digest успешно создан!")
-    print(f"📄 Страница: AI Digest - Week {week_number} {year}")
+    print(f"📄 Страница: AI Digest - Week {week_str} {year}")
     print(f"🔗 ID: {page_id}")
     print("=" * 60)
 
