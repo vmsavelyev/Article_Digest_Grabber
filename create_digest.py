@@ -1099,7 +1099,9 @@ def main():
     print("\n" + "-" * 60)
     print("🔍 Проверка соответствия названий статей...")
 
-    log_filename = f"title_verification_week{week_number}_{year}.log"
+    logs_dir = "logs"
+    os.makedirs(logs_dir, exist_ok=True)
+    log_filename = os.path.join(logs_dir, f"title_verification_week{week_number}_{year}.log")
     verifier = TitleVerifier(max_concurrent=5)
     mismatches = verifier.verify_titles(news_items, log_file=log_filename)
 
