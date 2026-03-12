@@ -28,7 +28,16 @@ from pathlib import Path
 from notion_client import Client
 
 # Импортируем утилиты из существующего скрипта
-from import_to_notion import extract_database_id, get_user_confirmation, NotionImporter
+import importlib.util as _ilu, pathlib as _pl
+_spec = _ilu.spec_from_file_location(
+    "import_to_notion",
+    _pl.Path(__file__).parent / "4_import_to_notion.py",
+)
+_mod = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_mod)
+extract_database_id = _mod.extract_database_id
+get_user_confirmation = _mod.get_user_confirmation
+NotionImporter = _mod.NotionImporter
 
 TAGS_FILE = "tags.txt"
 ARTICLES_DIR = "articles_markdown"
