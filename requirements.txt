@@ -4,3 +4,4 @@ lxml>=4.9.0
 notion-client>=2.2.1
 googletrans==4.0.0-rc1
 openai>=1.0.0
+sentence-transformers>=2.7.0
