@@ -69,6 +69,17 @@ BODY_EXCERPT_CHARS = 600
 # Работа с текстом
 # ---------------------------------------------------------------------------
 
+def is_russian(text: str) -> bool:
+    """Возвращает True если текст преимущественно на русском (>30% кириллицы)."""
+    if not text:
+        return False
+    letters = [c for c in text if c.isalpha()]
+    if not letters:
+        return False
+    cyrillic = sum(1 for c in letters if '\u0400' <= c <= '\u04FF')
+    return cyrillic / len(letters) > 0.3
+
+
 def extract_title(content: str) -> str:
     if content.startswith("# "):
         end = content.index("\n") if "\n" in content else len(content)
@@ -191,12 +202,15 @@ async def run(api_key: str, embed_threshold: float, confirm_threshold: float,
     for fp in md_files:
         with open(fp, "r", encoding="utf-8") as f:
             content = f.read()
+        title = extract_title(content)
+        body = extract_body_excerpt(content)
         articles.append({
             "filepath": fp,
             "filename": os.path.basename(fp),
-            "title": extract_title(content),
-            "body": extract_body_excerpt(content),
+            "title": title,
+            "body": body,
             "embed_text": extract_text_for_embedding(content),
+            "is_russian": is_russian(body),
         })
 
     # — Шаг 1: Локальные эмбеддинги LaBSE -----------------------------------
@@ -280,28 +294,45 @@ async def run(api_key: str, embed_threshold: float, confirm_threshold: float,
 
     groups = uf.groups(n)
 
-    to_remove = []
-    for root, members in groups.items():
-        keep = articles[root]
+    # Для каждой группы выбираем "хранителя":
+    # приоритет — английская статья; среди равных — наименьший индекс.
+    report_groups = []
+    for members in groups.values():
+        english = [m for m in members if not articles[m]["is_russian"]]
+        keeper_idx = min(english) if english else min(members)
+        keeper = articles[keeper_idx]
+
+        remove_list = []
         for m in members:
-            if m == root:
+            if m == keeper_idx:
                 continue
-            key = (min(root, m), max(root, m))
-            sim, reason = pair_info.get(key, (0.0, ""))
-            to_remove.append({
-                "keep_filename": keep["filename"],
-                "keep_title": keep["title"],
-                "remove_filename": articles[m]["filename"],
-                "remove_filepath": articles[m]["filepath"],
-                "remove_title": articles[m]["title"],
+            key = (min(keeper_idx, m), max(keeper_idx, m))
+            sim, reason = pair_info.get(
+                key,
+                (float(sim_matrix[keeper_idx, m]), "транзитивный дубликат"),
+            )
+            remove_list.append({
+                "filename": articles[m]["filename"],
+                "title": articles[m]["title"],
+                "filepath": articles[m]["filepath"],
+                "is_russian": articles[m]["is_russian"],
                 "similarity": sim,
                 "reason": reason,
             })
 
-    # — Отчёт ---------------------------------------------------------------
-    _save_report(to_remove, n, embed_threshold, confirm_threshold)
+        report_groups.append({
+            "keep": {
+                "filename": keeper["filename"],
+                "title": keeper["title"],
+                "is_russian": keeper["is_russian"],
+            },
+            "remove": remove_list,
+        })
 
-    if not to_remove:
+    # — Отчёт ---------------------------------------------------------------
+    _save_report(report_groups, n, embed_threshold, confirm_threshold)
+
+    if not report_groups:
         return
 
     # — Действие ------------------------------------------------------------
@@ -313,14 +344,15 @@ async def run(api_key: str, embed_threshold: float, confirm_threshold: float,
     if action == "move":
         os.makedirs(DUPLICATES_DIR, exist_ok=True)
         moved = 0
-        for item in to_remove:
-            src = item["remove_filepath"]
-            if not os.path.exists(src):
-                continue
-            dst = os.path.join(DUPLICATES_DIR, item["remove_filename"])
-            shutil.move(src, dst)
-            print(f"  Перемещён: {item['remove_filename']}")
-            moved += 1
+        for group in report_groups:
+            for item in group["remove"]:
+                src = item["filepath"]
+                if not os.path.exists(src):
+                    continue
+                dst = os.path.join(DUPLICATES_DIR, item["filename"])
+                shutil.move(src, dst)
+                print(f"  Перемещён: {item['filename']}")
+                moved += 1
         print(f"\nПеремещено файлов: {moved} → {DUPLICATES_DIR}/")
 
 
@@ -328,9 +360,15 @@ async def run(api_key: str, embed_threshold: float, confirm_threshold: float,
 # Отчёт
 # ---------------------------------------------------------------------------
 
-def _save_report(to_remove: list, total: int,
+def _lang_tag(is_ru: bool) -> str:
+    return "[RU]" if is_ru else "[EN]"
+
+
+def _save_report(report_groups: list, total: int,
                  embed_threshold: float, confirm_threshold: float):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    total_to_remove = sum(len(g["remove"]) for g in report_groups)
+
     lines = [
         "=" * 70,
         "ОТЧЁТ О СМЫСЛОВЫХ ДУБЛИКАТАХ",
@@ -340,27 +378,38 @@ def _save_report(to_remove: list, total: int,
         "=" * 70,
     ]
 
-    if not to_remove:
+    if not report_groups:
         lines.append("\nДубликатов не найдено.")
     else:
-        lines.append(f"\nНайдено дублирующихся файлов: {len(to_remove)}\n")
+        lines.append(f"\nНайдено групп дубликатов: {len(report_groups)}")
+        lines.append(f"Файлов к удалению:        {total_to_remove}\n")
         lines.append("-" * 70)
 
-        for idx, item in enumerate(to_remove, 1):
-            lines.append(f"\n#{idx}  (сходство: {item['similarity']:.1%})")
-            lines.append(f"  ОСТАВИТЬ:  {item['keep_filename']}")
-            lines.append(f"             {item['keep_title']}")
-            lines.append(f"  УДАЛИТЬ:   {item['remove_filename']}")
-            lines.append(f"             {item['remove_title']}")
-            if item["reason"]:
-                lines.append(f"  Причина:   {item['reason']}")
+        for idx, group in enumerate(report_groups, 1):
+            keep = group["keep"]
+            remove_list = group["remove"]
+            count = len(remove_list) + 1  # +1 — сам хранитель
+            lang = _lang_tag(keep["is_russian"])
+
+            lines.append(f"\n#{idx}  ({count} статьи об одном событии)")
+            lines.append(f"  ОСТАВИТЬ:  {keep['filename']}  {lang}")
+            lines.append(f"             {keep['title']}")
+
+            for item in remove_list:
+                item_lang = _lang_tag(item["is_russian"])
+                lines.append(f"  УДАЛИТЬ:   {item['filename']}  {item_lang}"
+                              f"  (сходство: {item['similarity']:.1%})")
+                lines.append(f"             {item['title']}")
+                if item["reason"]:
+                    lines.append(f"             Причина: {item['reason']}")
 
         lines += [
             "\n" + "-" * 70,
             "\nФАЙЛЫ ДЛЯ УДАЛЕНИЯ:",
         ]
-        for item in to_remove:
-            lines.append(f"  - {item['remove_filename']}")
+        for group in report_groups:
+            for item in group["remove"]:
+                lines.append(f"  - {item['filename']}")
 
     report_text = "\n".join(lines)
     print("\n" + report_text)
