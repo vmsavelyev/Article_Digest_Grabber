@@ -5,8 +5,8 @@
 ## Рабочий процесс
 
 ```
-parse_articles.py  →  find_duplicates.py  →  process_with_deepseek.py  →  collect_tags.py  →  import_to_notion.py  →  create_digest.py
-    парсинг          поиск дубликатов        переработка заголовков        теги Notion             импорт           создание дайджеста
+parse_articles.py  →  find_duplicates.py  →  find_notion_duplicates.py  →  process_with_deepseek.py  →  collect_tags.py  →  import_to_notion.py  →  create_digest.py
+    парсинг          поиск дубликатов       дубликаты vs Notion              переработка заголовков        теги Notion             импорт           создание дайджеста
 ```
 
 ---
@@ -181,6 +181,60 @@ python3 2.5_find_duplicates.py <DEEPSEEK_API_KEY> --action move
 ```
 
 При `--action move` дубликаты перемещаются в `articles_duplicates/` (можно восстановить вручную).
+
+---
+
+## 2.5. Проверка дубликатов в Notion — `1.6_find_notion_duplicates.py`
+
+Сравнивает локальные статьи из `articles_markdown/` со статьями, уже загруженными в выбранную базу данных Notion. Позволяет не импортировать то, что в дайджесте уже было.
+
+### Алгоритм
+
+1. **LaBSE-эмбеддинги** — генерируются для локальных статей и страниц Notion одним батчем. Кросс-матрица сходства N×M (локальные × Notion) эффективнее, чем полный перебор.
+2. **Авто-дубликаты** — пары с сходством ≥ 0.90 подтверждаются без LLM.
+3. **DeepSeek-верификация** — пары в диапазоне 0.65–0.90 проверяются полным текстом (опционально).
+
+### Использование
+
+```bash
+python3 1.6_find_notion_duplicates.py
+```
+
+Скрипт интерактивно запросит:
+1. Notion Integration Token (или `NOTION_API_KEY` из окружения)
+2. Базу данных Notion — выбор из списка или ввод URL/ID вручную
+3. Период: последние 7 / 30 / 90 / 365 дней, весь период или произвольный диапазон
+4. DeepSeek API ключ (или `DEEPSEEK_API_KEY`) — можно пропустить, тогда только LaBSE
+5. Пороги сходства (Enter для дефолтов: 0.65 / 0.90)
+6. Загружать ли содержимое блоков страниц Notion (медленнее, точнее — актуально если текст статей хранится внутри Notion, а не как внешняя ссылка)
+
+### Результат
+
+**`notion_duplicates_report.txt`** — список локальных файлов с совпадениями:
+
+```
+#1  ЛОКАЛЬНАЯ СТАТЬЯ [RU]:
+     060_Mistral_запустила_Forge.md
+     Mistral запустила Forge — платформу для обучения корпоративных LLM с нуля
+
+     Совпадения в Notion (1):
+       — [EN] Mistral launches Forge for enterprise LLM training
+         Создана: 2026-03-01  |  Сходство: 91.2%
+         URL: https://notion.so/...
+         Причина: LaBSE сходство 91.2% (авто)
+
+ФАЙЛЫ-ДУБЛИКАТЫ (рекомендуется не включать в дайджест):
+  - 060_Mistral_запустила_Forge.md
+```
+
+Файлы при этом **не перемещаются и не удаляются** — только отчёт.
+
+### Переменные окружения
+
+| Переменная | Описание |
+|---|---|
+| `NOTION_API_KEY` | Notion Integration Token |
+| `DEEPSEEK_API_KEY` | DeepSeek API ключ (опционально) |
 
 ---
 

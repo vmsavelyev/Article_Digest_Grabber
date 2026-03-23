@@ -56,13 +56,13 @@ CHAT_MODEL = "deepseek-chat"
 LABSE_MODEL = "sentence-transformers/LaBSE"
 
 # Пары ниже этого порога — не кандидаты
-DEFAULT_EMBED_THRESHOLD = 0.75
+DEFAULT_EMBED_THRESHOLD = 0.65
 # Пары выше этого порога — дубликаты без LLM-проверки
 DEFAULT_CONFIRM_THRESHOLD = 0.90
 DEFAULT_MAX_CONCURRENT = 5
 
 # Символов тела статьи для LLM-проверки
-BODY_EXCERPT_CHARS = 600
+BODY_EXCERPT_CHARS = 1500
 
 
 # ---------------------------------------------------------------------------
