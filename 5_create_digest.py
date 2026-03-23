@@ -23,6 +23,9 @@ from typing import List, Dict, Optional, Tuple
 from collections import defaultdict
 from notion_client import Client
 from googletrans import Translator
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def markdown_to_notion_blocks(markdown_content: str) -> List[dict]:
@@ -1085,7 +1088,7 @@ def get_template_path_from_user() -> str:
 def main():
     """Основная функция"""
     # Получаем токен из переменных окружения или аргументов
-    notion_token = os.getenv("NOTION_TOKEN")
+    notion_token = os.getenv("NOTION_API_KEY") or os.getenv("NOTION_TOKEN")
 
     if len(sys.argv) > 1:
         notion_token = sys.argv[1]

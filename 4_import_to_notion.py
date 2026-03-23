@@ -13,6 +13,9 @@ import time
 from pathlib import Path
 from notion_client import Client, AsyncClient
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 from typing import List, Dict, Tuple, Optional
 
 
@@ -1056,7 +1059,7 @@ def ask_user_for_multi_select_fields(custom_fields: dict) -> list:
 def main():
     """Основная функция"""
     # Парсим аргументы командной строки
-    notion_token = os.getenv('NOTION_TOKEN')
+    notion_token = os.getenv('NOTION_API_KEY') or os.getenv('NOTION_TOKEN')
     database_id = os.getenv('NOTION_DATABASE_ID')
     max_concurrent = 3  # Notion rate limit: 3 запроса в секунду
     use_async = True

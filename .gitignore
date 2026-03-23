@@ -8,3 +8,4 @@ tags.txt
 my_system_prompt.txt
 duplicates_report.txt
 notion_duplicates_report.txt
+.env

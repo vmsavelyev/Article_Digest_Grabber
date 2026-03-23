@@ -17,19 +17,22 @@ parse_articles.py  →  find_duplicates.py  →  find_notion_duplicates.py  → 
 pip install -r requirements.txt
 ```
 
-Для `process_with_deepseek.py`, `find_duplicates.py` и других скриптов с DeepSeek API:
+> Для `find_duplicates.py` дополнительно нужна модель LaBSE (~1.8 GB) — скачивается автоматически при первом запуске и кешируется в `~/.cache/huggingface/hub/`.
 
-```bash
-pip install openai
+---
+
+## Настройка переменных окружения
+
+Создайте файл `.env` в корне проекта:
+
+```
+NOTION_API_KEY=secret_xxx...
+DEEPSEEK_API_KEY=sk-xxx...
 ```
 
-Для `find_duplicates.py` дополнительно (локальные эмбеддинги):
+Все скрипты читают ключи из этого файла автоматически. Передавать ключи аргументами командной строки больше не нужно.
 
-```bash
-pip install sentence-transformers
-```
-
-> Модель LaBSE (~1.8 GB) скачивается автоматически при первом запуске `find_duplicates.py` и кешируется в `~/.cache/huggingface/hub/`.
+> `.env` уже добавлен в `.gitignore` — ключи не попадут в репозиторий.
 
 ---
 
@@ -137,10 +140,10 @@ python3 parse_articles.py "https://example.com/article?id=123"
 
 ```bash
 # Только отчёт (файлы не трогаются)
-python3 2.5_find_duplicates.py <DEEPSEEK_API_KEY>
+python3 1.5_find_duplicates.py
 
 # Переместить дубликаты в articles_duplicates/
-python3 2.5_find_duplicates.py <DEEPSEEK_API_KEY> --action move
+python3 1.5_find_duplicates.py --action move
 ```
 
 ### Параметры
@@ -229,13 +232,6 @@ python3 1.6_find_notion_duplicates.py
 
 Файлы при этом **не перемещаются и не удаляются** — только отчёт.
 
-### Переменные окружения
-
-| Переменная | Описание |
-|---|---|
-| `NOTION_API_KEY` | Notion Integration Token |
-| `DEEPSEEK_API_KEY` | DeepSeek API ключ (опционально) |
-
 ---
 
 ## 3. Переработка заголовков — `process_with_deepseek.py`
@@ -245,7 +241,7 @@ python3 1.6_find_notion_duplicates.py
 ### Использование
 
 ```bash
-python3 process_with_deepseek.py <DEEPSEEK_API_KEY>
+python3 2_new_title_with_deepseek.py
 ```
 
 Скрипт интерактивно запросит:
@@ -283,12 +279,7 @@ python3 process_with_deepseek.py <DEEPSEEK_API_KEY>
 ### Использование
 
 ```bash
-# Через переменную окружения (рекомендуется)
-export NOTION_TOKEN='your_token_here'
-python3 collect_tags.py
-
-# Через аргумент командной строки
-python3 collect_tags.py your_token_here
+python3 3_collect_tags.py
 ```
 
 ### Как работает сбор тегов
@@ -374,20 +365,8 @@ https://www.notion.so/workspace/abc123def456ghi789jkl012mno345pq?v=...
 ### Использование
 
 ```bash
-# Способ 1: переменные окружения (рекомендуется)
-export NOTION_TOKEN='your_token_here'
-export NOTION_DATABASE_ID='your_database_id_here'
-python3 import_to_notion.py
-
-# Способ 2: аргументы командной строки
-python3 import_to_notion.py <NOTION_TOKEN> <DATABASE_ID>
-
-# Способ 3: комбинированный
-export NOTION_DATABASE_ID='your_database_id_here'
-python3 import_to_notion.py <NOTION_TOKEN>
+python3 4_import_to_notion.py
 ```
-
-Аргументы командной строки имеют приоритет над переменными окружения.
 
 ### Что импортируется
 
@@ -419,12 +398,7 @@ python3 import_to_notion.py <NOTION_TOKEN>
 ### Использование
 
 ```bash
-# Через переменную окружения (рекомендуется)
-export NOTION_TOKEN='your_token_here'
-python3 create_digest.py
-
-# Через аргумент командной строки
-python3 create_digest.py <NOTION_TOKEN>
+python3 5_create_digest.py
 ```
 
 Скрипт интерактивно запросит:

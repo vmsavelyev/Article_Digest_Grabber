@@ -26,6 +26,9 @@ import os
 import re
 import sys
 import glob
+from dotenv import load_dotenv
+
+load_dotenv()
 import json
 import shutil
 import asyncio
@@ -425,17 +428,20 @@ def _save_report(report_groups: list, total: int,
 
 def parse_args():
     args = sys.argv[1:]
-    if not args or args[0] in ("-h", "--help"):
+    if args and args[0] in ("-h", "--help"):
         print(__doc__)
         sys.exit(0)
 
-    api_key = args[0]
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if args and not args[0].startswith("--"):
+        api_key = args[0]
+        args = args[1:]
     embed_threshold = DEFAULT_EMBED_THRESHOLD
     confirm_threshold = DEFAULT_CONFIRM_THRESHOLD
     action = "report"
     max_concurrent = DEFAULT_MAX_CONCURRENT
 
-    i = 1
+    i = 0
     while i < len(args):
         if args[i] == "--threshold" and i + 1 < len(args):
             try:

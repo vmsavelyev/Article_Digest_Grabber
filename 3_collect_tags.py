@@ -26,6 +26,9 @@ import sys
 import re
 from pathlib import Path
 from notion_client import Client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Импортируем утилиты из существующего скрипта
 import importlib.util as _ilu, pathlib as _pl
@@ -71,7 +74,7 @@ def get_notion_token() -> str:
         print_help()
         sys.exit(0)
 
-    token = os.getenv("NOTION_TOKEN")
+    token = os.getenv("NOTION_API_KEY") or os.getenv("NOTION_TOKEN")
     if not token:
         for arg in sys.argv[1:]:
             if not arg.startswith("--"):

@@ -28,6 +28,9 @@ import sys
 import glob
 import json
 import asyncio
+from dotenv import load_dotenv
+
+load_dotenv()
 from datetime import datetime, timedelta, timezone
 
 # --- notion-client ---

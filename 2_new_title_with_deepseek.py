@@ -21,6 +21,9 @@ import sys
 import glob
 import asyncio
 from openai import AsyncOpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Директория со статьями относительно расположения скрипта
@@ -186,12 +189,15 @@ async def run(api_key, system_prompt, md_files, max_concurrent):
 
 
 def main():
-    # Проверяем аргументы
-    if len(sys.argv) < 2:
-        print("Использование: python3 process_with_deepseek.py <DEEPSEEK_API_KEY>")
-        sys.exit(1)
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if len(sys.argv) >= 2:
+        api_key = sys.argv[1]
 
-    api_key = sys.argv[1]
+    if not api_key:
+        print("Ошибка: DEEPSEEK_API_KEY не указан")
+        print("Задайте его в .env файле или передайте аргументом:")
+        print("  python3 process_with_deepseek.py <DEEPSEEK_API_KEY>")
+        sys.exit(1)
 
     # Запрашиваем у пользователя файл системного промпта
     # Показываем доступные .txt файлы в корне проекта
