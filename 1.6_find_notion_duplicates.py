@@ -68,7 +68,7 @@ ARTICLES_DIR   = os.path.join(SCRIPT_DIR, "articles_markdown")
 REPORT_FILE    = os.path.join(SCRIPT_DIR, "notion_duplicates_report.txt")
 
 DEEPSEEK_BASE_URL   = "https://api.deepseek.com"
-CHAT_MODEL          = "deepseek-chat"
+CHAT_MODEL          = "deepseek-v4-flash"
 LABSE_MODEL         = "sentence-transformers/LaBSE"
 
 DEFAULT_EMBED_THRESHOLD   = 0.65   # порог кандидата

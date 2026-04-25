@@ -32,7 +32,7 @@ ARTICLES_DIR = os.path.join(SCRIPT_DIR, "articles_markdown")
 SYSTEM_PROMPT_FILE = os.path.join(SCRIPT_DIR, "system_prompt.txt")
 
 # Модель DeepSeek
-DEEPSEEK_MODEL = "deepseek-chat"
+DEEPSEEK_MODEL = "deepseek-v4-flash"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 
 # Количество параллельных запросов по умолчанию
