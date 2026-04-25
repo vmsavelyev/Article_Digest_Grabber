@@ -701,13 +701,13 @@ class DigestCreator:
         filter_params = {
             "and": [
                 {
-                    "property": "Date",
+                    "property": "Дата публикации",
                     "date": {
                         "on_or_after": start_date.strftime("%Y-%m-%d")
                     }
                 },
                 {
-                    "property": "Date",
+                    "property": "Дата публикации",
                     "date": {
                         "on_or_before": end_date.strftime("%Y-%m-%d")
                     }
@@ -725,7 +725,7 @@ class DigestCreator:
                 "filter": filter_params,
                 "sorts": [
                     {
-                        "property": "Date",
+                        "property": "Дата публикации",
                         "direction": "descending"
                     }
                 ]
@@ -767,9 +767,9 @@ class DigestCreator:
                 if url_prop.get("type") == "url":
                     url = url_prop.get("url", "") or ""
 
-                # Извлекаем Date
+                # Извлекаем Дата публикации
                 date_str = ""
-                date_prop = properties.get("Date", {})
+                date_prop = properties.get("Дата публикации", {})
                 if date_prop.get("type") == "date":
                     date_obj = date_prop.get("date", {})
                     if date_obj and date_obj.get("start"):

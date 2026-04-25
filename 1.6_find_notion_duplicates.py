@@ -28,6 +28,7 @@ import sys
 import glob
 import json
 import asyncio
+import httpx
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -71,8 +72,9 @@ DEEPSEEK_BASE_URL   = "https://api.deepseek.com"
 CHAT_MODEL          = "deepseek-v4-flash"
 LABSE_MODEL         = "sentence-transformers/LaBSE"
 
-DEFAULT_EMBED_THRESHOLD   = 0.65   # порог кандидата
-DEFAULT_CONFIRM_THRESHOLD = 0.90   # авто-дубликат без LLM
+DEFAULT_EMBED_THRESHOLD   = 0.58   # порог кандидата (полный текст)
+DEFAULT_TITLE_THRESHOLD   = 0.52   # порог кандидата (только заголовок)
+DEFAULT_CONFIRM_THRESHOLD = 0.85   # авто-дубликат без LLM
 DEFAULT_MAX_CONCURRENT    = 5
 BODY_EXCERPT_CHARS        = 1500
 MAX_BLOCKS_PER_PAGE       = 15     # блоков на страницу Notion
@@ -97,6 +99,11 @@ def extract_title(content: str) -> str:
         end = content.index("\n") if "\n" in content else len(content)
         return content[2:end].strip()
     return ""
+
+
+def extract_date(content: str) -> str:
+    m = re.search(r"\*\*Дата публикации:\*\*\s*(\S+)", content)
+    return m.group(1) if m else ""
 
 
 def extract_body_excerpt(content: str) -> str:
@@ -160,8 +167,13 @@ def get_page_url(page: dict) -> str:
     return page.get("url", "")
 
 
-def parse_created_date(page: dict) -> str:
-    return page.get("created_time", "")[:10]
+def parse_pub_date(page: dict) -> str:
+    date_prop = page.get("properties", {}).get("Дата публикации", {})
+    if date_prop.get("type") == "date":
+        date_obj = date_prop.get("date") or {}
+        if date_obj.get("start"):
+            return date_obj["start"][:10]
+    return ""
 
 
 def notion_embed_text(title: str, props_text: str, blocks_text: str) -> str:
@@ -200,42 +212,43 @@ def list_notion_databases(notion: NotionClient) -> list:
     return results
 
 
-def get_data_source_id(notion: NotionClient, db_id: str) -> str:
-    """В notion-client 2.x databases.query заменён на data_sources.query.
-    Получаем data_source_id из объекта базы данных."""
-    db = notion.databases.retrieve(db_id)
-    data_sources = db.get("data_sources", []) if isinstance(db, dict) else getattr(db, "data_sources", [])
-    if not data_sources:
-        raise ValueError(
-            "У базы данных нет data_sources. "
-            "Убедитесь, что интеграция имеет доступ к этой базе."
-        )
-    ds = data_sources[0]
-    return ds.get("id") if isinstance(ds, dict) else ds.id
-
-
-def fetch_notion_pages(notion: NotionClient, db_id: str,
+def fetch_notion_pages(token: str, db_id: str,
                        start_dt: datetime, end_dt: datetime) -> list:
-    ds_id = get_data_source_id(notion, db_id)
-
-    pages, cursor = [], None
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+    }
     date_filter = {
         "and": [
-            {"timestamp": "created_time", "created_time": {"after":  start_dt.strftime("%Y-%m-%dT%H:%M:%SZ")}},
-            {"timestamp": "created_time", "created_time": {"before": end_dt.strftime("%Y-%m-%dT%H:%M:%SZ")}},
+            {
+                "property": "Дата публикации",
+                "date": {"on_or_after": start_dt.strftime("%Y-%m-%d")},
+            },
+            {
+                "property": "Дата публикации",
+                "date": {"on_or_before": end_dt.strftime("%Y-%m-%d")},
+            },
         ]
     }
+    pages, cursor = [], None
     while True:
-        kwargs = {"filter": date_filter, "page_size": 100}
+        body = {"filter": date_filter, "page_size": 100}
         if cursor:
-            kwargs["start_cursor"] = cursor
-        resp = notion.data_sources.query(ds_id, **kwargs)
-        results = resp.get("results", []) if isinstance(resp, dict) else list(resp.results)
-        pages.extend(results)
-        has_more = resp.get("has_more", False) if isinstance(resp, dict) else bool(resp.has_more)
-        if not has_more:
+            body["start_cursor"] = cursor
+        with httpx.Client() as client:
+            resp = client.post(
+                f"https://api.notion.com/v1/databases/{db_id}/query",
+                headers=headers,
+                json=body,
+                timeout=30.0,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        pages.extend(data.get("results", []))
+        if not data.get("has_more"):
             break
-        cursor = resp.get("next_cursor") if isinstance(resp, dict) else resp.next_cursor
+        cursor = data.get("next_cursor")
     return pages
 
 
@@ -254,16 +267,35 @@ def fetch_blocks_text(notion: NotionClient, page_id: str) -> str:
 
 async def verify_pair(client, article_a: dict, article_b: dict,
                       sem: asyncio.Semaphore) -> dict:
+    date_a = article_a.get("date", "") or article_a.get("created", "неизвестна")
+    date_b = article_b.get("date", "") or article_b.get("created", "неизвестна")
+    same_date = date_a and date_b and date_a == date_b
+    date_hint = (
+        f"Обе статьи опубликованы в ОДИН ДЕНЬ ({date_a}) — это сильный признак одного события."
+        if same_date else
+        f"Даты публикации: статья 1 — {date_a}, статья 2 — {date_b}."
+    )
     prompt = (
-        "Ты эксперт по анализу новостных и технологических статей. "
-        "Определи, описывают ли две статьи ОДНО И ТО ЖЕ событие или новость.\n\n"
-        f"### Статья 1\n**Заголовок:** {article_a['title']}\n{article_a['body']}\n\n"
-        f"### Статья 2\n**Заголовок:** {article_b['title']}\n{article_b['body']}\n\n"
-        "Дубликатами считаются статьи об одном событии, даже если написаны разными словами, "
-        "разными авторами или с разного угла.\n"
-        "НЕ считаются дубликатами статьи на одну тему, но о разных событиях.\n\n"
-        "Ответь строго в формате JSON без markdown:\n"
-        '{"is_duplicate": true/false, "reason": "краткое объяснение на русском"}'
+        "Ты эксперт по анализу новостных статей. Определи, описывают ли две статьи "
+        "ОДНО И ТО ЖЕ реальное событие.\n\n"
+        f"### Статья 1 (дата: {date_a})\nЗаголовок: {article_a['title']}\n{article_a['body']}\n\n"
+        f"### Статья 2 (дата: {date_b})\nЗаголовок: {article_b['title']}\n{article_b['body']}\n\n"
+        f"{date_hint}\n\n"
+        "Рассуждай по шагам:\n"
+        "1. Кто главный субъект статьи 1? (компания, продукт, человек)\n"
+        "2. Какое конкретное действие/событие описано в статье 1?\n"
+        "3. Кто главный субъект статьи 2?\n"
+        "4. Какое конкретное действие/событие описано в статье 2?\n"
+        "5. Субъект один и тот же? Событие одно и то же (пусть описано разными словами "
+        "или на разных языках)?\n\n"
+        "ВАЖНО: дубликатами считаются статьи, если они об одном событии, даже если:\n"
+        "- написаны на разных языках (EN и RU);\n"
+        "- используют разную терминологию для одного явления;\n"
+        "- описывают одно событие с разных сторон (B2B vs B2C угол).\n"
+        "НЕ дубликаты: статьи об одной компании, но о разных событиях или разных функциях.\n\n"
+        "Ответь строго в формате JSON (без markdown):\n"
+        '{"reasoning": "рассуждения по шагам 1-5", '
+        '"is_duplicate": true/false, "reason": "итоговый вывод одной фразой на русском"}'
     )
     async with sem:
         try:
@@ -271,7 +303,7 @@ async def verify_pair(client, article_a: dict, article_b: dict,
                 model=CHAT_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0,
-                max_tokens=150,
+                max_tokens=400,
             )
             raw = resp.choices[0].message.content.strip()
             m = re.search(r"\{.*?\}", raw, re.DOTALL)
@@ -296,14 +328,15 @@ def ask(text: str, default: str = "") -> str:
     return value if value else default
 
 
-def setup_notion() -> NotionClient:
+def setup_notion() -> tuple:
+    """Возвращает (NotionClient, token)."""
     token = os.environ.get("NOTION_API_KEY", "")
     if not token:
         token = ask("Notion Integration Token (или задайте NOTION_API_KEY в окружении)")
     if not token:
         print("Ошибка: Notion token не задан.")
         sys.exit(1)
-    return NotionClient(auth=token)
+    return NotionClient(auth=token), token
 
 
 def choose_database(notion: NotionClient) -> tuple:
@@ -360,11 +393,11 @@ def choose_period() -> tuple:
     if choice == "5":
         return datetime(2020, 1, 1, tzinfo=timezone.utc), now
     if choice == "6":
-        start_str = ask("Начальная дата (YYYY-MM-DD)")
-        end_str   = ask("Конечная дата (YYYY-MM-DD)", now.strftime("%Y-%m-%d"))
+        start_str = ask("Начальная дата (DD-MM-YYYY)")
+        end_str   = ask("Конечная дата (DD-MM-YYYY)", now.strftime("%d-%m-%Y"))
         try:
-            start = datetime.strptime(start_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-            end   = datetime.strptime(end_str,   "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            start = datetime.strptime(start_str, "%d-%m-%Y").replace(tzinfo=timezone.utc)
+            end   = datetime.strptime(end_str,   "%d-%m-%Y").replace(tzinfo=timezone.utc)
             return start, end
         except ValueError:
             print("Неверный формат — используется последние 30 дней.")
@@ -401,7 +434,7 @@ def setup_deepseek() -> tuple:
 # Основная логика
 # ---------------------------------------------------------------------------
 
-async def run(notion: NotionClient, db_id: str, db_title: str,
+async def run(notion: NotionClient, notion_token: str, db_id: str, db_title: str,
               start_dt: datetime, end_dt: datetime,
               deepseek_key: str, max_concurrent: int,
               embed_threshold: float, confirm_threshold: float,
@@ -424,6 +457,7 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
             "filename":   os.path.basename(fp),
             "title":      title,
             "body":       body,
+            "date":       extract_date(content),
             "embed_text": extract_text_for_embedding(content),
             "is_russian": is_russian(body),
         })
@@ -435,7 +469,7 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
     print(f"  Период: {start_dt.strftime('%Y-%m-%d')} — {end_dt.strftime('%Y-%m-%d')}")
 
     try:
-        pages = fetch_notion_pages(notion, db_id, start_dt, end_dt)
+        pages = fetch_notion_pages(notion_token, db_id, start_dt, end_dt)
     except Exception as e:
         print(f"Ошибка при запросе Notion: {e}")
         return
@@ -460,7 +494,7 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
             "body":       body,
             "embed_text": notion_embed_text(title, props_text, blocks_text),
             "url":        get_page_url(page),
-            "created":    parse_created_date(page),
+            "created":    parse_pub_date(page),
             "is_russian": is_russian(body or title),
         })
 
@@ -489,32 +523,37 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
         [a["embed_text"] for a in notion_articles]
     )
 
-    print(f"  Генерация эмбеддингов ({n_local + n_notion} текстов)...")
-    embeddings = model.encode(
-        all_texts,
-        batch_size=32,
-        show_progress_bar=True,
-        normalize_embeddings=True,
-        convert_to_numpy=True,
+    print(f"  Генерация эмбеддингов ({n_local + n_notion} текстов, полный текст + заголовки)...")
+    encode_kwargs = dict(batch_size=32, show_progress_bar=True,
+                         normalize_embeddings=True, convert_to_numpy=True)
+    all_titles = (
+        [a["title"] for a in local_articles] +
+        [a["title"] for a in notion_articles]
     )
+    embeddings       = model.encode(all_texts,  **encode_kwargs)
+    title_embeddings = model.encode(all_titles, **encode_kwargs)
 
-    local_emb  = embeddings[:n_local]
-    notion_emb = embeddings[n_local:]
+    local_emb        = embeddings[:n_local]
+    notion_emb       = embeddings[n_local:]
+    local_title_emb  = title_embeddings[:n_local]
+    notion_title_emb = title_embeddings[n_local:]
 
     # --- Шаг 2: Матрица сходства (локальные × Notion) ---
     print("\n[2/3] Вычисление косинусного сходства (локальные vs Notion)...")
-    sim_matrix = local_emb @ notion_emb.T   # shape: (n_local, n_notion)
+    sim_matrix       = local_emb       @ notion_emb.T        # (n_local, n_notion)
+    title_sim_matrix = local_title_emb @ notion_title_emb.T  # (n_local, n_notion)
 
-    auto_pairs      = []  # (i, j, sim)       — выше confirm_threshold
-    candidate_pairs = []  # (i, j, sim)       — между порогами
+    auto_pairs      = []  # (i, j, sim, title_sim) — выше confirm_threshold
+    candidate_pairs = []  # (i, j, sim, title_sim) — хотя бы один сигнал >= порога
 
     for i in range(n_local):
         for j in range(n_notion):
-            sim = float(sim_matrix[i, j])
+            sim       = float(sim_matrix[i, j])
+            title_sim = float(title_sim_matrix[i, j])
             if sim >= confirm_threshold:
-                auto_pairs.append((i, j, sim))
-            elif sim >= embed_threshold:
-                candidate_pairs.append((i, j, sim))
+                auto_pairs.append((i, j, sim, title_sim))
+            elif sim >= embed_threshold or title_sim >= DEFAULT_TITLE_THRESHOLD:
+                candidate_pairs.append((i, j, sim, title_sim))
 
     print(f"  Автодубликатов  (>= {confirm_threshold}): {len(auto_pairs)}")
     print(f"  Кандидатов для LLM:              {len(candidate_pairs)}")
@@ -522,7 +561,7 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
     # --- Шаг 3: LLM-верификация ---
     confirmed_pairs = []  # (i, j, sim, reason)
 
-    for i, j, sim in auto_pairs:
+    for i, j, sim, title_sim in auto_pairs:
         confirmed_pairs.append((i, j, sim, f"LaBSE сходство {sim:.1%} (авто)"))
 
     if candidate_pairs and deepseek_key:
@@ -531,14 +570,15 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
         sem    = asyncio.Semaphore(max_concurrent)
 
         tasks   = [verify_pair(client, local_articles[i], notion_articles[j], sem)
-                   for i, j, _ in candidate_pairs]
+                   for i, j, _, __ in candidate_pairs]
         results = await asyncio.gather(*tasks)
 
         llm_confirmed = 0
-        for (i, j, sim), verdict in zip(candidate_pairs, results):
+        for (i, j, sim, title_sim), verdict in zip(candidate_pairs, results):
             status = "✓" if verdict["is_duplicate"] else "✗"
             notion_title = notion_articles[j]["title"][:50]
-            print(f"  [{status}] {local_articles[i]['filename']}  ↔  Notion: {notion_title}")
+            signal = f"текст={sim:.2f}, заголовок={title_sim:.2f}"
+            print(f"  [{status}] {local_articles[i]['filename']}  ↔  Notion: {notion_title}  ({signal})")
             if verdict["is_duplicate"]:
                 confirmed_pairs.append((i, j, sim, verdict["reason"]))
                 llm_confirmed += 1
@@ -548,7 +588,7 @@ async def run(notion: NotionClient, db_id: str, db_title: str,
     elif candidate_pairs and not deepseek_key:
         print(f"\n[3/3] DeepSeek не задан — {len(candidate_pairs)} кандидатов включены как "
               f"«требует проверки» (сходство {embed_threshold:.0%}–{confirm_threshold:.0%}).")
-        for i, j, sim in candidate_pairs:
+        for i, j, sim, title_sim in candidate_pairs:
             confirmed_pairs.append((i, j, sim, f"LaBSE {sim:.1%} — рекомендуется ручная проверка"))
     else:
         print("\n[3/3] Кандидатов нет — LLM-проверка пропущена.")
@@ -651,7 +691,7 @@ def main():
         sys.exit(1)
 
     # Настройка
-    notion             = setup_notion()
+    notion, notion_token = setup_notion()
     db_id, db_title    = choose_database(notion)
     start_dt, end_dt   = choose_period()
     deepseek_key, concurrent = setup_deepseek()
@@ -684,7 +724,7 @@ def main():
     print("=" * 70)
 
     asyncio.run(run(
-        notion, db_id, db_title,
+        notion, notion_token, db_id, db_title,
         start_dt, end_dt,
         deepseek_key, concurrent,
         embed_threshold, confirm_threshold,

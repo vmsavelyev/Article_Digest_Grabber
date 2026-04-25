@@ -279,11 +279,14 @@ class NotionImporter:
                 if url_field is None or 'url' in prop_name.lower():
                     url_field = prop_name
 
-        # Ищем поле Date
-        for prop_name, prop_info in properties.items():
-            if prop_info['type'] == 'date':
-                if date_field is None or 'дата' in prop_name.lower() or 'date' in prop_name.lower():
-                    date_field = prop_name
+        # Ищем поле "Дата публикации" сначала по точному имени, затем по типу
+        if "Дата публикации" in properties and properties["Дата публикации"]['type'] == 'date':
+            date_field = "Дата публикации"
+        else:
+            for prop_name, prop_info in properties.items():
+                if prop_info['type'] == 'date':
+                    if date_field is None or 'дата' in prop_name.lower() or 'date' in prop_name.lower():
+                        date_field = prop_name
 
         mapping['title'] = title_field
         mapping['url'] = url_field
