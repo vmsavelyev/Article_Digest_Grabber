@@ -304,6 +304,7 @@ async def verify_pair(client, article_a: dict, article_b: dict,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0,
                 max_tokens=400,
+                extra_body={"thinking": {"type": "disabled"}},
             )
             raw = resp.choices[0].message.content.strip()
             m = re.search(r"\{.*?\}", raw, re.DOTALL)

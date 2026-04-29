@@ -65,7 +65,7 @@ DEFAULT_EMBED_THRESHOLD = 0.58
 DEFAULT_TITLE_THRESHOLD = 0.52
 # Пары выше этого порога (полный текст) — авто-дубликат без LLM
 DEFAULT_CONFIRM_THRESHOLD = 0.85
-DEFAULT_MAX_CONCURRENT = 5
+DEFAULT_MAX_CONCURRENT = 10
 
 # Символов тела статьи для LLM-проверки
 BODY_EXCERPT_CHARS = 1500
@@ -190,6 +190,7 @@ async def verify_pair(client, article_a: dict, article_b: dict,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0,
                 max_tokens=400,
+                extra_body={"thinking": {"type": "disabled"}},
             )
             raw = resp.choices[0].message.content.strip()
             m = re.search(r"\{.*?\}", raw, re.DOTALL)
