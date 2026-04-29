@@ -65,7 +65,7 @@ DEFAULT_EMBED_THRESHOLD = 0.58
 DEFAULT_TITLE_THRESHOLD = 0.52
 # Пары выше этого порога (полный текст) — авто-дубликат без LLM
 DEFAULT_CONFIRM_THRESHOLD = 0.85
-DEFAULT_MAX_CONCURRENT = 10
+DEFAULT_MAX_CONCURRENT = 20
 
 # Символов тела статьи для LLM-проверки
 BODY_EXCERPT_CHARS = 1500
